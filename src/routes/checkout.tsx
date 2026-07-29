@@ -5,7 +5,7 @@ import { Minus, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
-import { useCart } from "@/lib/cart";
+import { useCart, lineTotal } from "@/lib/cart";
 import { formatBRL } from "@/lib/product-photos";
 import { checkoutSchema } from "@/lib/checkout-schema";
 import { Button } from "@/components/ui/button";
@@ -48,7 +48,7 @@ type Errors = Partial<Record<"fullName" | "email" | "phone" | "cep" | "paymentMe
 
 function Checkout() {
   const navigate = useNavigate();
-  const { items, subtotal, updateQuantity, removeItem, clear } = useCart();
+  const { items, subtotal, updateQuantity, removeLine, clear } = useCart();
 
   const [confirmado, setConfirmado] = useState<{ orderNumber: number; total: number } | null>(null);
   const [fullName, setFullName] = useState("");
@@ -111,7 +111,12 @@ function Checkout() {
       phone,
       cep,
       paymentMethod,
-      items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+      items: items.map((i) => ({
+        productId: i.productId,
+        quantity: i.quantity,
+        notes: i.notes || undefined,
+        addons: i.addons.map((a) => a.productId),
+      })),
     };
 
     const parsed = checkoutSchema.safeParse(payload);
@@ -135,10 +140,7 @@ function Checkout() {
         p_phone: parsed.data.phone,
         p_cep: parsed.data.cep,
         p_payment_method: parsed.data.paymentMethod,
-        p_items: parsed.data.items.map((i) => ({
-          productId: i.productId,
-          quantity: i.quantity,
-        })),
+        p_items: parsed.data.items,
       });
       if (error || orderNumber == null) throw error ?? new Error("Pedido não criado");
       const totalConfirmado = total;
@@ -165,10 +167,20 @@ function Checkout() {
           <h2 className="text-lg font-semibold text-foreground">Seu pedido</h2>
           <ul className="divide-y rounded-lg border bg-card">
             {items.map((item) => (
-              <li key={item.productId} className="flex items-center gap-3 p-4">
-                <div className="min-w-0 flex-1">
+              <li key={item.lineId} className="flex items-start gap-3 p-4">
+                <div className="min-w-0 flex-1 space-y-1">
                   <p className="truncate font-medium text-foreground">{item.name}</p>
-                  <p className="text-sm text-muted-foreground">{formatBRL(item.price)} cada</p>
+                  {item.addons.length > 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                      Adicionais:{" "}
+                      {item.addons
+                        .map((a) => `${a.name} (${formatBRL(a.price)})`)
+                        .join(", ")}
+                    </p>
+                  ) : null}
+                  {item.notes ? (
+                    <p className="text-sm text-muted-foreground">Obs.: {item.notes}</p>
+                  ) : null}
                 </div>
                 <div className="flex items-center gap-1">
                   <Button
@@ -176,7 +188,7 @@ function Checkout() {
                     variant="outline"
                     size="icon"
                     aria-label={`Diminuir ${item.name}`}
-                    onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                    onClick={() => updateQuantity(item.lineId, item.quantity - 1)}
                   >
                     <Minus className="h-4 w-4" />
                   </Button>
@@ -186,7 +198,7 @@ function Checkout() {
                     variant="outline"
                     size="icon"
                     aria-label={`Aumentar ${item.name}`}
-                    onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                    onClick={() => updateQuantity(item.lineId, item.quantity + 1)}
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
@@ -195,13 +207,13 @@ function Checkout() {
                     variant="ghost"
                     size="icon"
                     aria-label={`Remover ${item.name}`}
-                    onClick={() => removeItem(item.productId)}
+                    onClick={() => removeLine(item.lineId)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
                 <p className="w-24 text-right font-semibold text-foreground">
-                  {formatBRL(item.price * item.quantity)}
+                  {formatBRL(lineTotal(item))}
                 </p>
               </li>
             ))}
