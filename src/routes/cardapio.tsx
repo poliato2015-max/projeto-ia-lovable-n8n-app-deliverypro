@@ -1,8 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { Minus, Plus, ShoppingCart } from "lucide-react";
+import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { formatBRL, getPhotoUrls } from "@/lib/product-photos";
+import { useCart } from "@/lib/cart";
+import { Button } from "@/components/ui/button";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Product = Tables<"products">;
@@ -14,13 +19,13 @@ export const Route = createFileRoute("/cardapio")({
       {
         name: "description",
         content:
-          "Confira os hambúrgueres artesanais e adicionais disponíveis para delivery hoje.",
+          "Monte seu pedido: hambúrgueres artesanais e adicionais disponíveis para delivery hoje.",
       },
       { property: "og:title", content: "Cardápio | Delivery de Hambúrguer" },
       {
         property: "og:description",
         content:
-          "Confira os hambúrgueres artesanais e adicionais disponíveis para delivery hoje.",
+          "Monte seu pedido: hambúrgueres artesanais e adicionais disponíveis para delivery hoje.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -30,6 +35,8 @@ export const Route = createFileRoute("/cardapio")({
 });
 
 function Cardapio() {
+  const { totalItems, subtotal } = useCart();
+
   const { data: products = [], isLoading } = useQuery({
     queryKey: ["cardapio"],
     queryFn: async () => {
@@ -53,7 +60,7 @@ function Cardapio() {
   const adicionais = products.filter((p) => p.category === "adicional");
 
   return (
-    <main className="min-h-screen bg-background px-4 py-10">
+    <main className="min-h-screen bg-background px-4 py-10 pb-32">
       <div className="mx-auto max-w-3xl space-y-10">
         <header className="space-y-2">
           <h1 className="text-3xl font-bold text-foreground">Cardápio</h1>
@@ -76,6 +83,23 @@ function Cardapio() {
           </>
         )}
       </div>
+
+      {totalItems > 0 ? (
+        <div className="fixed inset-x-0 bottom-0 border-t bg-card/95 px-4 py-3 backdrop-blur">
+          <div className="mx-auto flex max-w-3xl items-center justify-between gap-4">
+            <div className="flex items-center gap-2 text-sm">
+              <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+              <span className="text-foreground">
+                {totalItems} {totalItems === 1 ? "item" : "itens"}
+              </span>
+              <span className="font-semibold text-foreground">{formatBRL(subtotal)}</span>
+            </div>
+            <Button asChild>
+              <Link to="/checkout">Ir para o checkout</Link>
+            </Button>
+          </div>
+        </div>
+      ) : null}
     </main>
   );
 }
@@ -97,24 +121,81 @@ function Secao({
       ) : (
         <ul className="grid gap-4 sm:grid-cols-2">
           {items.map((product) => (
-            <li key={product.id} className="flex gap-4 rounded-lg border bg-card p-4">
-              <img
-                src={product.photo_url ? photoUrls[product.photo_url] : undefined}
-                alt={`Foto de ${product.name}`}
-                loading="lazy"
-                className="h-20 w-20 shrink-0 rounded-md bg-muted object-cover"
-              />
-              <div className="min-w-0">
-                <h3 className="font-medium text-foreground">{product.name}</h3>
-                <p className="text-sm text-muted-foreground">{product.description}</p>
-                <p className="mt-1 font-semibold text-foreground">
-                  {formatBRL(Number(product.price))}
-                </p>
-              </div>
-            </li>
+            <ProductCard
+              key={product.id}
+              product={product}
+              photoUrl={product.photo_url ? photoUrls[product.photo_url] : undefined}
+            />
           ))}
         </ul>
       )}
     </section>
+  );
+}
+
+function ProductCard({ product, photoUrl }: { product: Product; photoUrl?: string }) {
+  const { addItem } = useCart();
+  const [quantity, setQuantity] = useState(1);
+
+  return (
+    <li className="flex flex-col gap-4 rounded-lg border bg-card p-4">
+      <div className="flex gap-4">
+        <img
+          src={photoUrl}
+          alt={`Foto de ${product.name}`}
+          loading="lazy"
+          className="h-20 w-20 shrink-0 rounded-md bg-muted object-cover"
+        />
+        <div className="min-w-0">
+          <h3 className="font-medium text-foreground">{product.name}</h3>
+          <p className="text-sm text-muted-foreground">{product.description}</p>
+          <p className="mt-1 font-semibold text-foreground">{formatBRL(Number(product.price))}</p>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label={`Diminuir quantidade de ${product.name}`}
+            onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+          >
+            <Minus className="h-4 w-4" />
+          </Button>
+          <span aria-live="polite" className="w-8 text-center text-sm font-medium">
+            {quantity}
+          </span>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label={`Aumentar quantidade de ${product.name}`}
+            onClick={() => setQuantity((q) => Math.min(100, q + 1))}
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
+        <Button
+          type="button"
+          onClick={() => {
+            addItem(
+              {
+                productId: product.id,
+                name: product.name,
+                price: Number(product.price),
+                photoPath: product.photo_url,
+              },
+              quantity,
+            );
+            setQuantity(1);
+            toast.success(`${product.name} adicionado ao carrinho.`);
+          }}
+        >
+          Adicionar
+        </Button>
+      </div>
+    </li>
   );
 }
