@@ -14,6 +14,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminProtectedRouteRouteImport } from './routes/admin/_protected/route'
 import { Route as AdminProtectedIndexRouteImport } from './routes/admin/_protected/index'
+import { Route as AdminProtectedProdutosRouteImport } from './routes/admin/_protected/produtos'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -40,18 +41,25 @@ const AdminProtectedIndexRoute = AdminProtectedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminProtectedRouteRoute,
 } as any)
+const AdminProtectedProdutosRoute = AdminProtectedProdutosRouteImport.update({
+  id: '/produtos',
+  path: '/produtos',
+  getParentRoute: () => AdminProtectedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AdminProtectedRouteRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
+  '/admin/produtos': typeof AdminProtectedProdutosRoute
   '/admin/': typeof AdminProtectedIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/produtos': typeof AdminProtectedProdutosRoute
   '/admin': typeof AdminProtectedIndexRoute
 }
 export interface FileRoutesById {
@@ -60,19 +68,27 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/_protected': typeof AdminProtectedRouteRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
+  '/admin/_protected/produtos': typeof AdminProtectedProdutosRoute
   '/admin/_protected/': typeof AdminProtectedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sitemap.xml' | '/admin' | '/admin/login' | '/admin/'
+  fullPaths:
+    | '/'
+    | '/sitemap.xml'
+    | '/admin'
+    | '/admin/login'
+    | '/admin/produtos'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sitemap.xml' | '/admin/login' | '/admin'
+  to: '/' | '/sitemap.xml' | '/admin/login' | '/admin/produtos' | '/admin'
   id:
     | '__root__'
     | '/'
     | '/sitemap.xml'
     | '/admin/_protected'
     | '/admin/login'
+    | '/admin/_protected/produtos'
     | '/admin/_protected/'
   fileRoutesById: FileRoutesById
 }
@@ -120,14 +136,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProtectedIndexRouteImport
       parentRoute: typeof AdminProtectedRouteRoute
     }
+    '/admin/_protected/produtos': {
+      id: '/admin/_protected/produtos'
+      path: '/produtos'
+      fullPath: '/admin/produtos'
+      preLoaderRoute: typeof AdminProtectedProdutosRouteImport
+      parentRoute: typeof AdminProtectedRouteRoute
+    }
   }
 }
 
 interface AdminProtectedRouteRouteChildren {
+  AdminProtectedProdutosRoute: typeof AdminProtectedProdutosRoute
   AdminProtectedIndexRoute: typeof AdminProtectedIndexRoute
 }
 
 const AdminProtectedRouteRouteChildren: AdminProtectedRouteRouteChildren = {
+  AdminProtectedProdutosRoute: AdminProtectedProdutosRoute,
   AdminProtectedIndexRoute: AdminProtectedIndexRoute,
 }
 
