@@ -30,12 +30,20 @@ function Index() {
         A base de dados do cardápio digital está pronta. As telas de cardápio, checkout e
         acompanhamento de pedidos chegam nas próximas etapas.
       </p>
-      <Link
-        to="/admin/login"
-        className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-      >
-        Área do administrador
-      </Link>
+      <div className="flex flex-wrap items-center justify-center gap-3">
+        <Link
+          to="/cardapio"
+          className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+        >
+          Ver cardápio
+        </Link>
+        <Link
+          to="/admin/login"
+          className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+        >
+          Área do administrador
+        </Link>
+      </div>
     </main>
   );
 }
