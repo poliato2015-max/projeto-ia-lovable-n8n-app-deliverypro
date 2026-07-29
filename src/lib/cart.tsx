@@ -1,18 +1,35 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
 
-export type CartItem = {
+export type CartAddon = {
+  productId: string;
+  name: string;
+  price: number;
+};
+
+export type CartLine = {
+  lineId: string;
   productId: string;
   name: string;
   price: number;
   quantity: number;
   photoPath: string | null;
+  notes: string;
+  addons: CartAddon[];
 };
 
+export function lineUnitPrice(line: CartLine) {
+  return line.price + line.addons.reduce((acc, a) => acc + a.price, 0);
+}
+
+export function lineTotal(line: CartLine) {
+  return lineUnitPrice(line) * line.quantity;
+}
+
 type CartContextValue = {
-  items: CartItem[];
-  addItem: (item: Omit<CartItem, "quantity">, quantity: number) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
-  removeItem: (productId: string) => void;
+  items: CartLine[];
+  addLine: (line: Omit<CartLine, "lineId">) => void;
+  updateQuantity: (lineId: string, quantity: number) => void;
+  removeLine: (lineId: string) => void;
   clear: () => void;
   totalItems: number;
   subtotal: number;
@@ -21,36 +38,28 @@ type CartContextValue = {
 const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<CartLine[]>([]);
 
   const value = useMemo<CartContextValue>(() => {
     return {
       items,
-      addItem: (item, quantity) =>
-        setItems((current) => {
-          const existing = current.find((i) => i.productId === item.productId);
-          if (existing) {
-            return current.map((i) =>
-              i.productId === item.productId
-                ? { ...i, quantity: Math.min(100, i.quantity + quantity) }
-                : i,
-            );
-          }
-          return [...current, { ...item, quantity: Math.min(100, quantity) }];
-        }),
-      updateQuantity: (productId, quantity) =>
+      addLine: (line) =>
+        setItems((current) => [
+          ...current,
+          { ...line, lineId: crypto.randomUUID(), quantity: Math.min(100, line.quantity) },
+        ]),
+      updateQuantity: (lineId, quantity) =>
         setItems((current) =>
           quantity <= 0
-            ? current.filter((i) => i.productId !== productId)
+            ? current.filter((i) => i.lineId !== lineId)
             : current.map((i) =>
-                i.productId === productId ? { ...i, quantity: Math.min(100, quantity) } : i,
+                i.lineId === lineId ? { ...i, quantity: Math.min(100, quantity) } : i,
               ),
         ),
-      removeItem: (productId) =>
-        setItems((current) => current.filter((i) => i.productId !== productId)),
+      removeLine: (lineId) => setItems((current) => current.filter((i) => i.lineId !== lineId)),
       clear: () => setItems([]),
       totalItems: items.reduce((acc, i) => acc + i.quantity, 0),
-      subtotal: items.reduce((acc, i) => acc + i.quantity * i.price, 0),
+      subtotal: items.reduce((acc, i) => acc + lineTotal(i), 0),
     };
   }, [items]);
 
