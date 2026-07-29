@@ -11,7 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -76,6 +77,8 @@ function AdminProdutos() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
   const [toDelete, setToDelete] = useState<Product | null>(null);
+  const [aba, setAba] = useState("hamburguer");
+  const [busca, setBusca] = useState("");
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: ["admin", "products"],
@@ -95,6 +98,13 @@ function AdminProdutos() {
     enabled: products.length > 0,
   });
 
+  const filtrar = (categoria: string) =>
+    products.filter(
+      (p) =>
+        p.category === categoria &&
+        p.name.toLowerCase().includes(busca.trim().toLowerCase()),
+    );
+
   async function excluir() {
     if (!toDelete) return;
     const { error } = await supabase.from("products").delete().eq("id", toDelete.id);
@@ -108,82 +118,126 @@ function AdminProdutos() {
     queryClient.invalidateQueries({ queryKey: ["admin", "products"] });
   }
 
+  async function alternarAtivo(product: Product, ativo: boolean) {
+    const { error } = await supabase
+      .from("products")
+      .update({ is_active: ativo })
+      .eq("id", product.id);
+    if (error) {
+      toast.error("Não foi possível atualizar o status do produto.");
+      return;
+    }
+    toast.success(ativo ? "Produto ativado." : "Produto desativado.");
+    queryClient.invalidateQueries({ queryKey: ["admin", "products"] });
+  }
+
+  function novoProduto() {
+    setEditing(null);
+    setFormOpen(true);
+  }
+
   return (
     <AdminShell
       title="Produtos"
       description="Gerencie os itens do cardápio."
       email={user.email ?? undefined}
       actions={
-        <Button
-          onClick={() => {
-            setEditing(null);
-            setFormOpen(true);
-          }}
-        >
+        <Button onClick={novoProduto}>
           <Plus className="mr-2 h-4 w-4" />
           Novo produto
         </Button>
       }
     >
-      <div className="rounded-lg border bg-card">
-        {isLoading ? (
-          <p className="p-6 text-sm text-muted-foreground">Carregando produtos...</p>
-        ) : products.length === 0 ? (
-          <p className="p-6 text-sm text-muted-foreground">
-            Nenhum produto cadastrado ainda. Clique em "Novo produto" para começar.
-          </p>
-        ) : (
-          <ul className="divide-y">
-            {products.map((product) => (
-              <li key={product.id} className="flex items-center gap-4 p-4">
-                <img
-                  src={product.photo_url ? photoUrls[product.photo_url] : undefined}
-                  alt={`Foto de ${product.name}`}
-                  className="h-14 w-14 shrink-0 rounded-md border bg-muted object-cover"
-                />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium text-foreground">{product.name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {product.category === "hamburguer" ? "Hambúrguer" : "Adicional"} ·{" "}
-                    {formatBRL(Number(product.price))}
+      <div className="space-y-4">
+        <Input
+          placeholder="Buscar por nome..."
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+          className="max-w-sm"
+        />
+
+        <Tabs value={aba} onValueChange={setAba}>
+          <TabsList>
+            <TabsTrigger value="hamburguer">Hambúrgueres</TabsTrigger>
+            <TabsTrigger value="adicional">Adicionais</TabsTrigger>
+          </TabsList>
+
+          {CATEGORIAS.map((categoria) => (
+            <TabsContent key={categoria.value} value={categoria.value}>
+              <div className="rounded-lg border bg-card">
+                {isLoading ? (
+                  <p className="p-6 text-sm text-muted-foreground">Carregando produtos...</p>
+                ) : filtrar(categoria.value).length === 0 ? (
+                  <p className="p-6 text-sm text-muted-foreground">
+                    Nenhum produto encontrado nesta aba.
                   </p>
-                </div>
-                <Badge variant={product.is_active ? "default" : "secondary"}>
-                  {product.is_active ? "Ativo" : "Inativo"}
-                </Badge>
-                <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    aria-label={`Editar ${product.name}`}
-                    onClick={() => {
-                      setEditing(product);
-                      setFormOpen(true);
-                    }}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    aria-label={`Excluir ${product.name}`}
-                    onClick={() => setToDelete(product)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+                ) : (
+                  <ul className="divide-y">
+                    {filtrar(categoria.value).map((product) => (
+                      <li key={product.id} className="flex items-center gap-4 p-4">
+                        <img
+                          src={product.photo_url ? photoUrls[product.photo_url] : undefined}
+                          alt={`Foto de ${product.name}`}
+                          className="h-14 w-14 shrink-0 rounded-md border bg-muted object-cover"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate font-medium text-foreground">{product.name}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {categoria.label} · {formatBRL(Number(product.price))}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={product.is_active}
+                            aria-label={`Ativar ou desativar ${product.name}`}
+                            onCheckedChange={(checked) => alternarAtivo(product, checked)}
+                          />
+                          <span className="w-14 text-xs text-muted-foreground">
+                            {product.is_active ? "Ativo" : "Inativo"}
+                          </span>
+                        </div>
+                        <div className="flex gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label={`Editar ${product.name}`}
+                            onClick={() => {
+                              setEditing(product);
+                              setFormOpen(true);
+                            }}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label={`Excluir ${product.name}`}
+                            onClick={() => setToDelete(product)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </TabsContent>
+          ))}
+        </Tabs>
       </div>
 
       <ProductFormDialog
         open={formOpen}
         onOpenChange={setFormOpen}
         product={editing}
+        defaultCategory={aba}
+        addonOptions={products.filter((p) => p.category === "adicional" && p.is_active)}
         currentPhotoUrl={editing?.photo_url ? photoUrls[editing.photo_url] : undefined}
-        onSaved={() => queryClient.invalidateQueries({ queryKey: ["admin", "products"] })}
+        onSaved={() => {
+          queryClient.invalidateQueries({ queryKey: ["admin", "products"] });
+          queryClient.invalidateQueries({ queryKey: ["admin", "product-addons"] });
+        }}
       />
 
       <AlertDialog open={!!toDelete} onOpenChange={(open) => !open && setToDelete(null)}>
@@ -208,12 +262,16 @@ function ProductFormDialog({
   open,
   onOpenChange,
   product,
+  defaultCategory,
+  addonOptions,
   currentPhotoUrl,
   onSaved,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   product: Product | null;
+  defaultCategory: string;
+  addonOptions: Product[];
   currentPhotoUrl?: string;
   onSaved: () => void;
 }) {
@@ -223,22 +281,44 @@ function ProductFormDialog({
   const [price, setPrice] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [file, setFile] = useState<File | null>(null);
+  const [addons, setAddons] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [loadedFor, setLoadedFor] = useState<string | null>(null);
+
+  const { data: vinculos = [] } = useQuery({
+    queryKey: ["admin", "product-addons", product?.id],
+    queryFn: async () => {
+      const { data, error: dbError } = await supabase
+        .from("product_addons")
+        .select("addon_id")
+        .eq("product_id", product!.id);
+      if (dbError) throw dbError;
+      return data.map((v) => v.addon_id);
+    },
+    enabled: open && !!product,
+  });
 
   const formKey = open ? (product?.id ?? "new") : null;
   if (open && loadedFor !== formKey) {
     setLoadedFor(formKey);
     setName(product?.name ?? "");
     setDescription(product?.description ?? "");
-    setCategory(product?.category ?? "hamburguer");
+    setCategory(product?.category ?? defaultCategory);
     setPrice(product ? String(product.price) : "");
     setIsActive(product?.is_active ?? true);
     setFile(null);
+    setAddons([]);
     setError(null);
   }
   if (!open && loadedFor !== null) setLoadedFor(null);
+
+  const [addonsLoadedFor, setAddonsLoadedFor] = useState<string | null>(null);
+  if (open && product && vinculos.length >= 0 && addonsLoadedFor !== product.id) {
+    setAddonsLoadedFor(product.id);
+    setAddons(vinculos);
+  }
+  if (!open && addonsLoadedFor !== null) setAddonsLoadedFor(null);
 
   async function salvar(event: React.FormEvent) {
     event.preventDefault();
@@ -273,17 +353,41 @@ function ProductFormDialog({
         photo_url: photoPath,
       };
 
-      const { error: dbError } = product
-        ? await supabase.from("products").update(payload).eq("id", product.id)
-        : await supabase.from("products").insert(payload);
+      let productId = product?.id ?? null;
+      if (product) {
+        const { error: dbError } = await supabase
+          .from("products")
+          .update(payload)
+          .eq("id", product.id);
+        if (dbError) throw dbError;
+      } else {
+        const { data: created, error: dbError } = await supabase
+          .from("products")
+          .insert(payload)
+          .select("id")
+          .single();
+        if (dbError) throw dbError;
+        productId = created.id;
+      }
 
-      if (dbError) {
-        if (dbError.message.includes("price")) {
-          setError("O preço precisa ser maior que zero.");
-        } else {
-          setError("Não foi possível salvar o produto. Tente novamente.");
+      if (category === "hamburguer" && productId) {
+        const atuais = product ? vinculos : [];
+        const paraAdicionar = addons.filter((id) => !atuais.includes(id));
+        const paraRemover = atuais.filter((id) => !addons.includes(id));
+        if (paraAdicionar.length > 0) {
+          const { error: linkError } = await supabase
+            .from("product_addons")
+            .insert(paraAdicionar.map((addonId) => ({ product_id: productId, addon_id: addonId })));
+          if (linkError) throw linkError;
         }
-        return;
+        if (paraRemover.length > 0) {
+          const { error: unlinkError } = await supabase
+            .from("product_addons")
+            .delete()
+            .eq("product_id", productId)
+            .in("addon_id", paraRemover);
+          if (unlinkError) throw unlinkError;
+        }
       }
 
       if (file && product?.photo_url && product.photo_url !== photoPath) {
@@ -294,7 +398,12 @@ function ProductFormDialog({
       onSaved();
       onOpenChange(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erro inesperado ao salvar o produto.");
+      const message = err instanceof Error ? err.message : "";
+      setError(
+        message.includes("price")
+          ? "O preço precisa ser maior que zero."
+          : "Não foi possível salvar o produto. Tente novamente.",
+      );
     } finally {
       setSaving(false);
     }
@@ -371,6 +480,41 @@ function ProductFormDialog({
               />
             ) : null}
           </div>
+
+          {category === "hamburguer" ? (
+            <div className="space-y-2 rounded-md border p-3">
+              <Label>Adicionais disponíveis</Label>
+              {addonOptions.length === 0 ? (
+                <p className="text-xs text-muted-foreground">
+                  Nenhum adicional ativo cadastrado ainda.
+                </p>
+              ) : (
+                <ul className="space-y-2">
+                  {addonOptions.map((addon) => (
+                    <li key={addon.id} className="flex items-center gap-3">
+                      <Checkbox
+                        id={`form-addon-${addon.id}`}
+                        checked={addons.includes(addon.id)}
+                        onCheckedChange={(checked) =>
+                          setAddons((current) =>
+                            checked
+                              ? [...current, addon.id]
+                              : current.filter((id) => id !== addon.id),
+                          )
+                        }
+                      />
+                      <Label htmlFor={`form-addon-${addon.id}`} className="flex-1 cursor-pointer">
+                        {addon.name}
+                      </Label>
+                      <span className="text-sm text-muted-foreground">
+                        {formatBRL(Number(addon.price))}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ) : null}
 
           <div className="flex items-center justify-between rounded-md border p-3">
             <div>
