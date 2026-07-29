@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import { toast } from "sonner";
 
@@ -313,12 +313,10 @@ function ProductFormDialog({
   }
   if (!open && loadedFor !== null) setLoadedFor(null);
 
-  const [addonsLoadedFor, setAddonsLoadedFor] = useState<string | null>(null);
-  if (open && product && vinculos.length >= 0 && addonsLoadedFor !== product.id) {
-    setAddonsLoadedFor(product.id);
-    setAddons(vinculos);
-  }
-  if (!open && addonsLoadedFor !== null) setAddonsLoadedFor(null);
+  useEffect(() => {
+    if (open && product) setAddons(vinculos);
+  }, [open, product, vinculos]);
+
 
   async function salvar(event: React.FormEvent) {
     event.preventDefault();
