@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminProtectedRouteRouteImport } from './routes/admin/_protected/route'
+import { Route as AdminProtectedIndexRouteImport } from './routes/admin/_protected/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,34 +29,46 @@ const AdminProtectedRouteRoute = AdminProtectedRouteRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminProtectedIndexRoute = AdminProtectedIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminProtectedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminProtectedRouteRoute
+  '/admin': typeof AdminProtectedRouteRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
+  '/admin/': typeof AdminProtectedIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminProtectedRouteRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin': typeof AdminProtectedIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin/_protected': typeof AdminProtectedRouteRoute
+  '/admin/_protected': typeof AdminProtectedRouteRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
+  '/admin/_protected/': typeof AdminProtectedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/admin/login'
+  fullPaths: '/' | '/admin' | '/admin/login' | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/admin/login'
-  id: '__root__' | '/' | '/admin/_protected' | '/admin/login'
+  to: '/' | '/admin/login' | '/admin'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin/_protected'
+    | '/admin/login'
+    | '/admin/_protected/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminProtectedRouteRoute: typeof AdminProtectedRouteRoute
+  AdminProtectedRouteRoute: typeof AdminProtectedRouteRouteWithChildren
   AdminLoginRoute: typeof AdminLoginRoute
 }
 
@@ -82,12 +95,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProtectedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/_protected/': {
+      id: '/admin/_protected/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminProtectedIndexRouteImport
+      parentRoute: typeof AdminProtectedRouteRoute
+    }
   }
 }
 
+interface AdminProtectedRouteRouteChildren {
+  AdminProtectedIndexRoute: typeof AdminProtectedIndexRoute
+}
+
+const AdminProtectedRouteRouteChildren: AdminProtectedRouteRouteChildren = {
+  AdminProtectedIndexRoute: AdminProtectedIndexRoute,
+}
+
+const AdminProtectedRouteRouteWithChildren =
+  AdminProtectedRouteRoute._addFileChildren(AdminProtectedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminProtectedRouteRoute: AdminProtectedRouteRoute,
+  AdminProtectedRouteRoute: AdminProtectedRouteRouteWithChildren,
   AdminLoginRoute: AdminLoginRoute,
 }
 export const routeTree = rootRouteImport
