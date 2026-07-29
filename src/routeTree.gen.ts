@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as AdminProtectedRouteRouteImport } from './routes/admin/_protected/route'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,30 +23,39 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminProtectedRouteRoute = AdminProtectedRouteRouteImport.update({
+  id: '/admin/_protected',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminProtectedRouteRoute
   '/admin/login': typeof AdminLoginRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminProtectedRouteRoute
   '/admin/login': typeof AdminLoginRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin/_protected': typeof AdminProtectedRouteRoute
   '/admin/login': typeof AdminLoginRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin/login'
+  fullPaths: '/' | '/admin' | '/admin/login'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin/login'
-  id: '__root__' | '/' | '/admin/login'
+  to: '/' | '/admin' | '/admin/login'
+  id: '__root__' | '/' | '/admin/_protected' | '/admin/login'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminProtectedRouteRoute: typeof AdminProtectedRouteRoute
   AdminLoginRoute: typeof AdminLoginRoute
 }
 
@@ -65,11 +75,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/_protected': {
+      id: '/admin/_protected'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminProtectedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminProtectedRouteRoute: AdminProtectedRouteRoute,
   AdminLoginRoute: AdminLoginRoute,
 }
 export const routeTree = rootRouteImport
