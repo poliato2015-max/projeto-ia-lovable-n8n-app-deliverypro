@@ -68,10 +68,50 @@ export type Database = {
         }
         Relationships: []
       }
+      order_item_addons: {
+        Row: {
+          addon_product_id: string
+          created_at: string
+          id: string
+          order_item_id: string
+          unit_price: number
+        }
+        Insert: {
+          addon_product_id: string
+          created_at?: string
+          id?: string
+          order_item_id: string
+          unit_price: number
+        }
+        Update: {
+          addon_product_id?: string
+          created_at?: string
+          id?: string
+          order_item_id?: string
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_item_addons_addon_product_id_fkey"
+            columns: ["addon_product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_item_addons_order_item_id_fkey"
+            columns: ["order_item_id"]
+            isOneToOne: false
+            referencedRelation: "order_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_items: {
         Row: {
           created_at: string
           id: string
+          notes: string | null
           order_id: string
           product_id: string
           quantity: number
@@ -80,6 +120,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          notes?: string | null
           order_id: string
           product_id: string
           quantity?: number
@@ -88,6 +129,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          notes?: string | null
           order_id?: string
           product_id?: string
           quantity?: number
@@ -156,6 +198,42 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_addons: {
+        Row: {
+          addon_id: string
+          created_at: string
+          id: string
+          product_id: string
+        }
+        Insert: {
+          addon_id: string
+          created_at?: string
+          id?: string
+          product_id: string
+        }
+        Update: {
+          addon_id?: string
+          created_at?: string
+          id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_addons_addon_id_fkey"
+            columns: ["addon_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "product_addons_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
