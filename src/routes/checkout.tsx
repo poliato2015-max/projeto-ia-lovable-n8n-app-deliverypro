@@ -1,6 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -9,7 +8,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/lib/cart";
 import { formatBRL } from "@/lib/product-photos";
 import { checkoutSchema } from "@/lib/checkout-schema";
-import { createOrder } from "@/lib/checkout.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -51,7 +49,6 @@ type Errors = Partial<Record<"fullName" | "email" | "phone" | "cep" | "paymentMe
 function Checkout() {
   const navigate = useNavigate();
   const { items, subtotal, updateQuantity, removeItem, clear } = useCart();
-  const enviarPedido = useServerFn(createOrder);
 
   const [confirmado, setConfirmado] = useState<{ orderNumber: number; total: number } | null>(null);
   const [fullName, setFullName] = useState("");
@@ -132,9 +129,21 @@ function Checkout() {
     setErrors({});
     setEnviando(true);
     try {
-      const result = await enviarPedido({ data: parsed.data });
+      const { data: orderNumber, error } = await supabase.rpc("create_order", {
+        p_full_name: parsed.data.fullName,
+        p_email: parsed.data.email,
+        p_phone: parsed.data.phone,
+        p_cep: parsed.data.cep,
+        p_payment_method: parsed.data.paymentMethod,
+        p_items: parsed.data.items.map((i) => ({
+          productId: i.productId,
+          quantity: i.quantity,
+        })),
+      });
+      if (error || orderNumber == null) throw error ?? new Error("Pedido não criado");
+      const totalConfirmado = total;
       clear();
-      setConfirmado({ orderNumber: result.orderNumber, total: result.total });
+      setConfirmado({ orderNumber, total: totalConfirmado });
     } catch {
       toast.error("Não foi possível finalizar o pedido. Tente novamente.");
     } finally {
