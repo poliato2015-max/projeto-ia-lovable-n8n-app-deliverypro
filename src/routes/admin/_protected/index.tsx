@@ -1,7 +1,7 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
+import { AdminShell } from "@/components/admin/admin-shell";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const Route = createFileRoute("/admin/_protected/")({
@@ -25,8 +25,6 @@ export const Route = createFileRoute("/admin/_protected/")({
 });
 
 function AdminHome() {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { user } = Route.useRouteContext();
 
   const { data: settings } = useQuery({
@@ -38,26 +36,13 @@ function AdminHome() {
     },
   });
 
-  async function sair() {
-    await queryClient.cancelQueries();
-    queryClient.clear();
-    await supabase.auth.signOut();
-    navigate({ to: "/admin/login", replace: true });
-  }
-
   return (
-    <main className="min-h-screen bg-background px-4 py-10">
-      <div className="mx-auto max-w-3xl space-y-6">
-        <header className="flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Painel administrativo</h1>
-            <p className="text-sm text-muted-foreground">Conectado como {user.email}</p>
-          </div>
-          <Button variant="outline" onClick={sair}>
-            Sair
-          </Button>
-        </header>
-
+    <AdminShell
+      title="Visão geral"
+      description="Resumo das configurações do delivery."
+      email={user.email ?? undefined}
+    >
+      <div className="space-y-6">
         <Card>
           <CardHeader>
             <CardTitle>Configurações de entrega</CardTitle>
@@ -81,11 +66,11 @@ function AdminHome() {
           <CardHeader>
             <CardTitle>Próximos passos</CardTitle>
             <CardDescription>
-              As telas de cardápio, checkout e Kanban de pedidos ainda serão construídas.
+              As telas de checkout e o Kanban de pedidos ainda serão construídas.
             </CardDescription>
           </CardHeader>
         </Card>
       </div>
-    </main>
+    </AdminShell>
   );
 }
