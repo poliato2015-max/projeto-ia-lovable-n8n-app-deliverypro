@@ -1,0 +1,4 @@
+CREATE POLICY "Publico ve fotos de produtos" ON storage.objects FOR SELECT TO anon, authenticated USING (bucket_id = 'product-photos');
+CREATE POLICY "Admins enviam fotos de produtos" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'product-photos' AND public.has_role(auth.uid(), 'admin'::public.app_role));
+CREATE POLICY "Admins atualizam fotos de produtos" ON storage.objects FOR UPDATE TO authenticated USING (bucket_id = 'product-photos' AND public.has_role(auth.uid(), 'admin'::public.app_role)) WITH CHECK (bucket_id = 'product-photos' AND public.has_role(auth.uid(), 'admin'::public.app_role));
+CREATE POLICY "Admins apagam fotos de produtos" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'product-photos' AND public.has_role(auth.uid(), 'admin'::public.app_role));
