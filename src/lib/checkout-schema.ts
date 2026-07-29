@@ -20,6 +20,8 @@ export const checkoutSchema = z.object({
       z.object({
         productId: z.string().uuid(),
         quantity: z.number().int().min(1).max(100),
+        notes: z.string().max(300, "A observação deve ter no máximo 300 caracteres.").optional(),
+        addons: z.array(z.string().uuid()).default([]),
       }),
     )
     .min(1, "O carrinho está vazio."),
