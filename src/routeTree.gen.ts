@@ -17,6 +17,8 @@ import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminProtectedRouteRouteImport } from './routes/admin/_protected/route'
 import { Route as AdminProtectedIndexRouteImport } from './routes/admin/_protected/index'
 import { Route as AdminProtectedProdutosRouteImport } from './routes/admin/_protected/produtos'
+import { Route as AdminProtectedPedidosRouteImport } from './routes/admin/_protected/pedidos'
+import { Route as AdminProtectedEntregaRouteImport } from './routes/admin/_protected/entrega'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -58,6 +60,16 @@ const AdminProtectedProdutosRoute = AdminProtectedProdutosRouteImport.update({
   path: '/produtos',
   getParentRoute: () => AdminProtectedRouteRoute,
 } as any)
+const AdminProtectedPedidosRoute = AdminProtectedPedidosRouteImport.update({
+  id: '/pedidos',
+  path: '/pedidos',
+  getParentRoute: () => AdminProtectedRouteRoute,
+} as any)
+const AdminProtectedEntregaRoute = AdminProtectedEntregaRouteImport.update({
+  id: '/entrega',
+  path: '/entrega',
+  getParentRoute: () => AdminProtectedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -66,6 +78,8 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AdminProtectedRouteRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
+  '/admin/entrega': typeof AdminProtectedEntregaRoute
+  '/admin/pedidos': typeof AdminProtectedPedidosRoute
   '/admin/produtos': typeof AdminProtectedProdutosRoute
   '/admin/': typeof AdminProtectedIndexRoute
 }
@@ -75,6 +89,8 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/entrega': typeof AdminProtectedEntregaRoute
+  '/admin/pedidos': typeof AdminProtectedPedidosRoute
   '/admin/produtos': typeof AdminProtectedProdutosRoute
   '/admin': typeof AdminProtectedIndexRoute
 }
@@ -86,6 +102,8 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/_protected': typeof AdminProtectedRouteRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
+  '/admin/_protected/entrega': typeof AdminProtectedEntregaRoute
+  '/admin/_protected/pedidos': typeof AdminProtectedPedidosRoute
   '/admin/_protected/produtos': typeof AdminProtectedProdutosRoute
   '/admin/_protected/': typeof AdminProtectedIndexRoute
 }
@@ -98,6 +116,8 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin'
     | '/admin/login'
+    | '/admin/entrega'
+    | '/admin/pedidos'
     | '/admin/produtos'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
@@ -107,6 +127,8 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/sitemap.xml'
     | '/admin/login'
+    | '/admin/entrega'
+    | '/admin/pedidos'
     | '/admin/produtos'
     | '/admin'
   id:
@@ -117,6 +139,8 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin/_protected'
     | '/admin/login'
+    | '/admin/_protected/entrega'
+    | '/admin/_protected/pedidos'
     | '/admin/_protected/produtos'
     | '/admin/_protected/'
   fileRoutesById: FileRoutesById
@@ -188,15 +212,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProtectedProdutosRouteImport
       parentRoute: typeof AdminProtectedRouteRoute
     }
+    '/admin/_protected/pedidos': {
+      id: '/admin/_protected/pedidos'
+      path: '/pedidos'
+      fullPath: '/admin/pedidos'
+      preLoaderRoute: typeof AdminProtectedPedidosRouteImport
+      parentRoute: typeof AdminProtectedRouteRoute
+    }
+    '/admin/_protected/entrega': {
+      id: '/admin/_protected/entrega'
+      path: '/entrega'
+      fullPath: '/admin/entrega'
+      preLoaderRoute: typeof AdminProtectedEntregaRouteImport
+      parentRoute: typeof AdminProtectedRouteRoute
+    }
   }
 }
 
 interface AdminProtectedRouteRouteChildren {
+  AdminProtectedEntregaRoute: typeof AdminProtectedEntregaRoute
+  AdminProtectedPedidosRoute: typeof AdminProtectedPedidosRoute
   AdminProtectedProdutosRoute: typeof AdminProtectedProdutosRoute
   AdminProtectedIndexRoute: typeof AdminProtectedIndexRoute
 }
 
 const AdminProtectedRouteRouteChildren: AdminProtectedRouteRouteChildren = {
+  AdminProtectedEntregaRoute: AdminProtectedEntregaRoute,
+  AdminProtectedPedidosRoute: AdminProtectedPedidosRoute,
   AdminProtectedProdutosRoute: AdminProtectedProdutosRoute,
   AdminProtectedIndexRoute: AdminProtectedIndexRoute,
 }
@@ -215,3 +257,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
