@@ -371,7 +371,7 @@ function ProductFormDialog({
       }
 
       if (category === "hamburguer" && productId) {
-        const atuais = product ? vinculos : [];
+        const atuais = product ? (vinculos ?? []) : [];
         const paraAdicionar = addons.filter((id) => !atuais.includes(id));
         const paraRemover = atuais.filter((id) => !addons.includes(id));
         if (paraAdicionar.length > 0) {
