@@ -286,7 +286,7 @@ function ProductFormDialog({
   const [saving, setSaving] = useState(false);
   const [loadedFor, setLoadedFor] = useState<string | null>(null);
 
-  const { data: vinculos = [] } = useQuery({
+  const { data: vinculos } = useQuery({
     queryKey: ["admin", "product-addons", product?.id],
     queryFn: async () => {
       const { data, error: dbError } = await supabase
@@ -314,8 +314,10 @@ function ProductFormDialog({
   if (!open && loadedFor !== null) setLoadedFor(null);
 
   useEffect(() => {
-    if (open && product) setAddons(vinculos);
-  }, [open, product, vinculos]);
+    if (vinculos) setAddons(vinculos);
+  }, [vinculos]);
+
+
 
 
   async function salvar(event: React.FormEvent) {
