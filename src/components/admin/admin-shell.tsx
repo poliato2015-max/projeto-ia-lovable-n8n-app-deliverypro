@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Package, Settings, KanbanSquare, ClipboardList, type LucideIcon } from "lucide-react";
+import { Package, Settings, KanbanSquare, type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
