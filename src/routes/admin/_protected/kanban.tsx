@@ -92,6 +92,7 @@ function AdminKanban() {
   const [arrastando, setArrastando] = useState<string | null>(null);
   const [colunaAlvo, setColunaAlvo] = useState<string | null>(null);
   const [detalhe, setDetalhe] = useState<Order | null>(null);
+  const [processando, setProcessando] = useState<string | null>(null);
 
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ["admin", "orders", "kanban"],
@@ -99,16 +100,24 @@ function AdminKanban() {
       const { data, error } = await supabase
         .from("orders")
         .select(SELECT)
-        .in("status", ["pedidos_a_fazer", "fazendo", "saiu_para_entrega"])
+        .in("status", [
+          "aguardando_aprovacao",
+          "pedidos_a_fazer",
+          "fazendo",
+          "saiu_para_entrega",
+        ])
         .order("order_number", { ascending: true });
       if (error) throw error;
       return data as unknown as Order[];
     },
   });
 
+  const pendentes = orders.filter((o) => o.status === "aguardando_aprovacao");
+
   async function mover(orderId: string, novoStatus: string) {
     const atual = orders.find((o) => o.id === orderId);
     if (!atual || atual.status === novoStatus) return;
+    if (atual.status === "aguardando_aprovacao") return;
 
     const patch: { status: string; out_for_delivery_at?: string } = { status: novoStatus };
     if (novoStatus === "saiu_para_entrega") patch.out_for_delivery_at = new Date().toISOString();
@@ -122,16 +131,88 @@ function AdminKanban() {
     queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
   }
 
+  async function decidir(order: Order, aprovar: boolean) {
+    setProcessando(order.id);
+    const { error } = await supabase
+      .from("orders")
+      .update(
+        aprovar
+          ? { status: "pedidos_a_fazer", approved_at: new Date().toISOString() }
+          : { status: "rejeitado" },
+      )
+      .eq("id", order.id);
+    setProcessando(null);
+
+    if (error) {
+      toast.error("Não foi possível atualizar o pedido. Tente novamente.");
+      return;
+    }
+    toast.success(aprovar ? "Pedido aprovado." : "Pedido rejeitado.");
+    queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
+  }
+
   return (
     <AdminShell
-      title="Kanban"
-      description="Pedidos aprovados em produção. Arraste os cartões entre as colunas."
+      title="Pedidos"
+      description="Aprove os pedidos pendentes e acompanhe a produção arrastando os cartões."
       email={user.email ?? undefined}
     >
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Carregando pedidos...</p>
       ) : (
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 lg:grid-cols-4">
+          <section className="flex min-h-64 flex-col gap-3 rounded-lg border border-dashed bg-card p-3">
+            <header className="flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-foreground">Aguardando aprovação</h2>
+              <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+                {pendentes.length}
+              </span>
+            </header>
+
+            {pendentes.length === 0 ? (
+              <p className="text-xs text-muted-foreground">Nenhum pedido aguardando aprovação.</p>
+            ) : (
+              pendentes.map((order) => (
+                <article key={order.id} className="rounded-md border bg-background p-3 shadow-sm">
+                  <button
+                    type="button"
+                    onClick={() => setDetalhe(order)}
+                    className="w-full text-left"
+                  >
+                    <p className="text-sm font-semibold text-foreground">
+                      Pedido #{order.order_number}
+                    </p>
+                    <p className="truncate text-sm text-muted-foreground">
+                      {order.customers?.full_name}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">{resumoItens(order)}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {formatBRL(Number(order.total))} ·{" "}
+                      {PAGAMENTOS[order.payment_method] ?? order.payment_method}
+                    </p>
+                  </button>
+                  <div className="mt-3 flex gap-2">
+                    <Button
+                      size="sm"
+                      disabled={processando === order.id}
+                      onClick={() => decidir(order, true)}
+                    >
+                      Aprovar
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={processando === order.id}
+                      onClick={() => decidir(order, false)}
+                    >
+                      Rejeitar
+                    </Button>
+                  </div>
+                </article>
+              ))
+            )}
+          </section>
+
           {COLUNAS.map((coluna) => {
             const cards = orders.filter((o) => o.status === coluna.status);
             return (
