@@ -17,7 +17,6 @@ import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminProtectedRouteRouteImport } from './routes/admin/_protected/route'
 import { Route as AdminProtectedIndexRouteImport } from './routes/admin/_protected/index'
 import { Route as AdminProtectedProdutosRouteImport } from './routes/admin/_protected/produtos'
-import { Route as AdminProtectedPedidosRouteImport } from './routes/admin/_protected/pedidos'
 import { Route as AdminProtectedKanbanRouteImport } from './routes/admin/_protected/kanban'
 import { Route as AdminProtectedConfiguracaoRouteImport } from './routes/admin/_protected/configuracao'
 
@@ -61,11 +60,6 @@ const AdminProtectedProdutosRoute = AdminProtectedProdutosRouteImport.update({
   path: '/produtos',
   getParentRoute: () => AdminProtectedRouteRoute,
 } as any)
-const AdminProtectedPedidosRoute = AdminProtectedPedidosRouteImport.update({
-  id: '/pedidos',
-  path: '/pedidos',
-  getParentRoute: () => AdminProtectedRouteRoute,
-} as any)
 const AdminProtectedKanbanRoute = AdminProtectedKanbanRouteImport.update({
   id: '/kanban',
   path: '/kanban',
@@ -87,7 +81,6 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/admin/configuracao': typeof AdminProtectedConfiguracaoRoute
   '/admin/kanban': typeof AdminProtectedKanbanRoute
-  '/admin/pedidos': typeof AdminProtectedPedidosRoute
   '/admin/produtos': typeof AdminProtectedProdutosRoute
   '/admin/': typeof AdminProtectedIndexRoute
 }
@@ -99,7 +92,6 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/admin/configuracao': typeof AdminProtectedConfiguracaoRoute
   '/admin/kanban': typeof AdminProtectedKanbanRoute
-  '/admin/pedidos': typeof AdminProtectedPedidosRoute
   '/admin/produtos': typeof AdminProtectedProdutosRoute
   '/admin': typeof AdminProtectedIndexRoute
 }
@@ -113,7 +105,6 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/admin/_protected/configuracao': typeof AdminProtectedConfiguracaoRoute
   '/admin/_protected/kanban': typeof AdminProtectedKanbanRoute
-  '/admin/_protected/pedidos': typeof AdminProtectedPedidosRoute
   '/admin/_protected/produtos': typeof AdminProtectedProdutosRoute
   '/admin/_protected/': typeof AdminProtectedIndexRoute
 }
@@ -128,7 +119,6 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/configuracao'
     | '/admin/kanban'
-    | '/admin/pedidos'
     | '/admin/produtos'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
@@ -140,7 +130,6 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/configuracao'
     | '/admin/kanban'
-    | '/admin/pedidos'
     | '/admin/produtos'
     | '/admin'
   id:
@@ -153,7 +142,6 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/_protected/configuracao'
     | '/admin/_protected/kanban'
-    | '/admin/_protected/pedidos'
     | '/admin/_protected/produtos'
     | '/admin/_protected/'
   fileRoutesById: FileRoutesById
@@ -225,13 +213,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProtectedProdutosRouteImport
       parentRoute: typeof AdminProtectedRouteRoute
     }
-    '/admin/_protected/pedidos': {
-      id: '/admin/_protected/pedidos'
-      path: '/pedidos'
-      fullPath: '/admin/pedidos'
-      preLoaderRoute: typeof AdminProtectedPedidosRouteImport
-      parentRoute: typeof AdminProtectedRouteRoute
-    }
     '/admin/_protected/kanban': {
       id: '/admin/_protected/kanban'
       path: '/kanban'
@@ -252,7 +233,6 @@ declare module '@tanstack/react-router' {
 interface AdminProtectedRouteRouteChildren {
   AdminProtectedConfiguracaoRoute: typeof AdminProtectedConfiguracaoRoute
   AdminProtectedKanbanRoute: typeof AdminProtectedKanbanRoute
-  AdminProtectedPedidosRoute: typeof AdminProtectedPedidosRoute
   AdminProtectedProdutosRoute: typeof AdminProtectedProdutosRoute
   AdminProtectedIndexRoute: typeof AdminProtectedIndexRoute
 }
@@ -260,7 +240,6 @@ interface AdminProtectedRouteRouteChildren {
 const AdminProtectedRouteRouteChildren: AdminProtectedRouteRouteChildren = {
   AdminProtectedConfiguracaoRoute: AdminProtectedConfiguracaoRoute,
   AdminProtectedKanbanRoute: AdminProtectedKanbanRoute,
-  AdminProtectedPedidosRoute: AdminProtectedPedidosRoute,
   AdminProtectedProdutosRoute: AdminProtectedProdutosRoute,
   AdminProtectedIndexRoute: AdminProtectedIndexRoute,
 }

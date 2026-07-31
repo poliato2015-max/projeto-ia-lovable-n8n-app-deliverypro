@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Package, Settings, KanbanSquare, ClipboardList, type LucideIcon } from "lucide-react";
+import { Package, Settings, KanbanSquare, type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -16,8 +16,7 @@ type AdminNavItem = {
 // Adicione novas seções do painel aqui.
 export const adminNavItems: AdminNavItem[] = [
   { label: "Produtos", to: "/admin/produtos", icon: Package },
-  { label: "Pedidos", to: "/admin/pedidos", icon: ClipboardList },
-  { label: "Kanban", to: "/admin/kanban", icon: KanbanSquare },
+  { label: "Pedidos", to: "/admin/kanban", icon: KanbanSquare },
   { label: "Configuração", to: "/admin/configuracao", icon: Settings },
 ];
 
