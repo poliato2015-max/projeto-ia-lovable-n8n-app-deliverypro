@@ -5,6 +5,7 @@ import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/admin-shell";
+import { Button } from "@/components/ui/button";
 import { formatBRL } from "@/lib/product-photos";
 import {
   Dialog,
