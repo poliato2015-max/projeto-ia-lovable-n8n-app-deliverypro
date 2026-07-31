@@ -18,7 +18,8 @@ import { Route as AdminProtectedRouteRouteImport } from './routes/admin/_protect
 import { Route as AdminProtectedIndexRouteImport } from './routes/admin/_protected/index'
 import { Route as AdminProtectedProdutosRouteImport } from './routes/admin/_protected/produtos'
 import { Route as AdminProtectedPedidosRouteImport } from './routes/admin/_protected/pedidos'
-import { Route as AdminProtectedEntregaRouteImport } from './routes/admin/_protected/entrega'
+import { Route as AdminProtectedKanbanRouteImport } from './routes/admin/_protected/kanban'
+import { Route as AdminProtectedConfiguracaoRouteImport } from './routes/admin/_protected/configuracao'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -65,11 +66,17 @@ const AdminProtectedPedidosRoute = AdminProtectedPedidosRouteImport.update({
   path: '/pedidos',
   getParentRoute: () => AdminProtectedRouteRoute,
 } as any)
-const AdminProtectedEntregaRoute = AdminProtectedEntregaRouteImport.update({
-  id: '/entrega',
-  path: '/entrega',
+const AdminProtectedKanbanRoute = AdminProtectedKanbanRouteImport.update({
+  id: '/kanban',
+  path: '/kanban',
   getParentRoute: () => AdminProtectedRouteRoute,
 } as any)
+const AdminProtectedConfiguracaoRoute =
+  AdminProtectedConfiguracaoRouteImport.update({
+    id: '/configuracao',
+    path: '/configuracao',
+    getParentRoute: () => AdminProtectedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -78,7 +85,8 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AdminProtectedRouteRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
-  '/admin/entrega': typeof AdminProtectedEntregaRoute
+  '/admin/configuracao': typeof AdminProtectedConfiguracaoRoute
+  '/admin/kanban': typeof AdminProtectedKanbanRoute
   '/admin/pedidos': typeof AdminProtectedPedidosRoute
   '/admin/produtos': typeof AdminProtectedProdutosRoute
   '/admin/': typeof AdminProtectedIndexRoute
@@ -89,7 +97,8 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/login': typeof AdminLoginRoute
-  '/admin/entrega': typeof AdminProtectedEntregaRoute
+  '/admin/configuracao': typeof AdminProtectedConfiguracaoRoute
+  '/admin/kanban': typeof AdminProtectedKanbanRoute
   '/admin/pedidos': typeof AdminProtectedPedidosRoute
   '/admin/produtos': typeof AdminProtectedProdutosRoute
   '/admin': typeof AdminProtectedIndexRoute
@@ -102,7 +111,8 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/_protected': typeof AdminProtectedRouteRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
-  '/admin/_protected/entrega': typeof AdminProtectedEntregaRoute
+  '/admin/_protected/configuracao': typeof AdminProtectedConfiguracaoRoute
+  '/admin/_protected/kanban': typeof AdminProtectedKanbanRoute
   '/admin/_protected/pedidos': typeof AdminProtectedPedidosRoute
   '/admin/_protected/produtos': typeof AdminProtectedProdutosRoute
   '/admin/_protected/': typeof AdminProtectedIndexRoute
@@ -116,7 +126,8 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin'
     | '/admin/login'
-    | '/admin/entrega'
+    | '/admin/configuracao'
+    | '/admin/kanban'
     | '/admin/pedidos'
     | '/admin/produtos'
     | '/admin/'
@@ -127,7 +138,8 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/sitemap.xml'
     | '/admin/login'
-    | '/admin/entrega'
+    | '/admin/configuracao'
+    | '/admin/kanban'
     | '/admin/pedidos'
     | '/admin/produtos'
     | '/admin'
@@ -139,7 +151,8 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin/_protected'
     | '/admin/login'
-    | '/admin/_protected/entrega'
+    | '/admin/_protected/configuracao'
+    | '/admin/_protected/kanban'
     | '/admin/_protected/pedidos'
     | '/admin/_protected/produtos'
     | '/admin/_protected/'
@@ -219,25 +232,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProtectedPedidosRouteImport
       parentRoute: typeof AdminProtectedRouteRoute
     }
-    '/admin/_protected/entrega': {
-      id: '/admin/_protected/entrega'
-      path: '/entrega'
-      fullPath: '/admin/entrega'
-      preLoaderRoute: typeof AdminProtectedEntregaRouteImport
+    '/admin/_protected/kanban': {
+      id: '/admin/_protected/kanban'
+      path: '/kanban'
+      fullPath: '/admin/kanban'
+      preLoaderRoute: typeof AdminProtectedKanbanRouteImport
+      parentRoute: typeof AdminProtectedRouteRoute
+    }
+    '/admin/_protected/configuracao': {
+      id: '/admin/_protected/configuracao'
+      path: '/configuracao'
+      fullPath: '/admin/configuracao'
+      preLoaderRoute: typeof AdminProtectedConfiguracaoRouteImport
       parentRoute: typeof AdminProtectedRouteRoute
     }
   }
 }
 
 interface AdminProtectedRouteRouteChildren {
-  AdminProtectedEntregaRoute: typeof AdminProtectedEntregaRoute
+  AdminProtectedConfiguracaoRoute: typeof AdminProtectedConfiguracaoRoute
+  AdminProtectedKanbanRoute: typeof AdminProtectedKanbanRoute
   AdminProtectedPedidosRoute: typeof AdminProtectedPedidosRoute
   AdminProtectedProdutosRoute: typeof AdminProtectedProdutosRoute
   AdminProtectedIndexRoute: typeof AdminProtectedIndexRoute
 }
 
 const AdminProtectedRouteRouteChildren: AdminProtectedRouteRouteChildren = {
-  AdminProtectedEntregaRoute: AdminProtectedEntregaRoute,
+  AdminProtectedConfiguracaoRoute: AdminProtectedConfiguracaoRoute,
+  AdminProtectedKanbanRoute: AdminProtectedKanbanRoute,
   AdminProtectedPedidosRoute: AdminProtectedPedidosRoute,
   AdminProtectedProdutosRoute: AdminProtectedProdutosRoute,
   AdminProtectedIndexRoute: AdminProtectedIndexRoute,

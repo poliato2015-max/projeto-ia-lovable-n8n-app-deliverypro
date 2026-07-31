@@ -10,15 +10,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 
-export const Route = createFileRoute("/admin/_protected/entrega")({
+export const Route = createFileRoute("/admin/_protected/configuracao")({
   head: () => ({
     meta: [
-      { title: "Entrega | Painel do Cardápio Digital" },
+      { title: "Configuração | Painel do Cardápio Digital" },
       {
         name: "description",
         content: "Configure o CEP da loja, a taxa de entrega e o frete grátis do delivery.",
       },
-      { property: "og:title", content: "Entrega | Painel do Cardápio Digital" },
+      { property: "og:title", content: "Configuração | Painel do Cardápio Digital" },
       {
         property: "og:description",
         content: "Configure o CEP da loja, a taxa de entrega e o frete grátis do delivery.",
@@ -106,7 +106,7 @@ function AdminEntrega() {
 
   return (
     <AdminShell
-      title="Entrega"
+      title="Configuração"
       description="Configurações usadas no cálculo do pedido."
       email={user.email ?? undefined}
     >
