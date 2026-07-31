@@ -19,15 +19,15 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/admin/_protected/kanban")({
   head: () => ({
     meta: [
-      { title: "Kanban | Painel do Cardápio Digital" },
+      { title: "Pedidos | Painel do Cardápio Digital" },
       {
         name: "description",
-        content: "Acompanhe a produção dos pedidos aprovados: a fazer, fazendo e saiu para entrega.",
+        content: "Aprove pedidos pendentes e acompanhe a produção: a fazer, fazendo e saiu para entrega.",
       },
-      { property: "og:title", content: "Kanban | Painel do Cardápio Digital" },
+      { property: "og:title", content: "Pedidos | Painel do Cardápio Digital" },
       {
         property: "og:description",
-        content: "Acompanhe a produção dos pedidos aprovados do delivery.",
+        content: "Aprovação e acompanhamento da produção dos pedidos do delivery.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
