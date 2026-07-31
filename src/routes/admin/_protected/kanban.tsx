@@ -110,7 +110,7 @@ function AdminKanban() {
     const atual = orders.find((o) => o.id === orderId);
     if (!atual || atual.status === novoStatus) return;
 
-    const patch: Record<string, unknown> = { status: novoStatus };
+    const patch: { status: string; out_for_delivery_at?: string } = { status: novoStatus };
     if (novoStatus === "saiu_para_entrega") patch.out_for_delivery_at = new Date().toISOString();
 
     const { error } = await supabase.from("orders").update(patch).eq("id", orderId);
