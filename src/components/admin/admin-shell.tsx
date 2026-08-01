@@ -22,8 +22,10 @@ type AdminNavItem = {
 
 // Adicione novas seções do painel aqui.
 export const adminNavItems: AdminNavItem[] = [
+  { label: "Visão geral", to: "/admin/visao-geral", icon: LayoutDashboard },
   { label: "Produtos", to: "/admin/produtos", icon: Package },
   { label: "Pedidos", to: "/admin/kanban", icon: KanbanSquare },
+  { label: "Relatórios", to: "/admin/relatorios", icon: BarChart3 },
   { label: "Configuração", to: "/admin/configuracao", icon: Settings },
 ];
 
