@@ -2,6 +2,6 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/admin/_protected/")({
   beforeLoad: () => {
-    throw redirect({ to: "/admin/visao-geral" });
+    throw redirect({ to: "/admin/relatorios" });
   },
 });

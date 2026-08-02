@@ -16,7 +16,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminProtectedRouteRouteImport } from './routes/admin/_protected/route'
 import { Route as AdminProtectedIndexRouteImport } from './routes/admin/_protected/index'
-import { Route as AdminProtectedVisaoGeralRouteImport } from './routes/admin/_protected/visao-geral'
 import { Route as AdminProtectedRelatoriosRouteImport } from './routes/admin/_protected/relatorios'
 import { Route as AdminProtectedProdutosRouteImport } from './routes/admin/_protected/produtos'
 import { Route as AdminProtectedKanbanRouteImport } from './routes/admin/_protected/kanban'
@@ -57,12 +56,6 @@ const AdminProtectedIndexRoute = AdminProtectedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminProtectedRouteRoute,
 } as any)
-const AdminProtectedVisaoGeralRoute =
-  AdminProtectedVisaoGeralRouteImport.update({
-    id: '/visao-geral',
-    path: '/visao-geral',
-    getParentRoute: () => AdminProtectedRouteRoute,
-  } as any)
 const AdminProtectedRelatoriosRoute =
   AdminProtectedRelatoriosRouteImport.update({
     id: '/relatorios',
@@ -97,7 +90,6 @@ export interface FileRoutesByFullPath {
   '/admin/kanban': typeof AdminProtectedKanbanRoute
   '/admin/produtos': typeof AdminProtectedProdutosRoute
   '/admin/relatorios': typeof AdminProtectedRelatoriosRoute
-  '/admin/visao-geral': typeof AdminProtectedVisaoGeralRoute
   '/admin/': typeof AdminProtectedIndexRoute
 }
 export interface FileRoutesByTo {
@@ -110,7 +102,6 @@ export interface FileRoutesByTo {
   '/admin/kanban': typeof AdminProtectedKanbanRoute
   '/admin/produtos': typeof AdminProtectedProdutosRoute
   '/admin/relatorios': typeof AdminProtectedRelatoriosRoute
-  '/admin/visao-geral': typeof AdminProtectedVisaoGeralRoute
   '/admin': typeof AdminProtectedIndexRoute
 }
 export interface FileRoutesById {
@@ -125,7 +116,6 @@ export interface FileRoutesById {
   '/admin/_protected/kanban': typeof AdminProtectedKanbanRoute
   '/admin/_protected/produtos': typeof AdminProtectedProdutosRoute
   '/admin/_protected/relatorios': typeof AdminProtectedRelatoriosRoute
-  '/admin/_protected/visao-geral': typeof AdminProtectedVisaoGeralRoute
   '/admin/_protected/': typeof AdminProtectedIndexRoute
 }
 export interface FileRouteTypes {
@@ -141,7 +131,6 @@ export interface FileRouteTypes {
     | '/admin/kanban'
     | '/admin/produtos'
     | '/admin/relatorios'
-    | '/admin/visao-geral'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -154,7 +143,6 @@ export interface FileRouteTypes {
     | '/admin/kanban'
     | '/admin/produtos'
     | '/admin/relatorios'
-    | '/admin/visao-geral'
     | '/admin'
   id:
     | '__root__'
@@ -168,7 +156,6 @@ export interface FileRouteTypes {
     | '/admin/_protected/kanban'
     | '/admin/_protected/produtos'
     | '/admin/_protected/relatorios'
-    | '/admin/_protected/visao-geral'
     | '/admin/_protected/'
   fileRoutesById: FileRoutesById
 }
@@ -232,13 +219,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProtectedIndexRouteImport
       parentRoute: typeof AdminProtectedRouteRoute
     }
-    '/admin/_protected/visao-geral': {
-      id: '/admin/_protected/visao-geral'
-      path: '/visao-geral'
-      fullPath: '/admin/visao-geral'
-      preLoaderRoute: typeof AdminProtectedVisaoGeralRouteImport
-      parentRoute: typeof AdminProtectedRouteRoute
-    }
     '/admin/_protected/relatorios': {
       id: '/admin/_protected/relatorios'
       path: '/relatorios'
@@ -275,7 +255,6 @@ interface AdminProtectedRouteRouteChildren {
   AdminProtectedKanbanRoute: typeof AdminProtectedKanbanRoute
   AdminProtectedProdutosRoute: typeof AdminProtectedProdutosRoute
   AdminProtectedRelatoriosRoute: typeof AdminProtectedRelatoriosRoute
-  AdminProtectedVisaoGeralRoute: typeof AdminProtectedVisaoGeralRoute
   AdminProtectedIndexRoute: typeof AdminProtectedIndexRoute
 }
 
@@ -284,7 +263,6 @@ const AdminProtectedRouteRouteChildren: AdminProtectedRouteRouteChildren = {
   AdminProtectedKanbanRoute: AdminProtectedKanbanRoute,
   AdminProtectedProdutosRoute: AdminProtectedProdutosRoute,
   AdminProtectedRelatoriosRoute: AdminProtectedRelatoriosRoute,
-  AdminProtectedVisaoGeralRoute: AdminProtectedVisaoGeralRoute,
   AdminProtectedIndexRoute: AdminProtectedIndexRoute,
 }
 
@@ -302,13 +280,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
