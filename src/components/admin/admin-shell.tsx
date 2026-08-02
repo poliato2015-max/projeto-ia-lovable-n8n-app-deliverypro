@@ -4,7 +4,6 @@ import {
   Package,
   Settings,
   KanbanSquare,
-  LayoutDashboard,
   BarChart3,
   type LucideIcon,
 } from "lucide-react";
