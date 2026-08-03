@@ -51,8 +51,6 @@ export const Route = createFileRoute("/cardapio")({
 function Cardapio() {
   const [selecionado, setSelecionado] = useState<Product | null>(null);
 
-  const [selecionado, setSelecionado] = useState<Product | null>(null);
-
   const { data: products = [], isLoading } = useQuery({
     queryKey: ["cardapio"],
     queryFn: async () => {
