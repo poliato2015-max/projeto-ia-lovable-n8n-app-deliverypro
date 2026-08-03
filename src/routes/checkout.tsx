@@ -327,6 +327,8 @@ function Checkout() {
           {enviando ? "Enviando pedido..." : "Confirmar pedido"}
         </Button>
       </div>
-    </main>
+      </main>
+    </div>
   );
+
 }
