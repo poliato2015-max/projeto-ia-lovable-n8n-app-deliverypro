@@ -1,16 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Minus, Plus, ShoppingCart } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { formatBRL, getPhotoUrls } from "@/lib/product-photos";
 import { useCart } from "@/lib/cart";
+import { SiteHeader } from "@/components/site-header";
+import { CartSheet } from "@/components/cart-sheet";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+
 import {
   Dialog,
   DialogContent,
@@ -26,17 +29,17 @@ type Product = Tables<"products">;
 export const Route = createFileRoute("/cardapio")({
   head: () => ({
     meta: [
-      { title: "Cardápio | Delivery de Hambúrguer" },
+      { title: "Cardápio | DeliveryPro" },
       {
         name: "description",
         content:
-          "Monte seu pedido: hambúrgueres artesanais com adicionais à sua escolha, direto no delivery.",
+          "Monte seu pedido no DeliveryPro: hambúrgueres artesanais com adicionais à sua escolha.",
       },
-      { property: "og:title", content: "Cardápio | Delivery de Hambúrguer" },
+      { property: "og:title", content: "Cardápio | DeliveryPro" },
       {
         property: "og:description",
         content:
-          "Monte seu pedido: hambúrgueres artesanais com adicionais à sua escolha, direto no delivery.",
+          "Monte seu pedido no DeliveryPro: hambúrgueres artesanais com adicionais à sua escolha.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -46,7 +49,6 @@ export const Route = createFileRoute("/cardapio")({
 });
 
 function Cardapio() {
-  const { totalItems, subtotal } = useCart();
   const [selecionado, setSelecionado] = useState<Product | null>(null);
 
   const { data: products = [], isLoading } = useQuery({
@@ -86,85 +88,70 @@ function Cardapio() {
       .filter((p): p is Product => !!p);
 
   return (
-    <main className="min-h-screen bg-background px-4 py-10 pb-32">
-      <div className="mx-auto max-w-3xl space-y-8">
-        <header className="space-y-2">
-          <h1 className="text-3xl font-bold text-foreground">Cardápio</h1>
-          <p className="text-muted-foreground">
-            Escolha seu hambúrguer e monte com os adicionais que quiser.
-          </p>
-          <Link to="/" className="inline-block text-sm text-primary underline">
-            Voltar para o início
-          </Link>
-        </header>
+    <div className="min-h-screen bg-client-bg">
+      <SiteHeader actions={<CartSheet />} />
+      <main className="px-4 py-10">
+        <div className="mx-auto max-w-3xl space-y-8">
+          <header className="space-y-2">
+            <h1 className="text-3xl font-bold text-foreground">Cardápio</h1>
+            <p className="text-muted-foreground">
+              Escolha seu hambúrguer e monte com os adicionais que quiser.
+            </p>
+            <Link to="/" className="inline-block text-sm text-primary underline">
+              Voltar para o início
+            </Link>
+          </header>
 
-        {isLoading ? (
-          <p className="text-sm text-muted-foreground">Carregando cardápio...</p>
-        ) : hamburgueres.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            Ainda não há hambúrgueres disponíveis no cardápio.
-          </p>
-        ) : (
-          <section className="space-y-4">
-            <h2 className="text-xl font-semibold text-foreground">Hambúrgueres</h2>
-            <ul className="grid gap-4 sm:grid-cols-2">
-              {hamburgueres.map((product) => (
-                <li key={product.id}>
-                  <button
-                    type="button"
-                    onClick={() => setSelecionado(product)}
-                    className="flex w-full gap-4 rounded-lg border bg-card p-4 text-left transition hover:border-primary"
-                  >
-                    <img
-                      src={product.photo_url ? photoUrls[product.photo_url] : undefined}
-                      alt={`Foto de ${product.name}`}
-                      loading="lazy"
-                      className="h-20 w-20 shrink-0 rounded-md bg-muted object-cover"
-                    />
-                    <div className="min-w-0">
-                      <h3 className="font-medium text-foreground">{product.name}</h3>
-                      <p className="line-clamp-2 text-sm text-muted-foreground">
-                        {product.description}
-                      </p>
-                      <p className="mt-1 font-semibold text-foreground">
-                        {formatBRL(Number(product.price))}
-                      </p>
-                    </div>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-      </div>
-
-      <ConfigDialog
-        product={selecionado}
-        addons={selecionado ? addonsDo(selecionado.id) : []}
-        photoUrl={
-          selecionado?.photo_url ? photoUrls[selecionado.photo_url] : undefined
-        }
-        onClose={() => setSelecionado(null)}
-      />
-
-      {totalItems > 0 ? (
-        <div className="fixed inset-x-0 bottom-0 border-t bg-card/95 px-4 py-3 backdrop-blur">
-          <div className="mx-auto flex max-w-3xl items-center justify-between gap-4">
-            <div className="flex items-center gap-2 text-sm">
-              <ShoppingCart className="h-4 w-4 text-muted-foreground" />
-              <span className="text-foreground">
-                {totalItems} {totalItems === 1 ? "item" : "itens"}
-              </span>
-              <span className="font-semibold text-foreground">{formatBRL(subtotal)}</span>
-            </div>
-            <Button asChild>
-              <Link to="/checkout">Ir para o checkout</Link>
-            </Button>
-          </div>
+          {isLoading ? (
+            <p className="text-sm text-muted-foreground">Carregando cardápio...</p>
+          ) : hamburgueres.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              Ainda não há hambúrgueres disponíveis no cardápio.
+            </p>
+          ) : (
+            <section className="space-y-4">
+              <h2 className="text-xl font-semibold text-foreground">Hambúrgueres</h2>
+              <ul className="grid gap-4 sm:grid-cols-2">
+                {hamburgueres.map((product) => (
+                  <li key={product.id}>
+                    <button
+                      type="button"
+                      onClick={() => setSelecionado(product)}
+                      className="flex w-full gap-4 rounded-lg border bg-card p-4 text-left shadow-sm transition hover:border-primary"
+                    >
+                      <img
+                        src={product.photo_url ? photoUrls[product.photo_url] : undefined}
+                        alt={`Foto de ${product.name}`}
+                        loading="lazy"
+                        className="h-20 w-20 shrink-0 rounded-md bg-muted object-cover"
+                      />
+                      <div className="min-w-0">
+                        <h3 className="font-medium text-foreground">{product.name}</h3>
+                        <p className="line-clamp-2 text-sm text-muted-foreground">
+                          {product.description}
+                        </p>
+                        <p className="mt-1 font-semibold text-foreground">
+                          {formatBRL(Number(product.price))}
+                        </p>
+                      </div>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
         </div>
-      ) : null}
-    </main>
+
+        <ConfigDialog
+          product={selecionado}
+          addons={selecionado ? addonsDo(selecionado.id) : []}
+          photoUrl={selecionado?.photo_url ? photoUrls[selecionado.photo_url] : undefined}
+          onClose={() => setSelecionado(null)}
+        />
+      </main>
+    </div>
   );
+
 }
 
 function ConfigDialog({

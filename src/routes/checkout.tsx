@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCart, lineTotal } from "@/lib/cart";
 import { formatBRL } from "@/lib/product-photos";
 import { checkoutSchema } from "@/lib/checkout-schema";
+import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,18 +17,19 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
-      { title: "Checkout | Delivery de Hambúrguer" },
+      { title: "Checkout | DeliveryPro" },
       {
         name: "description",
-        content: "Finalize seu pedido: informe seus dados, escolha o pagamento e confirme.",
+        content: "Finalize seu pedido no DeliveryPro: seus dados, o pagamento e a confirmação.",
       },
-      { property: "og:title", content: "Checkout | Delivery de Hambúrguer" },
+      { property: "og:title", content: "Checkout | DeliveryPro" },
       {
         property: "og:description",
-        content: "Finalize seu pedido: informe seus dados, escolha o pagamento e confirme.",
+        content: "Finalize seu pedido no DeliveryPro: seus dados, o pagamento e a confirmação.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+
     ],
   }),
   component: Checkout,
@@ -83,24 +85,31 @@ function Checkout() {
 
   if (confirmado) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background px-6 text-center">
-        <h1 className="text-3xl font-bold text-foreground">Pedido confirmado!</h1>
-        <p className="text-muted-foreground">
-          Seu pedido é o número{" "}
-          <span className="font-semibold text-foreground">#{confirmado.orderNumber}</span>.
-        </p>
-        <p className="text-muted-foreground">
-          Total: <span className="font-semibold text-foreground">{formatBRL(confirmado.total)}</span>
-        </p>
-        <p className="max-w-md text-sm text-muted-foreground">
-          Estamos aguardando a aprovação do restaurante. Em breve seu pedido entra em preparo.
-        </p>
-        <Button asChild>
-          <Link to="/cardapio">Voltar ao cardápio</Link>
-        </Button>
-      </main>
+      <div className="min-h-screen bg-client-bg">
+        <SiteHeader />
+        <main className="flex flex-col items-center justify-center gap-4 px-6 py-20 text-center">
+          <div className="w-full max-w-md space-y-4 rounded-2xl border bg-card p-8 shadow-sm">
+            <h1 className="text-3xl font-bold text-foreground">Pedido confirmado!</h1>
+            <p className="text-muted-foreground">
+              Seu pedido é o número{" "}
+              <span className="font-semibold text-foreground">#{confirmado.orderNumber}</span>.
+            </p>
+            <p className="text-muted-foreground">
+              Total:{" "}
+              <span className="font-semibold text-foreground">{formatBRL(confirmado.total)}</span>
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Estamos aguardando a aprovação do restaurante. Em breve seu pedido entra em preparo.
+            </p>
+            <Button asChild>
+              <Link to="/cardapio">Voltar ao cardápio</Link>
+            </Button>
+          </div>
+        </main>
+      </div>
     );
   }
+
 
   if (items.length === 0) return null;
 
@@ -154,8 +163,11 @@ function Checkout() {
   }
 
   return (
-    <main className="min-h-screen bg-background px-4 py-10">
+    <div className="min-h-screen bg-client-bg">
+      <SiteHeader />
+      <main className="px-4 py-10">
       <div className="mx-auto max-w-2xl space-y-8">
+
         <header className="space-y-2">
           <h1 className="text-3xl font-bold text-foreground">Checkout</h1>
           <Link to="/cardapio" className="inline-block text-sm text-primary underline">
@@ -315,6 +327,8 @@ function Checkout() {
           {enviando ? "Enviando pedido..." : "Confirmar pedido"}
         </Button>
       </div>
-    </main>
+      </main>
+    </div>
   );
+
 }
