@@ -163,8 +163,11 @@ function Checkout() {
   }
 
   return (
-    <main className="min-h-screen bg-background px-4 py-10">
+    <div className="min-h-screen bg-client-bg">
+      <SiteHeader />
+      <main className="px-4 py-10">
       <div className="mx-auto max-w-2xl space-y-8">
+
         <header className="space-y-2">
           <h1 className="text-3xl font-bold text-foreground">Checkout</h1>
           <Link to="/cardapio" className="inline-block text-sm text-primary underline">
