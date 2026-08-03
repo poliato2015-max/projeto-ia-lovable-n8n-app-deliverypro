@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useCart, lineTotal } from "@/lib/cart";
 import { formatBRL } from "@/lib/product-photos";
 import { checkoutSchema } from "@/lib/checkout-schema";
+import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,18 +17,19 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
-      { title: "Checkout | Delivery de Hambúrguer" },
+      { title: "Checkout | DeliveryPro" },
       {
         name: "description",
-        content: "Finalize seu pedido: informe seus dados, escolha o pagamento e confirme.",
+        content: "Finalize seu pedido no DeliveryPro: seus dados, o pagamento e a confirmação.",
       },
-      { property: "og:title", content: "Checkout | Delivery de Hambúrguer" },
+      { property: "og:title", content: "Checkout | DeliveryPro" },
       {
         property: "og:description",
-        content: "Finalize seu pedido: informe seus dados, escolha o pagamento e confirme.",
+        content: "Finalize seu pedido no DeliveryPro: seus dados, o pagamento e a confirmação.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+
     ],
   }),
   component: Checkout,
