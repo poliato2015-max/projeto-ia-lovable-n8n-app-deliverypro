@@ -85,24 +85,31 @@ function Checkout() {
 
   if (confirmado) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center gap-4 bg-background px-6 text-center">
-        <h1 className="text-3xl font-bold text-foreground">Pedido confirmado!</h1>
-        <p className="text-muted-foreground">
-          Seu pedido é o número{" "}
-          <span className="font-semibold text-foreground">#{confirmado.orderNumber}</span>.
-        </p>
-        <p className="text-muted-foreground">
-          Total: <span className="font-semibold text-foreground">{formatBRL(confirmado.total)}</span>
-        </p>
-        <p className="max-w-md text-sm text-muted-foreground">
-          Estamos aguardando a aprovação do restaurante. Em breve seu pedido entra em preparo.
-        </p>
-        <Button asChild>
-          <Link to="/cardapio">Voltar ao cardápio</Link>
-        </Button>
-      </main>
+      <div className="min-h-screen bg-client-bg">
+        <SiteHeader />
+        <main className="flex flex-col items-center justify-center gap-4 px-6 py-20 text-center">
+          <div className="w-full max-w-md space-y-4 rounded-2xl border bg-card p-8 shadow-sm">
+            <h1 className="text-3xl font-bold text-foreground">Pedido confirmado!</h1>
+            <p className="text-muted-foreground">
+              Seu pedido é o número{" "}
+              <span className="font-semibold text-foreground">#{confirmado.orderNumber}</span>.
+            </p>
+            <p className="text-muted-foreground">
+              Total:{" "}
+              <span className="font-semibold text-foreground">{formatBRL(confirmado.total)}</span>
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Estamos aguardando a aprovação do restaurante. Em breve seu pedido entra em preparo.
+            </p>
+            <Button asChild>
+              <Link to="/cardapio">Voltar ao cardápio</Link>
+            </Button>
+          </div>
+        </main>
+      </div>
     );
   }
+
 
   if (items.length === 0) return null;
 
