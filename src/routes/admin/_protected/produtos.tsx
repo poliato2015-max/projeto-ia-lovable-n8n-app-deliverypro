@@ -345,6 +345,11 @@ function ProductFormDialog({
     setError(null);
   }
   if (!open && loadedFor !== null) setLoadedFor(null);
+  const opcoesCategoria = [
+    ...categories.map((c) => ({ id: c.id, name: c.name })),
+    ...criadas.filter((c) => !categories.some((x) => x.id === c.id)),
+  ];
+
 
   useEffect(() => {
     if (vinculos) setAddons(vinculos);
