@@ -303,7 +303,10 @@ function ProductFormDialog({
 }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("hamburguer");
+  const [isAddon, setIsAddon] = useState(false);
+  const [categoryId, setCategoryId] = useState<string | null>(null);
+  const [novaCategoria, setNovaCategoria] = useState("");
+  const [criandoCategoria, setCriandoCategoria] = useState(false);
   const [price, setPrice] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [file, setFile] = useState<File | null>(null);
