@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { Download } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -123,7 +123,7 @@ function linhasExport(orders: OrderRow[]) {
 
 function AdminRelatorios() {
   const { user } = Route.useRouteContext();
-  const queryClient = useQueryClient();
+  
 
   const padrao = defaultRange();
   const [inicio, setInicio] = useState(padrao.inicio);
