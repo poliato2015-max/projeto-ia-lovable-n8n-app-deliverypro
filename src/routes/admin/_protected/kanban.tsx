@@ -178,13 +178,17 @@ function AdminKanban() {
         <p className="text-sm text-muted-foreground">Carregando pedidos...</p>
       ) : (
         <div className="grid gap-4 lg:grid-cols-4">
-          <section className="flex min-h-64 flex-col gap-3 rounded-lg border border-dashed bg-card p-3">
-            <header className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-foreground">Aguardando aprovação</h2>
-              <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+          <section className="flex min-h-64 flex-col gap-3 rounded-lg border bg-card p-3 shadow-sm">
+            <header className="flex items-center justify-between rounded-md bg-slate-200 px-3 py-2 text-slate-800">
+              <h2 className="flex items-center gap-2 text-sm font-semibold">
+                <Inbox className="h-4 w-4" />
+                Aguardando aprovação
+              </h2>
+              <span className="rounded-full bg-card px-2 py-0.5 text-xs font-semibold">
                 {pendentes.length}
               </span>
             </header>
+
 
             {pendentes.length === 0 ? (
               <p className="text-xs text-muted-foreground">Nenhum pedido aguardando aprovação.</p>
