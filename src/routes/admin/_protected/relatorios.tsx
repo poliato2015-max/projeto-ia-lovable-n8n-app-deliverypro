@@ -316,10 +316,11 @@ function AdminRelatorios() {
 
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Carregando pedidos...</p>
-        ) : orders.length === 0 ? (
+        ) : todos.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            Nenhum pedido válido no período selecionado.
+            Nenhum pedido no período selecionado.
           </p>
+
         ) : (
           <>
             <div className="grid gap-4 lg:grid-cols-2">
