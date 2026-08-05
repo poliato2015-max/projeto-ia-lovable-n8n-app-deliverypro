@@ -308,6 +308,8 @@ function ProductFormDialog({
   const [novaCategoria, setNovaCategoria] = useState("");
   const [criandoCategoria, setCriandoCategoria] = useState(false);
   const [criadas, setCriadas] = useState<Array<{ id: string; name: string }>>([]);
+  // Mantém a categoria recém-criada mesmo se o formulário re-inicializar.
+  const categoriaPendente = useRef<string | null>(null);
   const [price, setPrice] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [file, setFile] = useState<File | null>(null);
@@ -335,7 +337,7 @@ function ProductFormDialog({
     setName(product?.name ?? "");
     setDescription(product?.description ?? "");
     setIsAddon(product ? product.is_addon : defaultIsAddon);
-    setCategoryId(product ? product.category_id : defaultCategoryId);
+    setCategoryId(categoriaPendente.current ?? (product ? product.category_id : defaultCategoryId));
     setNovaCategoria("");
     setCriandoCategoria(false);
     setPrice(product ? String(product.price) : "");
@@ -344,7 +346,10 @@ function ProductFormDialog({
     setAddons([]);
     setError(null);
   }
-  if (!open && loadedFor !== null) setLoadedFor(null);
+  if (!open && loadedFor !== null) {
+    setLoadedFor(null);
+    categoriaPendente.current = null;
+  }
   const opcoesCategoria = [
     ...categories.map((c) => ({ id: c.id, name: c.name })),
     ...criadas.filter((c) => !categories.some((x) => x.id === c.id)),
@@ -368,6 +373,7 @@ function ProductFormDialog({
     }
     // Guarda localmente para a opção existir no select antes do refetch.
     setCriadas((atuais) => [...atuais, { id: data.id, name: data.name }]);
+    categoriaPendente.current = data.id;
     setCategoryId(data.id);
     setNovaCategoria("");
     setCriandoCategoria(false);
@@ -515,6 +521,7 @@ function ProductFormDialog({
                       setCriandoCategoria(true);
                     } else {
                       setCriandoCategoria(false);
+                      categoriaPendente.current = v;
                       setCategoryId(v);
                     }
                   }}
