@@ -348,9 +348,25 @@ function ProductFormDialog({
   useEffect(() => {
     if (vinculos) setAddons(vinculos);
   }, [vinculos]);
-
-
-
+  async function criarCategoria() {
+    const nome = novaCategoria.trim();
+    if (!nome) return setError("Informe o nome da nova categoria.");
+    const { data, error: dbError } = await supabase
+      .from("categories")
+      .insert({ name: nome })
+      .select("id")
+      .single();
+    if (dbError || !data) {
+      setError("Não foi possível criar a categoria.");
+      return;
+    }
+    setCategoryId(data.id);
+    setNovaCategoria("");
+    setCriandoCategoria(false);
+    setError(null);
+    onSaved();
+    toast.success("Categoria criada.");
+  }
 
   async function salvar(event: React.FormEvent) {
     event.preventDefault();
@@ -358,6 +374,7 @@ function ProductFormDialog({
 
     if (!name.trim()) return setError("Informe o nome do produto.");
     if (!description.trim()) return setError("Informe a descrição / ingredientes do produto.");
+    if (!isAddon && !categoryId) return setError("Escolha uma categoria para o produto.");
 
     const priceValue = Number(price.replace(",", "."));
     if (!price.trim() || Number.isNaN(priceValue)) return setError("Informe um preço válido.");
@@ -379,7 +396,8 @@ function ProductFormDialog({
       const payload = {
         name: name.trim(),
         description: description.trim(),
-        category,
+        is_addon: isAddon,
+        category_id: isAddon ? null : categoryId,
         price: priceValue,
         is_active: isActive,
         photo_url: photoPath,
