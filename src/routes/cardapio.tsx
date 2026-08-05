@@ -64,6 +64,15 @@ function Cardapio() {
     },
   });
 
+  const { data: categories = [] } = useQuery({
+    queryKey: ["cardapio", "categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("categories").select("id, name");
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const { data: links = [] } = useQuery({
     queryKey: ["cardapio", "product-addons"],
     queryFn: async () => {
@@ -79,13 +88,23 @@ function Cardapio() {
     enabled: products.length > 0,
   });
 
-  const hamburgueres = products.filter((p) => p.category === "hamburguer");
-  const addonsById = new Map(products.filter((p) => p.category === "adicional").map((p) => [p.id, p]));
+  const addonsById = new Map(products.filter((p) => p.is_addon).map((p) => [p.id, p]));
   const addonsDo = (productId: string) =>
     links
       .filter((l) => l.product_id === productId)
       .map((l) => addonsById.get(l.addon_id))
       .filter((p): p is Product => !!p);
+
+  const vendaveis = products.filter((p) => !p.is_addon);
+  const secoes = [...categories]
+    .map((c) => ({ id: c.id, nome: c.name, itens: vendaveis.filter((p) => p.category_id === c.id) }))
+    .filter((s) => s.itens.length > 0)
+    .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+
+  const semCategoria = vendaveis.filter((p) => !p.category_id);
+  if (semCategoria.length > 0) {
+    secoes.push({ id: "sem-categoria", nome: "Outros", itens: semCategoria });
+  }
 
   return (
     <div className="min-h-screen bg-client-bg">
@@ -95,7 +114,7 @@ function Cardapio() {
           <header className="space-y-2">
             <h1 className="text-3xl font-bold text-foreground">Cardápio</h1>
             <p className="text-muted-foreground">
-              Escolha seu hambúrguer e monte com os adicionais que quiser.
+              Escolha seu prato e monte com os adicionais que quiser.
             </p>
             <Link to="/" className="inline-block text-sm text-primary underline">
               Voltar para o início
@@ -104,41 +123,43 @@ function Cardapio() {
 
           {isLoading ? (
             <p className="text-sm text-muted-foreground">Carregando cardápio...</p>
-          ) : hamburgueres.length === 0 ? (
+          ) : secoes.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              Ainda não há hambúrgueres disponíveis no cardápio.
+              Ainda não há produtos disponíveis no cardápio.
             </p>
           ) : (
-            <section className="space-y-4">
-              <h2 className="text-xl font-semibold text-foreground">Hambúrgueres</h2>
-              <ul className="grid gap-4 sm:grid-cols-2">
-                {hamburgueres.map((product) => (
-                  <li key={product.id}>
-                    <button
-                      type="button"
-                      onClick={() => setSelecionado(product)}
-                      className="flex w-full gap-4 rounded-lg border bg-card p-4 text-left shadow-sm transition hover:border-primary"
-                    >
-                      <img
-                        src={product.photo_url ? photoUrls[product.photo_url] : undefined}
-                        alt={`Foto de ${product.name}`}
-                        loading="lazy"
-                        className="h-20 w-20 shrink-0 rounded-md bg-muted object-cover"
-                      />
-                      <div className="min-w-0">
-                        <h3 className="font-medium text-foreground">{product.name}</h3>
-                        <p className="line-clamp-2 text-sm text-muted-foreground">
-                          {product.description}
-                        </p>
-                        <p className="mt-1 font-semibold text-foreground">
-                          {formatBRL(Number(product.price))}
-                        </p>
-                      </div>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            secoes.map((secao) => (
+              <section key={secao.id} className="space-y-4">
+                <h2 className="text-xl font-semibold text-foreground">{secao.nome}</h2>
+                <ul className="grid items-stretch gap-4 sm:grid-cols-2">
+                  {secao.itens.map((product) => (
+                    <li key={product.id} className="h-full">
+                      <button
+                        type="button"
+                        onClick={() => setSelecionado(product)}
+                        className="flex h-full w-full gap-4 rounded-lg border bg-card p-4 text-left shadow-sm transition hover:border-primary"
+                      >
+                        <img
+                          src={product.photo_url ? photoUrls[product.photo_url] : undefined}
+                          alt={`Foto de ${product.name}`}
+                          loading="lazy"
+                          className="h-20 w-20 shrink-0 rounded-md bg-muted object-cover"
+                        />
+                        <div className="flex min-w-0 flex-1 flex-col">
+                          <h3 className="font-medium text-foreground">{product.name}</h3>
+                          <p className="line-clamp-2 text-sm text-muted-foreground">
+                            {product.description}
+                          </p>
+                          <p className="mt-auto pt-2 font-semibold text-foreground">
+                            {formatBRL(Number(product.price))}
+                          </p>
+                        </div>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))
           )}
         </div>
 

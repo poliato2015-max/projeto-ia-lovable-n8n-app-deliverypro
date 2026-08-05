@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import { toast } from "sonner";
 
@@ -66,10 +66,9 @@ export const Route = createFileRoute("/admin/_protected/produtos")({
   component: AdminProdutos,
 });
 
-const CATEGORIAS = [
-  { value: "hamburguer", label: "Hambúrguer" },
-  { value: "adicional", label: "Adicional" },
-];
+type Category = Tables<"categories">;
+
+const ABA_ADICIONAIS = "__adicionais__";
 
 function AdminProdutos() {
   const { user } = Route.useRouteContext();
@@ -77,7 +76,7 @@ function AdminProdutos() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
   const [toDelete, setToDelete] = useState<Product | null>(null);
-  const [aba, setAba] = useState("hamburguer");
+  const [aba, setAba] = useState<string | null>(null);
   const [busca, setBusca] = useState("");
 
   const { data: products = [], isLoading } = useQuery({
@@ -92,18 +91,34 @@ function AdminProdutos() {
     },
   });
 
+  const { data: categories = [] } = useQuery({
+    queryKey: ["admin", "categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("categories").select("*").order("name");
+      if (error) throw error;
+      return data as Category[];
+    },
+  });
+
   const { data: photoUrls = {} } = useQuery({
     queryKey: ["photo-urls", products.map((p) => p.photo_url).join(",")],
     queryFn: () => getPhotoUrls(products.map((p) => p.photo_url)),
     enabled: products.length > 0,
   });
 
-  const filtrar = (categoria: string) =>
+  const abas = [
+    ...categories.map((c) => ({ value: c.id, label: c.name })),
+    { value: ABA_ADICIONAIS, label: "Adicionais" },
+  ];
+  const abaAtual = aba ?? abas[0]?.value ?? ABA_ADICIONAIS;
+
+  const filtrar = (valor: string) =>
     products.filter(
       (p) =>
-        p.category === categoria &&
+        (valor === ABA_ADICIONAIS ? p.is_addon : !p.is_addon && p.category_id === valor) &&
         p.name.toLowerCase().includes(busca.trim().toLowerCase()),
     );
+
 
   async function excluir() {
     if (!toDelete) return;
@@ -156,13 +171,16 @@ function AdminProdutos() {
           className="max-w-sm"
         />
 
-        <Tabs value={aba} onValueChange={setAba}>
-          <TabsList>
-            <TabsTrigger value="hamburguer">Hambúrgueres</TabsTrigger>
-            <TabsTrigger value="adicional">Adicionais</TabsTrigger>
+        <Tabs value={abaAtual} onValueChange={setAba}>
+          <TabsList className="flex-wrap">
+            {abas.map((a) => (
+              <TabsTrigger key={a.value} value={a.value}>
+                {a.label}
+              </TabsTrigger>
+            ))}
           </TabsList>
 
-          {CATEGORIAS.map((categoria) => (
+          {abas.map((categoria) => (
             <TabsContent key={categoria.value} value={categoria.value}>
               <div className="rounded-lg border bg-card">
                 {isLoading ? (
@@ -231,14 +249,18 @@ function AdminProdutos() {
         open={formOpen}
         onOpenChange={setFormOpen}
         product={editing}
-        defaultCategory={aba}
-        addonOptions={products.filter((p) => p.category === "adicional" && p.is_active)}
+        categories={categories}
+        defaultIsAddon={abaAtual === ABA_ADICIONAIS}
+        defaultCategoryId={abaAtual === ABA_ADICIONAIS ? null : abaAtual}
+        addonOptions={products.filter((p) => p.is_addon && p.is_active)}
         currentPhotoUrl={editing?.photo_url ? photoUrls[editing.photo_url] : undefined}
         onSaved={() => {
           queryClient.invalidateQueries({ queryKey: ["admin", "products"] });
+          queryClient.invalidateQueries({ queryKey: ["admin", "categories"] });
           queryClient.invalidateQueries({ queryKey: ["admin", "product-addons"] });
         }}
       />
+
 
       <AlertDialog open={!!toDelete} onOpenChange={(open) => !open && setToDelete(null)}>
         <AlertDialogContent>
@@ -262,7 +284,9 @@ function ProductFormDialog({
   open,
   onOpenChange,
   product,
-  defaultCategory,
+  categories,
+  defaultIsAddon,
+  defaultCategoryId,
   addonOptions,
   currentPhotoUrl,
   onSaved,
@@ -270,14 +294,22 @@ function ProductFormDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   product: Product | null;
-  defaultCategory: string;
+  categories: Category[];
+  defaultIsAddon: boolean;
+  defaultCategoryId: string | null;
   addonOptions: Product[];
   currentPhotoUrl?: string;
   onSaved: () => void;
 }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("hamburguer");
+  const [isAddon, setIsAddon] = useState(false);
+  const [categoryId, setCategoryId] = useState<string | null>(null);
+  const [novaCategoria, setNovaCategoria] = useState("");
+  const [criandoCategoria, setCriandoCategoria] = useState(false);
+  const [criadas, setCriadas] = useState<Array<{ id: string; name: string }>>([]);
+  // Mantém a categoria recém-criada mesmo se o formulário re-inicializar.
+  const categoriaPendente = useRef<string | null>(null);
   const [price, setPrice] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [file, setFile] = useState<File | null>(null);
@@ -304,20 +336,50 @@ function ProductFormDialog({
     setLoadedFor(formKey);
     setName(product?.name ?? "");
     setDescription(product?.description ?? "");
-    setCategory(product?.category ?? defaultCategory);
+    setIsAddon(product ? product.is_addon : defaultIsAddon);
+    setCategoryId(categoriaPendente.current ?? (product ? product.category_id : defaultCategoryId));
+    setNovaCategoria("");
+    setCriandoCategoria(false);
     setPrice(product ? String(product.price) : "");
     setIsActive(product?.is_active ?? true);
     setFile(null);
     setAddons([]);
     setError(null);
   }
-  if (!open && loadedFor !== null) setLoadedFor(null);
+  if (!open && loadedFor !== null) {
+    setLoadedFor(null);
+    categoriaPendente.current = null;
+  }
+  const opcoesCategoria = [
+    ...categories.map((c) => ({ id: c.id, name: c.name })),
+    ...criadas.filter((c) => !categories.some((x) => x.id === c.id)),
+  ];
+
 
   useEffect(() => {
     if (vinculos) setAddons(vinculos);
   }, [vinculos]);
-
-
+  async function criarCategoria() {
+    const nome = novaCategoria.trim();
+    if (!nome) return setError("Informe o nome da nova categoria.");
+    const { data, error: dbError } = await supabase
+      .from("categories")
+      .insert({ name: nome })
+      .select("id, name")
+      .single();
+    if (dbError || !data) {
+      setError("Não foi possível criar a categoria.");
+      return;
+    }
+    // Guarda localmente para a opção existir no select antes do refetch.
+    setCriadas((atuais) => [...atuais, { id: data.id, name: data.name }]);
+    categoriaPendente.current = data.id;
+    setCategoryId(data.id);
+    setNovaCategoria("");
+    setCriandoCategoria(false);
+    setError(null);
+    toast.success("Categoria criada.");
+  }
 
 
   async function salvar(event: React.FormEvent) {
@@ -326,6 +388,8 @@ function ProductFormDialog({
 
     if (!name.trim()) return setError("Informe o nome do produto.");
     if (!description.trim()) return setError("Informe a descrição / ingredientes do produto.");
+    const categoriaFinal = categoriaPendente.current ?? categoryId;
+    if (!isAddon && !categoriaFinal) return setError("Escolha uma categoria para o produto.");
 
     const priceValue = Number(price.replace(",", "."));
     if (!price.trim() || Number.isNaN(priceValue)) return setError("Informe um preço válido.");
@@ -347,7 +411,8 @@ function ProductFormDialog({
       const payload = {
         name: name.trim(),
         description: description.trim(),
-        category,
+        is_addon: isAddon,
+        category_id: isAddon ? null : categoriaFinal,
         price: priceValue,
         is_active: isActive,
         photo_url: photoPath,
@@ -370,7 +435,7 @@ function ProductFormDialog({
         productId = created.id;
       }
 
-      if (category === "hamburguer" && productId) {
+      if (!isAddon && productId) {
         const atuais = product ? (vinculos ?? []) : [];
         const paraAdicionar = addons.filter((id) => !atuais.includes(id));
         const paraRemover = atuais.filter((id) => !addons.includes(id));
@@ -435,22 +500,62 @@ function ProductFormDialog({
             />
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="category">Categoria</Label>
-              <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger id="category">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {CATEGORIAS.map((c) => (
-                    <SelectItem key={c.value} value={c.value}>
-                      {c.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          <div className="flex items-center justify-between rounded-md border p-3">
+            <div>
+              <Label htmlFor="is_addon">Este item é um adicional</Label>
+              <p className="text-xs text-muted-foreground">
+                Adicionais não aparecem como produto no cardápio, só dentro de outros produtos.
+              </p>
             </div>
+            <Switch id="is_addon" checked={isAddon} onCheckedChange={setIsAddon} />
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            {!isAddon ? (
+              <div className="space-y-2">
+                <Label htmlFor="category">Categoria</Label>
+                <Select
+                  value={criandoCategoria ? "__nova__" : (categoryId ?? "")}
+                  onValueChange={(v) => {
+                    if (v === "__nova__") {
+                      setCriandoCategoria(true);
+                    } else {
+                      setCriandoCategoria(false);
+                      categoriaPendente.current = v;
+                      setCategoryId(v);
+                    }
+                  }}
+                >
+                  <SelectTrigger id="category">
+                    <SelectValue placeholder="Escolha uma categoria" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {opcoesCategoria.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+
+                    <SelectItem value="__nova__">+ Nova categoria</SelectItem>
+                  </SelectContent>
+                </Select>
+                {criandoCategoria ? (
+                  <div className="flex gap-2">
+                    <Input
+                      value={novaCategoria}
+                      onChange={(e) => setNovaCategoria(e.target.value)}
+                      placeholder="Nome da categoria"
+                      maxLength={60}
+                      aria-label="Nome da nova categoria"
+                    />
+                    <Button type="button" variant="outline" onClick={criarCategoria}>
+                      Criar
+                    </Button>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+
 
             <div className="space-y-2">
               <Label htmlFor="price">Preço (R$)</Label>
@@ -481,7 +586,7 @@ function ProductFormDialog({
             ) : null}
           </div>
 
-          {category === "hamburguer" ? (
+          {!isAddon ? (
             <div className="space-y-2 rounded-md border p-3">
               <Label>Adicionais disponíveis</Label>
               {addonOptions.length === 0 ? (

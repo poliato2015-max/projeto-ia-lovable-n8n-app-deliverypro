@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Bike, Flame, Inbox, ListChecks } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { AdminShell } from "@/components/admin/admin-shell";
@@ -37,9 +38,24 @@ export const Route = createFileRoute("/admin/_protected/kanban")({
 });
 
 const COLUNAS = [
-  { status: "pedidos_a_fazer", label: "Pedidos a fazer" },
-  { status: "fazendo", label: "Fazendo" },
-  { status: "saiu_para_entrega", label: "Saiu para a entrega" },
+  {
+    status: "pedidos_a_fazer",
+    label: "Pedidos a fazer",
+    icon: ListChecks,
+    header: "bg-blue-100 text-blue-800",
+  },
+  {
+    status: "fazendo",
+    label: "Fazendo",
+    icon: Flame,
+    header: "bg-amber-100 text-amber-800",
+  },
+  {
+    status: "saiu_para_entrega",
+    label: "Saiu para a entrega",
+    icon: Bike,
+    header: "bg-emerald-100 text-emerald-800",
+  },
 ] as const;
 
 const PAGAMENTOS: Record<string, string> = {
@@ -162,13 +178,17 @@ function AdminKanban() {
         <p className="text-sm text-muted-foreground">Carregando pedidos...</p>
       ) : (
         <div className="grid gap-4 lg:grid-cols-4">
-          <section className="flex min-h-64 flex-col gap-3 rounded-lg border border-dashed bg-card p-3">
-            <header className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-foreground">Aguardando aprovação</h2>
-              <span className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+          <section className="flex min-h-64 flex-col gap-3 rounded-lg border bg-card p-3 shadow-sm">
+            <header className="flex items-center justify-between rounded-md bg-slate-200 px-3 py-2 text-slate-800">
+              <h2 className="flex items-center gap-2 text-sm font-semibold">
+                <Inbox className="h-4 w-4" />
+                Aguardando aprovação
+              </h2>
+              <span className="rounded-full bg-card px-2 py-0.5 text-xs font-semibold">
                 {pendentes.length}
               </span>
             </header>
+
 
             {pendentes.length === 0 ? (
               <p className="text-xs text-muted-foreground">Nenhum pedido aguardando aprovação.</p>
@@ -231,16 +251,25 @@ function AdminKanban() {
                   setArrastando(null);
                 }}
                 className={cn(
-                  "flex min-h-64 flex-col gap-3 rounded-lg border bg-muted/40 p-3 transition-colors",
+                  "flex min-h-64 flex-col gap-3 rounded-lg border bg-card p-3 shadow-sm transition-colors",
                   colunaAlvo === coluna.status && "border-primary bg-accent",
                 )}
               >
-                <header className="flex items-center justify-between">
-                  <h2 className="text-sm font-semibold text-foreground">{coluna.label}</h2>
-                  <span className="rounded-full bg-background px-2 py-0.5 text-xs text-muted-foreground">
+                <header
+                  className={cn(
+                    "flex items-center justify-between rounded-md px-3 py-2",
+                    coluna.header,
+                  )}
+                >
+                  <h2 className="flex items-center gap-2 text-sm font-semibold">
+                    <coluna.icon className="h-4 w-4" />
+                    {coluna.label}
+                  </h2>
+                  <span className="rounded-full bg-card px-2 py-0.5 text-xs font-semibold">
                     {cards.length}
                   </span>
                 </header>
+
 
                 {cards.length === 0 ? (
                   <p className="text-xs text-muted-foreground">Nenhum pedido nesta coluna.</p>

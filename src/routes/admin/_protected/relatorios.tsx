@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { Download } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -52,13 +52,18 @@ const STATUS_LABEL: Record<string, string> = {
   rejeitado: "Rejeitado",
 };
 
-const STATUS_AO_VIVO = [
-  "aguardando_aprovacao",
-  "pedidos_a_fazer",
-  "fazendo",
-  "saiu_para_entrega",
-  "rejeitado",
-] as const;
+// Resumo curto dos itens, no mesmo formato do card do Kanban.
+function resumoItens(order: OrderRow) {
+  const partes = order.order_items.map((item) => {
+    const adicionais = item.order_item_addons
+      .map((a) => a.products?.name)
+      .filter(Boolean)
+      .join(", ");
+    return `${item.quantity}x ${item.products?.name ?? "Item"}${adicionais ? ` (+ ${adicionais})` : ""}`;
+  });
+  return partes.join(" • ") || "—";
+}
+
 
 const EXCLUIDOS = ["aguardando_aprovacao", "rejeitado"];
 
@@ -118,38 +123,14 @@ function linhasExport(orders: OrderRow[]) {
 
 function AdminRelatorios() {
   const { user } = Route.useRouteContext();
-  const queryClient = useQueryClient();
+  
 
   const padrao = defaultRange();
   const [inicio, setInicio] = useState(padrao.inicio);
   const [fim, setFim] = useState(padrao.fim);
   const [periodo, setPeriodo] = useState(padrao);
 
-  const { data: counts, isLoading: loadingCounts } = useQuery({
-    queryKey: ["admin", "orders", "counts"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("orders").select("status");
-      if (error) throw error;
-      const acc: Record<string, number> = {};
-      for (const row of data ?? []) acc[row.status] = (acc[row.status] ?? 0) + 1;
-      return acc;
-    },
-  });
-
-  useEffect(() => {
-    const channel = supabase
-      .channel("orders-relatorios")
-      .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => {
-        queryClient.invalidateQueries({ queryKey: ["admin", "orders", "counts"] });
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [queryClient]);
-
-  const { data: orders = [], isLoading } = useQuery({
+  const { data: todos = [], isLoading } = useQuery({
     queryKey: ["admin", "orders", "relatorios", periodo.inicio, periodo.fim],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -161,9 +142,11 @@ function AdminRelatorios() {
         .lte("created_at", `${periodo.fim}T23:59:59.999`)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data as unknown as OrderRow[]).filter((o) => !EXCLUIDOS.includes(o.status));
+      return data as unknown as OrderRow[];
     },
   });
+
+  const orders = todos.filter((o) => !EXCLUIDOS.includes(o.status));
 
   const receita = orders.reduce((s, o) => s + Number(o.total), 0);
   const ticket = orders.length > 0 ? receita / orders.length : 0;
@@ -178,13 +161,15 @@ function AdminRelatorios() {
     }, [])
     .sort((a, b) => a.ts - b.ts);
 
-  const porStatus = orders.reduce<Array<{ nome: string; valor: number }>>((acc, o) => {
+  // O gráfico de pizza mostra TODOS os status do período, inclusive os excluídos dos indicadores.
+  const porStatus = todos.reduce<Array<{ nome: string; valor: number }>>((acc, o) => {
     const nome = STATUS_LABEL[o.status] ?? o.status;
     const existente = acc.find((d) => d.nome === nome);
     if (existente) existente.valor += 1;
     else acc.push({ nome, valor: 1 });
     return acc;
   }, []);
+
 
   function ranking(tipo: "produto" | "adicional") {
     const acc: Record<string, number> = {};
@@ -249,7 +234,7 @@ function AdminRelatorios() {
   return (
     <AdminShell
       title="Relatórios"
-      description="Status ao vivo, indicadores do período, gráficos e exportação."
+      description="Indicadores do período, gráficos, mais vendidos e exportação."
       email={user.email ?? undefined}
       actions={
         <div className="flex gap-2">
@@ -299,21 +284,8 @@ function AdminRelatorios() {
           </Button>
         </section>
 
-        <section>
-          <h2 className="mb-3 text-sm font-semibold text-foreground">
-            Status dos pedidos ao vivo
-          </h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {STATUS_AO_VIVO.map((s) => (
-              <article key={s} className="rounded-lg border bg-card p-5 shadow-sm">
-                <p className="text-sm text-muted-foreground">{STATUS_LABEL[s]}</p>
-                <p className="mt-2 text-4xl font-bold tabular-nums text-foreground">
-                  {loadingCounts ? "—" : (counts?.[s] ?? 0)}
-                </p>
-              </article>
-            ))}
-          </div>
-        </section>
+
+
 
         <section>
           <h2 className="mb-3 text-sm font-semibold text-foreground">
@@ -344,10 +316,11 @@ function AdminRelatorios() {
 
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Carregando pedidos...</p>
-        ) : orders.length === 0 ? (
+        ) : todos.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            Nenhum pedido válido no período selecionado.
+            Nenhum pedido no período selecionado.
           </p>
+
         ) : (
           <>
             <div className="grid gap-4 lg:grid-cols-2">
@@ -411,29 +384,30 @@ function AdminRelatorios() {
             </div>
 
             <section className="overflow-x-auto rounded-lg border bg-card">
-              <table className="w-full min-w-[640px] text-sm">
+              <h2 className="border-b px-4 py-3 text-sm font-semibold text-foreground">
+                Pedidos do período
+              </h2>
+              <table className="w-full min-w-[760px] text-sm">
                 <thead className="border-b bg-muted/50 text-left text-xs uppercase text-muted-foreground">
                   <tr>
                     <th className="px-4 py-2 font-medium">Data</th>
                     <th className="px-4 py-2 font-medium">Pedido</th>
                     <th className="px-4 py-2 font-medium">Cliente</th>
+                    <th className="px-4 py-2 font-medium">Produtos</th>
                     <th className="px-4 py-2 font-medium">Total</th>
-                    <th className="px-4 py-2 font-medium">Pagamento</th>
                     <th className="px-4 py-2 font-medium">Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {orders.map((o) => (
+                  {todos.map((o) => (
                     <tr key={o.order_number} className="border-b last:border-0">
                       <td className="px-4 py-2 text-muted-foreground">
                         {new Date(o.created_at).toLocaleString("pt-BR")}
                       </td>
                       <td className="px-4 py-2 font-medium text-foreground">#{o.order_number}</td>
                       <td className="px-4 py-2 text-muted-foreground">{o.customers?.full_name}</td>
+                      <td className="px-4 py-2 text-muted-foreground">{resumoItens(o)}</td>
                       <td className="px-4 py-2 text-foreground">{formatBRL(Number(o.total))}</td>
-                      <td className="px-4 py-2 text-muted-foreground">
-                        {PAGAMENTOS[o.payment_method] ?? o.payment_method}
-                      </td>
                       <td className="px-4 py-2 text-muted-foreground">
                         {STATUS_LABEL[o.status] ?? o.status}
                       </td>
@@ -442,6 +416,7 @@ function AdminRelatorios() {
                 </tbody>
               </table>
             </section>
+
           </>
         )}
       </div>

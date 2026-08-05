@@ -4,21 +4,25 @@ import { BookOpen, CreditCard, MessageCircle, Leaf } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import heroBurger from "@/assets/hero-burger.jpg";
+import benefitMenu from "@/assets/benefit-menu.jpg";
+import benefitPayment from "@/assets/benefit-payment.jpg";
+import benefitWhatsapp from "@/assets/benefit-whatsapp.jpg";
+import benefitIngredients from "@/assets/benefit-ingredients.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "DeliveryPro | Hambúrgueres artesanais com entrega" },
+      { title: "DeliveryPro | Comida artesanal com entrega rápida" },
       {
         name: "description",
         content:
-          "DeliveryPro: peça hambúrgueres artesanais pelo cardápio digital, pague na entrega e acompanhe tudo pelo WhatsApp.",
+          "DeliveryPro: peça pelo cardápio digital, pague na entrega e acompanhe tudo pelo WhatsApp.",
       },
-      { property: "og:title", content: "DeliveryPro | Hambúrgueres artesanais com entrega" },
+      { property: "og:title", content: "DeliveryPro | Comida artesanal com entrega rápida" },
       {
         property: "og:description",
         content:
-          "DeliveryPro: peça hambúrgueres artesanais pelo cardápio digital, pague na entrega e acompanhe tudo pelo WhatsApp.",
+          "DeliveryPro: peça pelo cardápio digital, pague na entrega e acompanhe tudo pelo WhatsApp.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -30,21 +34,25 @@ export const Route = createFileRoute("/")({
 const beneficios = [
   {
     icon: BookOpen,
+    image: benefitMenu,
     title: "Cardápio digital",
-    text: "Monte seu hambúrguer com os adicionais que quiser, direto no navegador.",
+    text: "Monte seu pedido com os adicionais que quiser, direto no navegador.",
   },
   {
     icon: CreditCard,
+    image: benefitPayment,
     title: "Pagamento na entrega",
     text: "Escolha crédito, débito ou Pix e pague quando o pedido chegar.",
   },
   {
     icon: MessageCircle,
+    image: benefitWhatsapp,
     title: "Confirmação por WhatsApp",
     text: "Avisamos quando o pedido for aprovado e quando sair para a entrega.",
   },
   {
     icon: Leaf,
+    image: benefitIngredients,
     title: "Ingredientes frescos",
     text: "Pão, carne e acompanhamentos preparados na hora do seu pedido.",
   },
@@ -56,35 +64,52 @@ function Index() {
       <SiteHeader />
 
       <main>
-        <section className="mx-auto grid max-w-5xl items-center gap-8 px-4 py-14 md:grid-cols-2">
-          <div className="space-y-5">
-            <h1 className="text-4xl font-bold leading-tight text-foreground sm:text-5xl">
-              Hambúrguer artesanal quentinho na sua porta
-            </h1>
-            <p className="text-lg text-muted-foreground">
-              Peça em poucos cliques e acompanhe cada etapa até a entrega.
-            </p>
-            <Button asChild size="lg">
-              <Link to="/cardapio">Ver Cardápio</Link>
-            </Button>
-          </div>
+        <section className="relative isolate overflow-hidden">
           <img
             src={heroBurger}
             alt="Hambúrguer artesanal com bacon, queijo derretido e alface"
             width={1200}
             height={1000}
-            className="w-full rounded-2xl object-cover shadow-lg"
+            className="absolute inset-0 -z-20 h-full w-full object-cover"
           />
+          <div
+            className="absolute inset-0 -z-10"
+            style={{
+              background:
+                "linear-gradient(120deg, color-mix(in oklab, var(--primary) 92%, transparent), color-mix(in oklab, var(--primary) 55%, #1A1A1A))",
+            }}
+          />
+          <div className="mx-auto max-w-5xl space-y-5 px-4 py-24 text-primary-foreground">
+            <h1 className="max-w-2xl text-4xl font-bold leading-tight drop-shadow-sm sm:text-5xl">
+              Comida artesanal quentinha na sua porta
+            </h1>
+            <p className="max-w-xl text-lg text-primary-foreground/90">
+              Peça em poucos cliques e acompanhe cada etapa até a entrega.
+            </p>
+            <Button asChild size="lg" variant="secondary">
+              <Link to="/cardapio">Ver Cardápio</Link>
+            </Button>
+          </div>
         </section>
 
-        <section className="mx-auto max-w-5xl space-y-6 px-4 py-10">
+        <section className="mx-auto max-w-5xl space-y-6 px-4 py-12">
           <h2 className="text-2xl font-bold text-foreground">Por que pedir com a gente?</h2>
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {beneficios.map((b) => (
               <li key={b.title} className="space-y-2 rounded-xl border bg-card p-5 shadow-sm">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-primary">
-                  <b.icon className="h-5 w-5" />
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-primary">
+                    <b.icon className="h-5 w-5" />
+                  </span>
+                  <img
+                    src={b.image}
+                    alt={`Ilustração de ${b.title}`}
+                    loading="lazy"
+                    width={512}
+                    height={512}
+                    className="h-12 w-12 rounded-lg object-cover"
+                  />
+                </div>
                 <h3 className="font-semibold text-foreground">{b.title}</h3>
                 <p className="text-sm text-muted-foreground">{b.text}</p>
               </li>
@@ -96,10 +121,10 @@ function Index() {
           <div className="space-y-4 rounded-2xl border bg-card p-8 text-center shadow-sm">
             <h2 className="text-2xl font-bold text-foreground">Pronto pra pedir?</h2>
             <p className="text-muted-foreground">
-              Seu hambúrguer está a poucos cliques de distância.
+              Seu pedido está a poucos cliques de distância.
             </p>
             <Button asChild size="lg">
-              <Link to="/cardapio">Ver Cardápio</Link>
+              <Link to="/cardapio">Começar Pedido</Link>
             </Button>
           </div>
         </section>
