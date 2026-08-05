@@ -333,7 +333,10 @@ function ProductFormDialog({
     setLoadedFor(formKey);
     setName(product?.name ?? "");
     setDescription(product?.description ?? "");
-    setCategory(product?.category ?? defaultCategory);
+    setIsAddon(product ? product.is_addon : defaultIsAddon);
+    setCategoryId(product ? product.category_id : defaultCategoryId);
+    setNovaCategoria("");
+    setCriandoCategoria(false);
     setPrice(product ? String(product.price) : "");
     setIsActive(product?.is_active ?? true);
     setFile(null);
