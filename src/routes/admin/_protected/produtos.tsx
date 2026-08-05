@@ -354,12 +354,14 @@ function ProductFormDialog({
     const { data, error: dbError } = await supabase
       .from("categories")
       .insert({ name: nome })
-      .select("id")
+      .select("id, name")
       .single();
     if (dbError || !data) {
       setError("Não foi possível criar a categoria.");
       return;
     }
+    // Guarda localmente para a opção existir no select antes do refetch.
+    setCriadas((atuais) => [...atuais, { id: data.id, name: data.name }]);
     setCategoryId(data.id);
     setNovaCategoria("");
     setCriandoCategoria(false);
@@ -367,6 +369,7 @@ function ProductFormDialog({
     onSaved();
     toast.success("Categoria criada.");
   }
+
 
   async function salvar(event: React.FormEvent) {
     event.preventDefault();
