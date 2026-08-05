@@ -485,22 +485,60 @@ function ProductFormDialog({
             />
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="category">Categoria</Label>
-              <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger id="category">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {CATEGORIAS.map((c) => (
-                    <SelectItem key={c.value} value={c.value}>
-                      {c.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          <div className="flex items-center justify-between rounded-md border p-3">
+            <div>
+              <Label htmlFor="is_addon">Este item é um adicional</Label>
+              <p className="text-xs text-muted-foreground">
+                Adicionais não aparecem como produto no cardápio, só dentro de outros produtos.
+              </p>
             </div>
+            <Switch id="is_addon" checked={isAddon} onCheckedChange={setIsAddon} />
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            {!isAddon ? (
+              <div className="space-y-2">
+                <Label htmlFor="category">Categoria</Label>
+                <Select
+                  value={criandoCategoria ? "__nova__" : (categoryId ?? "")}
+                  onValueChange={(v) => {
+                    if (v === "__nova__") {
+                      setCriandoCategoria(true);
+                    } else {
+                      setCriandoCategoria(false);
+                      setCategoryId(v);
+                    }
+                  }}
+                >
+                  <SelectTrigger id="category">
+                    <SelectValue placeholder="Escolha uma categoria" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                    <SelectItem value="__nova__">+ Nova categoria</SelectItem>
+                  </SelectContent>
+                </Select>
+                {criandoCategoria ? (
+                  <div className="flex gap-2">
+                    <Input
+                      value={novaCategoria}
+                      onChange={(e) => setNovaCategoria(e.target.value)}
+                      placeholder="Nome da categoria"
+                      maxLength={60}
+                      aria-label="Nome da nova categoria"
+                    />
+                    <Button type="button" variant="outline" onClick={criarCategoria}>
+                      Criar
+                    </Button>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+
 
             <div className="space-y-2">
               <Label htmlFor="price">Preço (R$)</Label>
