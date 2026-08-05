@@ -37,9 +37,24 @@ export const Route = createFileRoute("/admin/_protected/kanban")({
 });
 
 const COLUNAS = [
-  { status: "pedidos_a_fazer", label: "Pedidos a fazer" },
-  { status: "fazendo", label: "Fazendo" },
-  { status: "saiu_para_entrega", label: "Saiu para a entrega" },
+  {
+    status: "pedidos_a_fazer",
+    label: "Pedidos a fazer",
+    icon: ListChecks,
+    header: "bg-blue-100 text-blue-800",
+  },
+  {
+    status: "fazendo",
+    label: "Fazendo",
+    icon: Flame,
+    header: "bg-amber-100 text-amber-800",
+  },
+  {
+    status: "saiu_para_entrega",
+    label: "Saiu para a entrega",
+    icon: Bike,
+    header: "bg-emerald-100 text-emerald-800",
+  },
 ] as const;
 
 const PAGAMENTOS: Record<string, string> = {
