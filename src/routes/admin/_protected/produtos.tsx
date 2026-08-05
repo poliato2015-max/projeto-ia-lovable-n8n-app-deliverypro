@@ -569,7 +569,7 @@ function ProductFormDialog({
             ) : null}
           </div>
 
-          {category === "hamburguer" ? (
+          {!isAddon ? (
             <div className="space-y-2 rounded-md border p-3">
               <Label>Adicionais disponíveis</Label>
               {addonOptions.length === 0 ? (
