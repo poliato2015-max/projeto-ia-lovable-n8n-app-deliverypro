@@ -125,31 +125,7 @@ function AdminRelatorios() {
   const [fim, setFim] = useState(padrao.fim);
   const [periodo, setPeriodo] = useState(padrao);
 
-  const { data: counts, isLoading: loadingCounts } = useQuery({
-    queryKey: ["admin", "orders", "counts"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("orders").select("status");
-      if (error) throw error;
-      const acc: Record<string, number> = {};
-      for (const row of data ?? []) acc[row.status] = (acc[row.status] ?? 0) + 1;
-      return acc;
-    },
-  });
-
-  useEffect(() => {
-    const channel = supabase
-      .channel("orders-relatorios")
-      .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => {
-        queryClient.invalidateQueries({ queryKey: ["admin", "orders", "counts"] });
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [queryClient]);
-
-  const { data: orders = [], isLoading } = useQuery({
+  const { data: todos = [], isLoading } = useQuery({
     queryKey: ["admin", "orders", "relatorios", periodo.inicio, periodo.fim],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -161,9 +137,11 @@ function AdminRelatorios() {
         .lte("created_at", `${periodo.fim}T23:59:59.999`)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data as unknown as OrderRow[]).filter((o) => !EXCLUIDOS.includes(o.status));
+      return data as unknown as OrderRow[];
     },
   });
+
+  const orders = todos.filter((o) => !EXCLUIDOS.includes(o.status));
 
   const receita = orders.reduce((s, o) => s + Number(o.total), 0);
   const ticket = orders.length > 0 ? receita / orders.length : 0;
@@ -178,13 +156,15 @@ function AdminRelatorios() {
     }, [])
     .sort((a, b) => a.ts - b.ts);
 
-  const porStatus = orders.reduce<Array<{ nome: string; valor: number }>>((acc, o) => {
+  // O gráfico de pizza mostra TODOS os status do período, inclusive os excluídos dos indicadores.
+  const porStatus = todos.reduce<Array<{ nome: string; valor: number }>>((acc, o) => {
     const nome = STATUS_LABEL[o.status] ?? o.status;
     const existente = acc.find((d) => d.nome === nome);
     if (existente) existente.valor += 1;
     else acc.push({ nome, valor: 1 });
     return acc;
   }, []);
+
 
   function ranking(tipo: "produto" | "adicional") {
     const acc: Record<string, number> = {};
