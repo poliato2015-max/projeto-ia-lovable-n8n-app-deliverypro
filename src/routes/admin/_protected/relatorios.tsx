@@ -378,29 +378,30 @@ function AdminRelatorios() {
             </div>
 
             <section className="overflow-x-auto rounded-lg border bg-card">
-              <table className="w-full min-w-[640px] text-sm">
+              <h2 className="border-b px-4 py-3 text-sm font-semibold text-foreground">
+                Pedidos do período
+              </h2>
+              <table className="w-full min-w-[760px] text-sm">
                 <thead className="border-b bg-muted/50 text-left text-xs uppercase text-muted-foreground">
                   <tr>
                     <th className="px-4 py-2 font-medium">Data</th>
                     <th className="px-4 py-2 font-medium">Pedido</th>
                     <th className="px-4 py-2 font-medium">Cliente</th>
+                    <th className="px-4 py-2 font-medium">Produtos</th>
                     <th className="px-4 py-2 font-medium">Total</th>
-                    <th className="px-4 py-2 font-medium">Pagamento</th>
                     <th className="px-4 py-2 font-medium">Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {orders.map((o) => (
+                  {todos.map((o) => (
                     <tr key={o.order_number} className="border-b last:border-0">
                       <td className="px-4 py-2 text-muted-foreground">
                         {new Date(o.created_at).toLocaleString("pt-BR")}
                       </td>
                       <td className="px-4 py-2 font-medium text-foreground">#{o.order_number}</td>
                       <td className="px-4 py-2 text-muted-foreground">{o.customers?.full_name}</td>
+                      <td className="px-4 py-2 text-muted-foreground">{resumoItens(o)}</td>
                       <td className="px-4 py-2 text-foreground">{formatBRL(Number(o.total))}</td>
-                      <td className="px-4 py-2 text-muted-foreground">
-                        {PAGAMENTOS[o.payment_method] ?? o.payment_method}
-                      </td>
                       <td className="px-4 py-2 text-muted-foreground">
                         {STATUS_LABEL[o.status] ?? o.status}
                       </td>
@@ -409,6 +410,7 @@ function AdminRelatorios() {
                 </tbody>
               </table>
             </section>
+
           </>
         )}
       </div>
