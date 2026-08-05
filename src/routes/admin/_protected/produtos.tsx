@@ -171,13 +171,16 @@ function AdminProdutos() {
           className="max-w-sm"
         />
 
-        <Tabs value={aba} onValueChange={setAba}>
-          <TabsList>
-            <TabsTrigger value="hamburguer">Hambúrgueres</TabsTrigger>
-            <TabsTrigger value="adicional">Adicionais</TabsTrigger>
+        <Tabs value={abaAtual} onValueChange={setAba}>
+          <TabsList className="flex-wrap">
+            {abas.map((a) => (
+              <TabsTrigger key={a.value} value={a.value}>
+                {a.label}
+              </TabsTrigger>
+            ))}
           </TabsList>
 
-          {CATEGORIAS.map((categoria) => (
+          {abas.map((categoria) => (
             <TabsContent key={categoria.value} value={categoria.value}>
               <div className="rounded-lg border bg-card">
                 {isLoading ? (
@@ -246,14 +249,18 @@ function AdminProdutos() {
         open={formOpen}
         onOpenChange={setFormOpen}
         product={editing}
-        defaultCategory={aba}
-        addonOptions={products.filter((p) => p.category === "adicional" && p.is_active)}
+        categories={categories}
+        defaultIsAddon={abaAtual === ABA_ADICIONAIS}
+        defaultCategoryId={abaAtual === ABA_ADICIONAIS ? null : abaAtual}
+        addonOptions={products.filter((p) => p.is_addon && p.is_active)}
         currentPhotoUrl={editing?.photo_url ? photoUrls[editing.photo_url] : undefined}
         onSaved={() => {
           queryClient.invalidateQueries({ queryKey: ["admin", "products"] });
+          queryClient.invalidateQueries({ queryKey: ["admin", "categories"] });
           queryClient.invalidateQueries({ queryKey: ["admin", "product-addons"] });
         }}
       />
+
 
       <AlertDialog open={!!toDelete} onOpenChange={(open) => !open && setToDelete(null)}>
         <AlertDialogContent>
