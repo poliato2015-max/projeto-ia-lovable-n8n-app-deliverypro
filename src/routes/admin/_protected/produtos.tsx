@@ -378,7 +378,6 @@ function ProductFormDialog({
     setNovaCategoria("");
     setCriandoCategoria(false);
     setError(null);
-    onSaved();
     toast.success("Categoria criada.");
   }
 
