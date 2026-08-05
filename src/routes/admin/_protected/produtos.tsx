@@ -307,6 +307,7 @@ function ProductFormDialog({
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [novaCategoria, setNovaCategoria] = useState("");
   const [criandoCategoria, setCriandoCategoria] = useState(false);
+  const [criadas, setCriadas] = useState<Array<{ id: string; name: string }>>([]);
   const [price, setPrice] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [file, setFile] = useState<File | null>(null);
