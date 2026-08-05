@@ -66,10 +66,9 @@ export const Route = createFileRoute("/admin/_protected/produtos")({
   component: AdminProdutos,
 });
 
-const CATEGORIAS = [
-  { value: "hamburguer", label: "Hambúrguer" },
-  { value: "adicional", label: "Adicional" },
-];
+type Category = Tables<"categories">;
+
+const ABA_ADICIONAIS = "__adicionais__";
 
 function AdminProdutos() {
   const { user } = Route.useRouteContext();
@@ -77,7 +76,7 @@ function AdminProdutos() {
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
   const [toDelete, setToDelete] = useState<Product | null>(null);
-  const [aba, setAba] = useState("hamburguer");
+  const [aba, setAba] = useState<string | null>(null);
   const [busca, setBusca] = useState("");
 
   const { data: products = [], isLoading } = useQuery({
@@ -92,18 +91,34 @@ function AdminProdutos() {
     },
   });
 
+  const { data: categories = [] } = useQuery({
+    queryKey: ["admin", "categories"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("categories").select("*").order("name");
+      if (error) throw error;
+      return data as Category[];
+    },
+  });
+
   const { data: photoUrls = {} } = useQuery({
     queryKey: ["photo-urls", products.map((p) => p.photo_url).join(",")],
     queryFn: () => getPhotoUrls(products.map((p) => p.photo_url)),
     enabled: products.length > 0,
   });
 
-  const filtrar = (categoria: string) =>
+  const abas = [
+    ...categories.map((c) => ({ value: c.id, label: c.name })),
+    { value: ABA_ADICIONAIS, label: "Adicionais" },
+  ];
+  const abaAtual = aba ?? abas[0]?.value ?? ABA_ADICIONAIS;
+
+  const filtrar = (valor: string) =>
     products.filter(
       (p) =>
-        p.category === categoria &&
+        (valor === ABA_ADICIONAIS ? p.is_addon : !p.is_addon && p.category_id === valor) &&
         p.name.toLowerCase().includes(busca.trim().toLowerCase()),
     );
+
 
   async function excluir() {
     if (!toDelete) return;
