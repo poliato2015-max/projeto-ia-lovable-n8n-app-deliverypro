@@ -420,7 +420,7 @@ function ProductFormDialog({
         productId = created.id;
       }
 
-      if (category === "hamburguer" && productId) {
+      if (!isAddon && productId) {
         const atuais = product ? (vinculos ?? []) : [];
         const paraAdicionar = addons.filter((id) => !atuais.includes(id));
         const paraRemover = atuais.filter((id) => !addons.includes(id));
