@@ -284,7 +284,9 @@ function ProductFormDialog({
   open,
   onOpenChange,
   product,
-  defaultCategory,
+  categories,
+  defaultIsAddon,
+  defaultCategoryId,
   addonOptions,
   currentPhotoUrl,
   onSaved,
@@ -292,7 +294,9 @@ function ProductFormDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   product: Product | null;
-  defaultCategory: string;
+  categories: Category[];
+  defaultIsAddon: boolean;
+  defaultCategoryId: string | null;
   addonOptions: Product[];
   currentPhotoUrl?: string;
   onSaved: () => void;
