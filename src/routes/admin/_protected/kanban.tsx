@@ -251,16 +251,25 @@ function AdminKanban() {
                   setArrastando(null);
                 }}
                 className={cn(
-                  "flex min-h-64 flex-col gap-3 rounded-lg border bg-muted/40 p-3 transition-colors",
+                  "flex min-h-64 flex-col gap-3 rounded-lg border bg-card p-3 shadow-sm transition-colors",
                   colunaAlvo === coluna.status && "border-primary bg-accent",
                 )}
               >
-                <header className="flex items-center justify-between">
-                  <h2 className="text-sm font-semibold text-foreground">{coluna.label}</h2>
-                  <span className="rounded-full bg-background px-2 py-0.5 text-xs text-muted-foreground">
+                <header
+                  className={cn(
+                    "flex items-center justify-between rounded-md px-3 py-2",
+                    coluna.header,
+                  )}
+                >
+                  <h2 className="flex items-center gap-2 text-sm font-semibold">
+                    <coluna.icon className="h-4 w-4" />
+                    {coluna.label}
+                  </h2>
+                  <span className="rounded-full bg-card px-2 py-0.5 text-xs font-semibold">
                     {cards.length}
                   </span>
                 </header>
+
 
                 {cards.length === 0 ? (
                   <p className="text-xs text-muted-foreground">Nenhum pedido nesta coluna.</p>
