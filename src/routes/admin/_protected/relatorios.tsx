@@ -279,21 +279,8 @@ function AdminRelatorios() {
           </Button>
         </section>
 
-        <section>
-          <h2 className="mb-3 text-sm font-semibold text-foreground">
-            Status dos pedidos ao vivo
-          </h2>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {STATUS_AO_VIVO.map((s) => (
-              <article key={s} className="rounded-lg border bg-card p-5 shadow-sm">
-                <p className="text-sm text-muted-foreground">{STATUS_LABEL[s]}</p>
-                <p className="mt-2 text-4xl font-bold tabular-nums text-foreground">
-                  {loadingCounts ? "—" : (counts?.[s] ?? 0)}
-                </p>
-              </article>
-            ))}
-          </div>
-        </section>
+
+
 
         <section>
           <h2 className="mb-3 text-sm font-semibold text-foreground">
