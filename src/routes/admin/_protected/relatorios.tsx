@@ -52,13 +52,18 @@ const STATUS_LABEL: Record<string, string> = {
   rejeitado: "Rejeitado",
 };
 
-const STATUS_AO_VIVO = [
-  "aguardando_aprovacao",
-  "pedidos_a_fazer",
-  "fazendo",
-  "saiu_para_entrega",
-  "rejeitado",
-] as const;
+// Resumo curto dos itens, no mesmo formato do card do Kanban.
+function resumoItens(order: OrderRow) {
+  const partes = order.order_items.map((item) => {
+    const adicionais = item.order_item_addons
+      .map((a) => a.products?.name)
+      .filter(Boolean)
+      .join(", ");
+    return `${item.quantity}x ${item.products?.name ?? "Item"}${adicionais ? ` (+ ${adicionais})` : ""}`;
+  });
+  return partes.join(" • ") || "—";
+}
+
 
 const EXCLUIDOS = ["aguardando_aprovacao", "rejeitado"];
 
