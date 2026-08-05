@@ -234,7 +234,7 @@ function AdminRelatorios() {
   return (
     <AdminShell
       title="Relatórios"
-      description="Status ao vivo, indicadores do período, gráficos e exportação."
+      description="Indicadores do período, gráficos, mais vendidos e exportação."
       email={user.email ?? undefined}
       actions={
         <div className="flex gap-2">
