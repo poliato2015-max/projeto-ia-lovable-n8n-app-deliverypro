@@ -518,11 +518,12 @@ function ProductFormDialog({
                     <SelectValue placeholder="Escolha uma categoria" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((c) => (
+                    {opcoesCategoria.map((c) => (
                       <SelectItem key={c.id} value={c.id}>
                         {c.name}
                       </SelectItem>
                     ))}
+
                     <SelectItem value="__nova__">+ Nova categoria</SelectItem>
                   </SelectContent>
                 </Select>
