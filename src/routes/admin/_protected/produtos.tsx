@@ -389,7 +389,8 @@ function ProductFormDialog({
 
     if (!name.trim()) return setError("Informe o nome do produto.");
     if (!description.trim()) return setError("Informe a descrição / ingredientes do produto.");
-    if (!isAddon && !categoryId) return setError("Escolha uma categoria para o produto.");
+    const categoriaFinal = categoriaPendente.current ?? categoryId;
+    if (!isAddon && !categoriaFinal) return setError("Escolha uma categoria para o produto.");
 
     const priceValue = Number(price.replace(",", "."));
     if (!price.trim() || Number.isNaN(priceValue)) return setError("Informe um preço válido.");
@@ -412,7 +413,7 @@ function ProductFormDialog({
         name: name.trim(),
         description: description.trim(),
         is_addon: isAddon,
-        category_id: isAddon ? null : categoryId,
+        category_id: isAddon ? null : categoriaFinal,
         price: priceValue,
         is_active: isActive,
         photo_url: photoPath,
