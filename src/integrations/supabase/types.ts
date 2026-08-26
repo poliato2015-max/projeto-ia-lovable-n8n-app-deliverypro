@@ -35,53 +35,83 @@ export type Database = {
       customers: {
         Row: {
           cep: string
+          city: string | null
+          complement: string | null
           created_at: string
           email: string
           full_name: string
           id: string
+          lat: number | null
+          lng: number | null
+          neighborhood: string | null
+          number: string | null
           phone: string
+          state: string | null
+          street: string | null
         }
         Insert: {
           cep: string
+          city?: string | null
+          complement?: string | null
           created_at?: string
           email: string
           full_name: string
           id?: string
+          lat?: number | null
+          lng?: number | null
+          neighborhood?: string | null
+          number?: string | null
           phone: string
+          state?: string | null
+          street?: string | null
         }
         Update: {
           cep?: string
+          city?: string | null
+          complement?: string | null
           created_at?: string
           email?: string
           full_name?: string
           id?: string
+          lat?: number | null
+          lng?: number | null
+          neighborhood?: string | null
+          number?: string | null
           phone?: string
+          state?: string | null
+          street?: string | null
         }
         Relationships: []
       }
       delivery_settings: {
         Row: {
           delivery_fee: number
-          delivery_range_limit: number
+          delivery_radius_km: number
           free_shipping_enabled: boolean
           id: string
           store_cep: string
+          store_lat: number | null
+          store_lng: number | null
           updated_at: string
         }
         Insert: {
           delivery_fee?: number
-          delivery_range_limit?: number
+          delivery_radius_km?: number
           free_shipping_enabled?: boolean
           id?: string
           store_cep: string
+          store_lat?: number | null
+          store_lng?: number | null
           updated_at?: string
         }
         Update: {
           delivery_fee?: number
-          delivery_range_limit?: number
+          delivery_radius_km?: number
           free_shipping_enabled?: boolean
           id?: string
           store_cep?: string
+          store_lat?: number | null
+          store_lng?: number | null
           updated_at?: string
         }
         Relationships: []
@@ -173,41 +203,62 @@ export type Database = {
       orders: {
         Row: {
           approved_at: string | null
+          city: string | null
+          complement: string | null
           created_at: string
           customer_id: string
+          delivery_cep: string | null
           delivery_fee: number
           id: string
+          neighborhood: string | null
+          number: string | null
           order_number: number
           out_for_delivery_at: string | null
           payment_method: string
           payment_status: string
+          state: string | null
           status: string
+          street: string | null
           total: number
         }
         Insert: {
           approved_at?: string | null
+          city?: string | null
+          complement?: string | null
           created_at?: string
           customer_id: string
+          delivery_cep?: string | null
           delivery_fee?: number
           id?: string
+          neighborhood?: string | null
+          number?: string | null
           order_number?: number
           out_for_delivery_at?: string | null
           payment_method: string
           payment_status?: string
+          state?: string | null
           status?: string
+          street?: string | null
           total?: number
         }
         Update: {
           approved_at?: string | null
+          city?: string | null
+          complement?: string | null
           created_at?: string
           customer_id?: string
+          delivery_cep?: string | null
           delivery_fee?: number
           id?: string
+          neighborhood?: string | null
+          number?: string | null
           order_number?: number
           out_for_delivery_at?: string | null
           payment_method?: string
           payment_status?: string
+          state?: string | null
           status?: string
+          street?: string | null
           total?: number
         }
         Relationships: [
@@ -329,11 +380,16 @@ export type Database = {
       create_order: {
         Args: {
           p_cep: string
-          p_email: string
+          p_city: string
+          p_complement: string
           p_full_name: string
           p_items: Json
+          p_neighborhood: string
+          p_number: string
           p_payment_method: string
           p_phone: string
+          p_state: string
+          p_street: string
         }
         Returns: number
       }
