@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as MeusPedidosRouteImport } from './routes/meus-pedidos'
 import { Route as ContaRouteImport } from './routes/conta'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CardapioRouteImport } from './routes/cardapio'
@@ -25,6 +26,11 @@ import { Route as AdminProtectedConfiguracaoRouteImport } from './routes/admin/_
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeusPedidosRoute = MeusPedidosRouteImport.update({
+  id: '/meus-pedidos',
+  path: '/meus-pedidos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContaRoute = ContaRouteImport.update({
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/cardapio': typeof CardapioRoute
   '/checkout': typeof CheckoutRoute
   '/conta': typeof ContaRoute
+  '/meus-pedidos': typeof MeusPedidosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AdminProtectedRouteRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/cardapio': typeof CardapioRoute
   '/checkout': typeof CheckoutRoute
   '/conta': typeof ContaRoute
+  '/meus-pedidos': typeof MeusPedidosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/configuracao': typeof AdminProtectedConfiguracaoRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/cardapio': typeof CardapioRoute
   '/checkout': typeof CheckoutRoute
   '/conta': typeof ContaRoute
+  '/meus-pedidos': typeof MeusPedidosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/_protected': typeof AdminProtectedRouteRouteWithChildren
   '/admin/login': typeof AdminLoginRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/cardapio'
     | '/checkout'
     | '/conta'
+    | '/meus-pedidos'
     | '/sitemap.xml'
     | '/admin'
     | '/admin/login'
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/cardapio'
     | '/checkout'
     | '/conta'
+    | '/meus-pedidos'
     | '/sitemap.xml'
     | '/admin/login'
     | '/admin/configuracao'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/cardapio'
     | '/checkout'
     | '/conta'
+    | '/meus-pedidos'
     | '/sitemap.xml'
     | '/admin/_protected'
     | '/admin/login'
@@ -176,6 +188,7 @@ export interface RootRouteChildren {
   CardapioRoute: typeof CardapioRoute
   CheckoutRoute: typeof CheckoutRoute
   ContaRoute: typeof ContaRoute
+  MeusPedidosRoute: typeof MeusPedidosRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AdminProtectedRouteRoute: typeof AdminProtectedRouteRouteWithChildren
   AdminLoginRoute: typeof AdminLoginRoute
@@ -188,6 +201,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meus-pedidos': {
+      id: '/meus-pedidos'
+      path: '/meus-pedidos'
+      fullPath: '/meus-pedidos'
+      preLoaderRoute: typeof MeusPedidosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/conta': {
@@ -294,6 +314,7 @@ const rootRouteChildren: RootRouteChildren = {
   CardapioRoute: CardapioRoute,
   CheckoutRoute: CheckoutRoute,
   ContaRoute: ContaRoute,
+  MeusPedidosRoute: MeusPedidosRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   AdminProtectedRouteRoute: AdminProtectedRouteRouteWithChildren,
   AdminLoginRoute: AdminLoginRoute,

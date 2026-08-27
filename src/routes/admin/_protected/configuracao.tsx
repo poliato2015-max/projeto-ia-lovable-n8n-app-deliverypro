@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
+import { buscarCep } from "@/lib/cep";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -63,7 +64,7 @@ function AdminEntrega() {
     setStoreCep(settings.store_cep);
     setFee(String(settings.delivery_fee));
     setFreeShipping(settings.free_shipping_enabled);
-    setRange(String(settings.delivery_range_limit));
+    setRange(String(settings.delivery_radius_km));
   }, [settings]);
 
   async function salvar(event: React.FormEvent) {
@@ -77,18 +78,25 @@ function AdminEntrega() {
       return setErro("Informe uma taxa de entrega igual ou maior que zero.");
     }
     const rangeValue = Number(range);
-    if (!Number.isInteger(rangeValue) || rangeValue < 0) {
-      return setErro("Informe um limite de alcance inteiro e não negativo.");
+    if (!Number.isInteger(rangeValue) || rangeValue <= 0) {
+      return setErro("Informe um raio de entrega inteiro e maior que zero.");
     }
 
     setSalvando(true);
+    const localizacao = await buscarCep(storeCep);
+    if (!localizacao) {
+      setSalvando(false);
+      return setErro("CEP da loja não encontrado.");
+    }
     const { error } = await supabase
       .from("delivery_settings")
       .update({
         store_cep: storeCep,
         delivery_fee: feeValue,
         free_shipping_enabled: freeShipping,
-        delivery_range_limit: rangeValue,
+        delivery_radius_km: rangeValue,
+        store_lat: localizacao.lat,
+        store_lng: localizacao.lng,
         updated_at: new Date().toISOString(),
       })
       .eq("id", settings.id);
@@ -148,7 +156,7 @@ function AdminEntrega() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="range-limit">Limite de alcance (ainda sem efeito)</Label>
+            <Label htmlFor="range-limit">Raio de entrega (km)</Label>
             <Input
               id="range-limit"
               inputMode="numeric"
@@ -156,8 +164,8 @@ function AdminEntrega() {
               onChange={(e) => setRange(onlyDigits(e.target.value).slice(0, 6))}
             />
             <p className="text-xs text-muted-foreground">
-              Este valor ainda não bloqueia nenhum pedido — é só preparação para quando a validação
-              de CEP de entrega for implementada.
+              Pedidos com endereço acima desta distância da loja são bloqueados no cadastro e no
+              checkout.
             </p>
           </div>
 
