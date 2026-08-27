@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { UtensilsCrossed } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { useSession } from "@/lib/use-session";
 import { Button } from "@/components/ui/button";
 
 /** Cabeçalho persistente das telas do cliente. */
@@ -11,6 +12,8 @@ export function SiteHeader({ actions }: { actions?: ReactNode }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [adminEmail, setAdminEmail] = useState<string | null>(null);
+  const { user } = useSession();
+  const clienteLogado = !!user;
 
   useEffect(() => {
     let ativo = true;
@@ -53,6 +56,15 @@ export function SiteHeader({ actions }: { actions?: ReactNode }) {
         >
           Cardápio
         </Link>
+        {clienteLogado ? (
+          <Link
+            to="/meus-pedidos"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            activeProps={{ className: "text-primary" }}
+          >
+            Meus Pedidos
+          </Link>
+        ) : null}
 
         <div className="ml-auto flex items-center gap-2">
           {adminEmail !== null ? (
@@ -63,11 +75,17 @@ export function SiteHeader({ actions }: { actions?: ReactNode }) {
               <span className="hidden max-w-[180px] truncate text-xs text-muted-foreground sm:inline">
                 {adminEmail}
               </span>
-              <Button variant="outline" size="sm" onClick={sair}>
-                Sair
-              </Button>
             </>
           ) : null}
+          {clienteLogado ? (
+            <Button variant="outline" size="sm" onClick={sair}>
+              Sair
+            </Button>
+          ) : (
+            <Button asChild variant="ghost" size="sm">
+              <Link to="/conta">Entrar</Link>
+            </Button>
+          )}
           {actions}
         </div>
       </div>
