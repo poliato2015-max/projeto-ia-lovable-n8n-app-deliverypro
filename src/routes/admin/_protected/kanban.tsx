@@ -65,7 +65,7 @@ const PAGAMENTOS: Record<string, string> = {
 };
 
 const SELECT =
-  "id, order_number, status, payment_method, total, delivery_fee, created_at, customers(full_name, phone, cep), order_items(id, quantity, unit_price, notes, products(name), order_item_addons(id, unit_price, products(name)))";
+  "id, order_number, status, payment_method, total, delivery_fee, created_at, delivery_cep, street, number, complement, neighborhood, city, state, customers(full_name, phone, cep, street, number, complement, neighborhood), order_items(id, quantity, unit_price, notes, products(name), order_item_addons(id, unit_price, products(name)))";
 
 type Order = {
   id: string;
@@ -74,7 +74,22 @@ type Order = {
   payment_method: string;
   total: number;
   delivery_fee: number;
-  customers: { full_name: string; phone: string; cep: string } | null;
+  delivery_cep: string | null;
+  street: string | null;
+  number: string | null;
+  complement: string | null;
+  neighborhood: string | null;
+  city: string | null;
+  state: string | null;
+  customers: {
+    full_name: string;
+    phone: string;
+    cep: string;
+    street: string | null;
+    number: string | null;
+    complement: string | null;
+    neighborhood: string | null;
+  } | null;
   order_items: Array<{
     id: string;
     quantity: number;
@@ -84,6 +99,22 @@ type Order = {
     order_item_addons: Array<{ id: string; unit_price: number; products: { name: string } | null }>;
   }>;
 };
+
+/** Endereço de entrega do pedido, com o cadastro do cliente como reserva. */
+function enderecoCompleto(order: Order) {
+  const rua = order.street ?? order.customers?.street ?? "";
+  const numero = order.number ?? order.customers?.number ?? "";
+  const complemento = order.complement ?? order.customers?.complement ?? "";
+  const bairro = order.neighborhood ?? order.customers?.neighborhood ?? "";
+  const cep = order.delivery_cep ?? order.customers?.cep ?? "";
+  const partes = [
+    [rua, numero].filter(Boolean).join(", "),
+    complemento,
+    bairro,
+    cep ? `CEP ${formatCep(cep)}` : "",
+  ].filter(Boolean);
+  return partes.length > 0 ? partes.join(" · ") : "Endereço não informado";
+}
 
 function formatPhone(digits: string) {
   if (digits.length !== 11) return digits;
@@ -312,8 +343,9 @@ function AdminKanban() {
               <DialogHeader>
                 <DialogTitle>Pedido #{detalhe.order_number}</DialogTitle>
                 <DialogDescription>
-                  {detalhe.customers?.full_name} · {formatPhone(detalhe.customers?.phone ?? "")} ·
-                  CEP {formatCep(detalhe.customers?.cep ?? "")}
+                  {detalhe.customers?.full_name} · {formatPhone(detalhe.customers?.phone ?? "")}
+                  <br />
+                  {enderecoCompleto(detalhe)}
                 </DialogDescription>
               </DialogHeader>
 
