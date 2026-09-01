@@ -86,12 +86,17 @@ function FormEntrar() {
     e.preventDefault();
     setErro(null);
     setEnviando(true);
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password: senha });
-    setEnviando(false);
-    if (error) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password: senha,
+    });
+    if (error || !data.user) {
+      setEnviando(false);
       setErro("E-mail ou senha inválidos.");
       return;
     }
+    await garantirFicha(data.user);
+    setEnviando(false);
     navigate({ to: "/checkout", replace: true });
   }
 
