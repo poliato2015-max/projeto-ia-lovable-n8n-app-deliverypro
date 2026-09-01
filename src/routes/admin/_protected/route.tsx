@@ -5,14 +5,13 @@ export const Route = createFileRoute("/admin/_protected")({
   ssr: false,
   beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) throw redirect({ to: "/admin/login" });
+    if (error || !data.user) throw redirect({ to: "/conta", search: { redirect: "/admin" } });
     const { data: isAdmin } = await supabase.rpc("has_role", {
       _user_id: data.user.id,
       _role: "admin",
     });
     if (!isAdmin) {
-      await supabase.auth.signOut();
-      throw redirect({ to: "/admin/login" });
+      throw redirect({ to: "/conta", search: { redirect: "/admin" } });
     }
     return { user: data.user };
   },

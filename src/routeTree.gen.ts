@@ -15,7 +15,6 @@ import { Route as ContaRouteImport } from './routes/conta'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CardapioRouteImport } from './routes/cardapio'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminLoginRouteImport } from './routes/admin/login'
 import { Route as AdminProtectedRouteRouteImport } from './routes/admin/_protected/route'
 import { Route as AdminProtectedIndexRouteImport } from './routes/admin/_protected/index'
 import { Route as AdminProtectedRelatoriosRouteImport } from './routes/admin/_protected/relatorios'
@@ -51,11 +50,6 @@ const CardapioRoute = CardapioRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminLoginRoute = AdminLoginRouteImport.update({
-  id: '/admin/login',
-  path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminProtectedRouteRoute = AdminProtectedRouteRouteImport.update({
@@ -99,7 +93,6 @@ export interface FileRoutesByFullPath {
   '/meus-pedidos': typeof MeusPedidosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AdminProtectedRouteRouteWithChildren
-  '/admin/login': typeof AdminLoginRoute
   '/admin/configuracao': typeof AdminProtectedConfiguracaoRoute
   '/admin/kanban': typeof AdminProtectedKanbanRoute
   '/admin/produtos': typeof AdminProtectedProdutosRoute
@@ -113,7 +106,6 @@ export interface FileRoutesByTo {
   '/conta': typeof ContaRoute
   '/meus-pedidos': typeof MeusPedidosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/admin/login': typeof AdminLoginRoute
   '/admin/configuracao': typeof AdminProtectedConfiguracaoRoute
   '/admin/kanban': typeof AdminProtectedKanbanRoute
   '/admin/produtos': typeof AdminProtectedProdutosRoute
@@ -129,7 +121,6 @@ export interface FileRoutesById {
   '/meus-pedidos': typeof MeusPedidosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/_protected': typeof AdminProtectedRouteRouteWithChildren
-  '/admin/login': typeof AdminLoginRoute
   '/admin/_protected/configuracao': typeof AdminProtectedConfiguracaoRoute
   '/admin/_protected/kanban': typeof AdminProtectedKanbanRoute
   '/admin/_protected/produtos': typeof AdminProtectedProdutosRoute
@@ -146,7 +137,6 @@ export interface FileRouteTypes {
     | '/meus-pedidos'
     | '/sitemap.xml'
     | '/admin'
-    | '/admin/login'
     | '/admin/configuracao'
     | '/admin/kanban'
     | '/admin/produtos'
@@ -160,7 +150,6 @@ export interface FileRouteTypes {
     | '/conta'
     | '/meus-pedidos'
     | '/sitemap.xml'
-    | '/admin/login'
     | '/admin/configuracao'
     | '/admin/kanban'
     | '/admin/produtos'
@@ -175,7 +164,6 @@ export interface FileRouteTypes {
     | '/meus-pedidos'
     | '/sitemap.xml'
     | '/admin/_protected'
-    | '/admin/login'
     | '/admin/_protected/configuracao'
     | '/admin/_protected/kanban'
     | '/admin/_protected/produtos'
@@ -191,7 +179,6 @@ export interface RootRouteChildren {
   MeusPedidosRoute: typeof MeusPedidosRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AdminProtectedRouteRoute: typeof AdminProtectedRouteRouteWithChildren
-  AdminLoginRoute: typeof AdminLoginRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -236,13 +223,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/login': {
-      id: '/admin/login'
-      path: '/admin/login'
-      fullPath: '/admin/login'
-      preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/_protected': {
@@ -317,7 +297,6 @@ const rootRouteChildren: RootRouteChildren = {
   MeusPedidosRoute: MeusPedidosRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   AdminProtectedRouteRoute: AdminProtectedRouteRouteWithChildren,
-  AdminLoginRoute: AdminLoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
