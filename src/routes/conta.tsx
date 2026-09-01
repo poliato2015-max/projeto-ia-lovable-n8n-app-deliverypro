@@ -42,42 +42,159 @@ function onlyDigits(value: string) {
   return value.replace(/\D/g, "");
 }
 
+/** Detecta os parâmetros de recuperação de senha na URL (hash ou query). */
+function urlDeRecuperacao() {
+  if (typeof window === "undefined") return false;
+  const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+  const query = new URLSearchParams(window.location.search);
+  return (
+    hash.get("type") === "recovery" ||
+    query.get("type") === "recovery" ||
+    !!query.get("code") ||
+    !!query.get("token_hash")
+  );
+}
+
+/** Envia o usuário logado para o destino certo conforme o papel. */
+export async function destinoAposLogin(userId: string, redirecionar?: string) {
+  const { data: isAdmin } = await supabase.rpc("has_role", {
+    _user_id: userId,
+    _role: "admin",
+  });
+  if (isAdmin) return "/admin";
+  if (redirecionar && redirecionar.startsWith("/") && !redirecionar.startsWith("/admin")) {
+    return redirecionar;
+  }
+  return "/cardapio";
+}
+
 function ContaPage() {
   const navigate = useNavigate();
+  const { redirect: redirecionar } = Route.useSearch();
   const { user } = useSession();
+  const [recuperacao, setRecuperacao] = useState<boolean>(() => urlDeRecuperacao());
 
   useEffect(() => {
-    if (user) navigate({ to: "/checkout", replace: true });
-  }, [user, navigate]);
+    const { data: sub } = supabase.auth.onAuthStateChange((evento) => {
+      if (evento === "PASSWORD_RECOVERY") setRecuperacao(true);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (recuperacao || !user) return;
+    let ativo = true;
+    destinoAposLogin(user.id, redirecionar).then((destino) => {
+      if (ativo) navigate({ to: destino as never, replace: true });
+    });
+    return () => {
+      ativo = false;
+    };
+  }, [user, navigate, recuperacao, redirecionar]);
 
   return (
     <div className="min-h-screen bg-client-bg">
       <SiteHeader />
       <main className="px-4 py-10">
         <div className="mx-auto w-full max-w-lg rounded-2xl border bg-card p-6 shadow-sm">
-          <h1 className="mb-1 text-2xl font-bold text-foreground">Sua conta</h1>
-          <p className="mb-6 text-sm text-muted-foreground">
-            Entre ou crie sua conta para finalizar o pedido.
-          </p>
-          <Tabs defaultValue="entrar">
-            <TabsList className="mb-6 grid w-full grid-cols-2">
-              <TabsTrigger value="entrar">Entrar</TabsTrigger>
-              <TabsTrigger value="cadastrar">Cadastrar</TabsTrigger>
-            </TabsList>
-            <TabsContent value="entrar">
-              <FormEntrar />
-            </TabsContent>
-            <TabsContent value="cadastrar">
-              <FormCadastrar />
-            </TabsContent>
-          </Tabs>
+          {recuperacao ? (
+            <>
+              <h1 className="mb-1 text-2xl font-bold text-foreground">Definir nova senha</h1>
+              <p className="mb-6 text-sm text-muted-foreground">
+                Escolha uma nova senha para a sua conta.
+              </p>
+              <FormNovaSenha onConcluido={() => setRecuperacao(false)} />
+            </>
+          ) : (
+            <>
+              <h1 className="mb-1 text-2xl font-bold text-foreground">Bem-vindo ao DeliveryPro</h1>
+              <p className="mb-6 text-sm text-muted-foreground">
+                Entre ou crie a sua conta para continuar.
+              </p>
+              <Tabs defaultValue="entrar">
+                <TabsList className="mb-6 grid w-full grid-cols-2">
+                  <TabsTrigger value="entrar">Entrar</TabsTrigger>
+                  <TabsTrigger value="cadastrar">Cadastrar</TabsTrigger>
+                </TabsList>
+                <TabsContent value="entrar">
+                  <FormEntrar redirecionar={redirecionar} />
+                </TabsContent>
+                <TabsContent value="cadastrar">
+                  <FormCadastrar />
+                </TabsContent>
+              </Tabs>
+            </>
+          )}
         </div>
       </main>
     </div>
   );
 }
 
-function FormEntrar() {
+function FormNovaSenha({ onConcluido }: { onConcluido: () => void }) {
+  const navigate = useNavigate();
+  const [senha, setSenha] = useState("");
+  const [confirmar, setConfirmar] = useState("");
+  const [erro, setErro] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
+
+  async function salvar(e: React.FormEvent) {
+    e.preventDefault();
+    setErro(null);
+    if (senha.length < 6) return setErro("A senha deve ter no mínimo 6 caracteres.");
+    if (senha !== confirmar) return setErro("As senhas não conferem.");
+
+    setEnviando(true);
+    const { data: sessao } = await supabase.auth.getSession();
+    if (!sessao.session) {
+      setEnviando(false);
+      return setErro(
+        "O link de recuperação expirou ou já foi usado. Peça um novo link em “Esqueci minha senha”.",
+      );
+    }
+    const { error } = await supabase.auth.updateUser({ password: senha });
+    setEnviando(false);
+    if (error) return setErro("Não foi possível alterar a senha. Peça um novo link.");
+
+    window.history.replaceState(null, "", "/conta");
+    toast.success("Senha alterada com sucesso!");
+    onConcluido();
+    const { data: user } = await supabase.auth.getUser();
+    const destino = user.user ? await destinoAposLogin(user.user.id) : "/conta";
+    navigate({ to: destino as never, replace: true });
+  }
+
+  return (
+    <form onSubmit={salvar} className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="nova-senha">Nova senha</Label>
+        <Input
+          id="nova-senha"
+          type="password"
+          autoComplete="new-password"
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="nova-senha-confirmar">Confirmar nova senha</Label>
+        <Input
+          id="nova-senha-confirmar"
+          type="password"
+          autoComplete="new-password"
+          value={confirmar}
+          onChange={(e) => setConfirmar(e.target.value)}
+        />
+      </div>
+      {erro ? <p className="text-sm text-destructive">{erro}</p> : null}
+      <Button type="submit" className="w-full" disabled={enviando}>
+        {enviando ? "Salvando..." : "Salvar nova senha"}
+      </Button>
+    </form>
+  );
+}
+
+function FormEntrar({ redirecionar }: { redirecionar?: string }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
