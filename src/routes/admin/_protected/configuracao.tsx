@@ -178,6 +178,114 @@ function AdminEntrega() {
           </Button>
         </form>
       )}
+
+      <SecaoAdministradores />
     </AdminShell>
+  );
+}
+
+function SecaoAdministradores() {
+  const queryClient = useQueryClient();
+  const buscarAdmins = useServerFn(listarAdmins);
+  const promover = useServerFn(promoverAdmin);
+  const remover = useServerFn(removerAdmin);
+
+  const [email, setEmail] = useState("");
+  const [erro, setErro] = useState<string | null>(null);
+  const [ocupado, setOcupado] = useState(false);
+
+  const { data: admins, isLoading } = useQuery({
+    queryKey: ["admins"],
+    queryFn: () => buscarAdmins(),
+  });
+
+  async function tornarAdmin(event: React.FormEvent) {
+    event.preventDefault();
+    setErro(null);
+    if (!email.trim()) return setErro("Informe o e-mail da conta.");
+    setOcupado(true);
+    try {
+      const r = await promover({ data: { email: email.trim() } });
+      if (!r.ok) setErro(r.mensagem);
+      else {
+        toast.success(r.mensagem);
+        setEmail("");
+        queryClient.invalidateQueries({ queryKey: ["admins"] });
+      }
+    } catch {
+      setErro("Não foi possível concluir a operação.");
+    }
+    setOcupado(false);
+  }
+
+  async function tirarAdmin(userId: string) {
+    setErro(null);
+    setOcupado(true);
+    try {
+      const r = await remover({ data: { userId } });
+      if (!r.ok) setErro(r.mensagem);
+      else {
+        toast.success(r.mensagem);
+        queryClient.invalidateQueries({ queryKey: ["admins"] });
+      }
+    } catch {
+      setErro("Não foi possível concluir a operação.");
+    }
+    setOcupado(false);
+  }
+
+  return (
+    <section className="mt-8 max-w-lg space-y-5 rounded-lg border bg-card p-5">
+      <div>
+        <h2 className="text-lg font-semibold text-foreground">Administradores</h2>
+        <p className="text-sm text-muted-foreground">
+          Contas com acesso total ao painel. Para promover alguém, a pessoa precisa já ter uma conta
+          criada em /conta.
+        </p>
+      </div>
+
+      {isLoading ? (
+        <p className="text-sm text-muted-foreground">Carregando administradores...</p>
+      ) : (
+        <ul className="space-y-2">
+          {(admins ?? []).map((a) => (
+            <li
+              key={a.userId}
+              className="flex flex-wrap items-center justify-between gap-2 rounded-md border p-3"
+            >
+              <span className="truncate text-sm text-foreground">{a.email}</span>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={ocupado}
+                onClick={() => tirarAdmin(a.userId)}
+              >
+                Remover admin
+              </Button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <form onSubmit={tornarAdmin} className="space-y-2">
+        <Label htmlFor="novo-admin">E-mail da conta</Label>
+        <div className="flex flex-wrap gap-2">
+          <Input
+            id="novo-admin"
+            type="email"
+            className="min-w-48 flex-1"
+            placeholder="pessoa@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Button type="submit" disabled={ocupado}>
+            Tornar admin
+          </Button>
+        </div>
+      </form>
+
+      {erro ? <p className="text-sm text-destructive">{erro}</p> : null}
+    </section>
   );
 }
