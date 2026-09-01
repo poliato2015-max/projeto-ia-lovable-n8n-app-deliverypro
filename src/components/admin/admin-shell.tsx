@@ -48,7 +48,7 @@ export function AdminShell({
     await queryClient.cancelQueries();
     queryClient.clear();
     await supabase.auth.signOut();
-    navigate({ to: "/admin/login", replace: true });
+    navigate({ to: "/conta", replace: true });
   }
 
   return (
