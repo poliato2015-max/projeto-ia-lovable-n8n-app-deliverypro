@@ -2,6 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { garantirFicha } from "@/lib/ensure-customer";
+
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/use-session";
 import { useCepEntrega } from "@/lib/use-cep-entrega";
@@ -84,12 +86,17 @@ function FormEntrar() {
     e.preventDefault();
     setErro(null);
     setEnviando(true);
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password: senha });
-    setEnviando(false);
-    if (error) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password: senha,
+    });
+    if (error || !data.user) {
+      setEnviando(false);
       setErro("E-mail ou senha inválidos.");
       return;
     }
+    await garantirFicha(data.user);
+    setEnviando(false);
     navigate({ to: "/checkout", replace: true });
   }
 
@@ -180,7 +187,22 @@ function FormCadastrar() {
     const { data, error } = await supabase.auth.signUp({
       email: email.trim(),
       password: senha,
-      options: { emailRedirectTo: `${window.location.origin}/conta` },
+      options: {
+        emailRedirectTo: `${window.location.origin}/conta`,
+        data: {
+          full_name: fullName.trim(),
+          phone,
+          cep: endereco.cep,
+          street: endereco.street,
+          number: numero,
+          complement: complemento.trim() || null,
+          neighborhood: endereco.neighborhood,
+          city: endereco.city,
+          state: endereco.state,
+          lat: endereco.lat,
+          lng: endereco.lng,
+        },
+      },
     });
 
     if (error) {
