@@ -15,6 +15,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/conta")({
   ssr: false,
+  validateSearch: (search: Record<string, unknown>) => ({
+    redirect: typeof search['redirect'] === "string" ? (search['redirect'] as string) : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Entrar ou criar conta | DeliveryPro" },
