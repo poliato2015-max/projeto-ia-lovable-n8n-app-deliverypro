@@ -109,7 +109,7 @@ function Checkout() {
   useEffect(() => {
     if (carregandoSessao) return;
     if (!user) {
-      navigate({ to: "/conta", replace: true });
+      navigate({ to: "/conta", search: { redirect: "/checkout" }, replace: true });
       return;
     }
     if (items.length === 0 && !confirmado) {

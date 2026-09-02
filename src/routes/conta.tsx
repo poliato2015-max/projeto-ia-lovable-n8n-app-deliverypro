@@ -190,6 +190,16 @@ function FormNovaSenha({ onConcluido }: { onConcluido: () => void }) {
       <Button type="submit" className="w-full" disabled={enviando}>
         {enviando ? "Salvando..." : "Salvar nova senha"}
       </Button>
+      <button
+        type="button"
+        className="w-full text-sm text-primary underline"
+        onClick={() => {
+          window.history.replaceState(null, "", "/conta");
+          onConcluido();
+        }}
+      >
+        Voltar para entrar
+      </button>
     </form>
   );
 }
@@ -215,8 +225,9 @@ function FormEntrar({ redirecionar }: { redirecionar?: string }) {
       return;
     }
     await garantirFicha(data.user);
+    const destino = await destinoAposLogin(data.user.id, redirecionar);
     setEnviando(false);
-    navigate({ to: "/checkout", replace: true });
+    navigate({ to: destino as never, replace: true });
   }
 
   async function recuperar() {
