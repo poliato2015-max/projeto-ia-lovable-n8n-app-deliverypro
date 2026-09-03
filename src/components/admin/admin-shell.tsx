@@ -8,8 +8,7 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
+import { SiteHeader } from "@/components/site-header";
 import { cn } from "@/lib/utils";
 
 type AdminNavItem = {
