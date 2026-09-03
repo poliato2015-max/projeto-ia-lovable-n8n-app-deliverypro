@@ -82,6 +82,12 @@ function Cardapio() {
     },
   });
 
+  const buscarPopulares = useServerFn(produtosPopulares);
+  const { data: populares = [] } = useQuery({
+    queryKey: ["cardapio", "populares"],
+    queryFn: () => buscarPopulares(),
+  });
+
   const { data: photoUrls = {} } = useQuery({
     queryKey: ["photo-urls", "cardapio", products.map((p) => p.photo_url).join(",")],
     queryFn: () => getPhotoUrls(products.map((p) => p.photo_url)),
