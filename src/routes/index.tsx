@@ -72,19 +72,21 @@ function Index() {
             height={1000}
             className="absolute inset-0 -z-20 h-full w-full object-cover"
           />
+          {/* Gradiente translúcido: escurece o lado do texto sem esconder a foto. */}
           <div
             className="absolute inset-0 -z-10"
             style={{
               background:
-                "linear-gradient(120deg, color-mix(in oklab, var(--primary) 92%, transparent), color-mix(in oklab, var(--primary) 55%, #1A1A1A))",
+                "linear-gradient(100deg, color-mix(in oklab, var(--primary) 82%, transparent) 0%, color-mix(in oklab, var(--primary) 45%, transparent) 45%, color-mix(in oklab, #1A1A1A 25%, transparent) 100%)",
             }}
           />
           <div className="mx-auto max-w-5xl space-y-5 px-4 py-24 text-primary-foreground">
-            <h1 className="max-w-2xl text-4xl font-bold leading-tight drop-shadow-sm sm:text-5xl">
-              Comida artesanal quentinha na sua porta
+            <h1 className="max-w-2xl text-4xl font-bold leading-tight drop-shadow-md sm:text-5xl">
+              Hambúrgueres, pizzas e mais, feitos na hora e entregues quentinhos
             </h1>
-            <p className="max-w-xl text-lg text-primary-foreground/90">
-              Peça em poucos cliques e acompanhe cada etapa até a entrega.
+            <p className="max-w-xl text-lg text-primary-foreground/95 drop-shadow">
+              Monte seu pedido do jeito que você gosta e acompanhe cada etapa, do preparo até a sua
+              porta.
             </p>
             <Button asChild size="lg" variant="secondary">
               <Link to="/cardapio">Ver Cardápio</Link>
