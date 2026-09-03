@@ -39,18 +39,9 @@ export function AdminShell({
   actions?: ReactNode;
   children: ReactNode;
 }) {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-
-  async function sair() {
-    await queryClient.cancelQueries();
-    queryClient.clear();
-    await supabase.auth.signOut();
-    navigate({ to: "/conta", replace: true });
-  }
-
   return (
     <div className="min-h-screen bg-client-bg">
+      <SiteHeader />
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 md:flex-row">
         <aside className="md:w-56 md:shrink-0">
           <div className="mb-4">
