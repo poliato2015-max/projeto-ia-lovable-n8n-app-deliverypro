@@ -144,4 +144,13 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
+
+  /*
+   * Suaviza todas as superfícies brancas sobre o fundo rosa:
+   * borda sutil (1px) + sombra leve, de forma consistente no app inteiro.
+   */
+  .bg-card {
+    border: 1px solid var(--card-border);
+    box-shadow: var(--shadow-card);
+  }
 }
