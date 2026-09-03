@@ -312,6 +312,7 @@ function ProductFormDialog({
   const categoriaPendente = useRef<string | null>(null);
   const [price, setPrice] = useState("");
   const [isActive, setIsActive] = useState(true);
+  const [isPromo, setIsPromo] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [addons, setAddons] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -342,6 +343,7 @@ function ProductFormDialog({
     setCriandoCategoria(false);
     setPrice(product ? String(product.price) : "");
     setIsActive(product?.is_active ?? true);
+    setIsPromo(product?.is_promo ?? false);
     setFile(null);
     setAddons([]);
     setError(null);
@@ -415,6 +417,7 @@ function ProductFormDialog({
         category_id: isAddon ? null : categoriaFinal,
         price: priceValue,
         is_active: isActive,
+        is_promo: isPromo,
         photo_url: photoPath,
       };
 
@@ -629,6 +632,16 @@ function ProductFormDialog({
               </p>
             </div>
             <Switch id="is_active" checked={isActive} onCheckedChange={setIsActive} />
+          </div>
+
+          <div className="flex items-center justify-between rounded-md border p-3">
+            <div>
+              <Label htmlFor="is_promo">Em promoção</Label>
+              <p className="text-xs text-muted-foreground">
+                Mostra o emblema "Promo" no cartão do produto no cardápio.
+              </p>
+            </div>
+            <Switch id="is_promo" checked={isPromo} onCheckedChange={setIsPromo} />
           </div>
 
           {error ? (
