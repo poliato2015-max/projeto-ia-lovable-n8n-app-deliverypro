@@ -72,19 +72,21 @@ function Index() {
             height={1000}
             className="absolute inset-0 -z-20 h-full w-full object-cover"
           />
+          {/* Gradiente translúcido: escurece o lado do texto sem esconder a foto. */}
           <div
             className="absolute inset-0 -z-10"
             style={{
               background:
-                "linear-gradient(120deg, color-mix(in oklab, var(--primary) 92%, transparent), color-mix(in oklab, var(--primary) 55%, #1A1A1A))",
+                "linear-gradient(100deg, color-mix(in oklab, var(--primary) 82%, transparent) 0%, color-mix(in oklab, var(--primary) 45%, transparent) 45%, color-mix(in oklab, #1A1A1A 25%, transparent) 100%)",
             }}
           />
           <div className="mx-auto max-w-5xl space-y-5 px-4 py-24 text-primary-foreground">
-            <h1 className="max-w-2xl text-4xl font-bold leading-tight drop-shadow-sm sm:text-5xl">
-              Comida artesanal quentinha na sua porta
+            <h1 className="max-w-2xl text-4xl font-bold leading-tight drop-shadow-md sm:text-5xl">
+              Hambúrgueres, pizzas e mais, feitos na hora e entregues quentinhos
             </h1>
-            <p className="max-w-xl text-lg text-primary-foreground/90">
-              Peça em poucos cliques e acompanhe cada etapa até a entrega.
+            <p className="max-w-xl text-lg text-primary-foreground/95 drop-shadow">
+              Monte seu pedido do jeito que você gosta e acompanhe cada etapa, do preparo até a sua
+              porta.
             </p>
             <Button asChild size="lg" variant="secondary">
               <Link to="/cardapio">Ver Cardápio</Link>
@@ -96,22 +98,24 @@ function Index() {
           <h2 className="text-2xl font-bold text-foreground">Por que pedir com a gente?</h2>
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {beneficios.map((b) => (
-              <li key={b.title} className="space-y-2 rounded-xl border bg-card p-5 shadow-sm">
-                <div className="flex items-center gap-3">
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-primary">
-                    <b.icon className="h-5 w-5" />
-                  </span>
+              <li key={b.title} className="overflow-hidden rounded-xl bg-card">
+                <div className="relative">
                   <img
                     src={b.image}
                     alt={`Ilustração de ${b.title}`}
                     loading="lazy"
                     width={512}
                     height={512}
-                    className="h-12 w-12 rounded-lg object-cover"
+                    className="h-40 w-full object-cover"
                   />
+                  <span className="absolute bottom-2 right-2 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-card/90 text-primary shadow-sm">
+                    <b.icon className="h-4 w-4" />
+                  </span>
                 </div>
-                <h3 className="font-semibold text-foreground">{b.title}</h3>
-                <p className="text-sm text-muted-foreground">{b.text}</p>
+                <div className="space-y-2 p-5">
+                  <h3 className="font-semibold text-foreground">{b.title}</h3>
+                  <p className="text-sm text-muted-foreground">{b.text}</p>
+                </div>
               </li>
             ))}
           </ul>

@@ -1,5 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
-import { useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import {
   Package,
   Settings,
@@ -9,8 +8,7 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
+import { SiteHeader } from "@/components/site-header";
 import { cn } from "@/lib/utils";
 
 type AdminNavItem = {
@@ -41,18 +39,9 @@ export function AdminShell({
   actions?: ReactNode;
   children: ReactNode;
 }) {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-
-  async function sair() {
-    await queryClient.cancelQueries();
-    queryClient.clear();
-    await supabase.auth.signOut();
-    navigate({ to: "/conta", replace: true });
-  }
-
   return (
     <div className="min-h-screen bg-client-bg">
+      <SiteHeader />
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 md:flex-row">
         <aside className="md:w-56 md:shrink-0">
           <div className="mb-4">
@@ -75,9 +64,6 @@ export function AdminShell({
               </Link>
             ))}
           </nav>
-          <Button variant="outline" size="sm" className="mt-4 w-full" onClick={sair}>
-            Sair
-          </Button>
         </aside>
 
         <main className="min-w-0 flex-1">
