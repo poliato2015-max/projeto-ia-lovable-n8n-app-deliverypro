@@ -315,6 +315,7 @@ export type Database = {
           id: string
           is_active: boolean
           is_addon: boolean
+          is_promo: boolean
           name: string
           photo_url: string | null
           price: number
@@ -326,6 +327,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_addon?: boolean
+          is_promo?: boolean
           name: string
           photo_url?: string | null
           price: number
@@ -337,6 +339,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_addon?: boolean
+          is_promo?: boolean
           name?: string
           photo_url?: string | null
           price?: number
