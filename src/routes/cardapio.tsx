@@ -116,9 +116,6 @@ function Cardapio() {
             <p className="text-muted-foreground">
               Escolha seu prato e monte com os adicionais que quiser.
             </p>
-            <Link to="/" className="inline-block text-sm text-primary underline">
-              Voltar para o início
-            </Link>
           </header>
 
           {isLoading ? (

@@ -201,9 +201,6 @@ function Checkout() {
         <div className="mx-auto max-w-2xl space-y-8">
           <header className="space-y-2">
             <h1 className="text-3xl font-bold text-foreground">Revisão do pedido</h1>
-            <Link to="/cardapio" className="inline-block text-sm text-primary underline">
-              Voltar ao cardápio
-            </Link>
           </header>
 
           <section className="space-y-3">
