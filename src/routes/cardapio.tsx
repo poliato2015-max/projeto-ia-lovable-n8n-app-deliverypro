@@ -4,7 +4,10 @@ import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import { toast } from "sonner";
 
+import { useServerFn } from "@tanstack/react-start";
+
 import { supabase } from "@/integrations/supabase/client";
+import { produtosPopulares } from "@/lib/populares.functions";
 import { formatBRL, getPhotoUrls } from "@/lib/product-photos";
 import { useCart } from "@/lib/cart";
 import { SiteHeader } from "@/components/site-header";
