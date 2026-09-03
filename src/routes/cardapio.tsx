@@ -128,32 +128,47 @@ function Cardapio() {
             secoes.map((secao) => (
               <section key={secao.id} className="space-y-4">
                 <h2 className="text-xl font-semibold text-foreground">{secao.nome}</h2>
-                <ul className="grid items-stretch gap-4 sm:grid-cols-2">
-                  {secao.itens.map((product) => (
-                    <li key={product.id} className="h-full">
-                      <button
-                        type="button"
-                        onClick={() => setSelecionado(product)}
-                        className="flex h-full w-full gap-4 rounded-lg border bg-card p-4 text-left shadow-sm transition hover:border-primary"
-                      >
-                        <img
-                          src={product.photo_url ? photoUrls[product.photo_url] : undefined}
-                          alt={`Foto de ${product.name}`}
-                          loading="lazy"
-                          className="h-20 w-20 shrink-0 rounded-md bg-muted object-cover"
-                        />
-                        <div className="flex min-w-0 flex-1 flex-col">
-                          <h3 className="font-medium text-foreground">{product.name}</h3>
-                          <p className="line-clamp-2 text-sm text-muted-foreground">
-                            {product.description}
-                          </p>
-                          <p className="mt-auto pt-2 font-semibold text-foreground">
-                            {formatBRL(Number(product.price))}
-                          </p>
-                        </div>
-                      </button>
-                    </li>
-                  ))}
+                <ul className="grid items-stretch gap-5 sm:grid-cols-2">
+                  {secao.itens.map((product) => {
+                    const emblema = emblemaDe(product);
+                    return (
+                      <li key={product.id} className="h-full">
+                        <button
+                          type="button"
+                          onClick={() => setSelecionado(product)}
+                          className="group flex h-full w-full flex-col overflow-hidden rounded-xl bg-card text-left transition hover:-translate-y-0.5 hover:border-primary"
+                        >
+                          <div className="relative">
+                            <img
+                              src={product.photo_url ? photoUrls[product.photo_url] : undefined}
+                              alt={`Foto de ${product.name}`}
+                              loading="lazy"
+                              className="h-48 w-full bg-muted object-cover"
+                            />
+                            {emblema ? (
+                              <span
+                                className={`absolute left-3 top-3 rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${emblema.classe}`}
+                              >
+                                {emblema.texto}
+                              </span>
+                            ) : null}
+                            <span className="absolute -bottom-5 right-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition group-hover:scale-105">
+                              <Plus className="h-5 w-5" />
+                            </span>
+                          </div>
+                          <div className="flex flex-1 flex-col gap-1 p-4 pt-5">
+                            <h3 className="pr-10 font-semibold text-foreground">{product.name}</h3>
+                            <p className="line-clamp-2 text-sm text-muted-foreground">
+                              {product.description}
+                            </p>
+                            <p className="mt-auto pt-3 text-lg font-bold text-foreground">
+                              {formatBRL(Number(product.price))}
+                            </p>
+                          </div>
+                        </button>
+                      </li>
+                    );
+                  })}
                 </ul>
               </section>
             ))
