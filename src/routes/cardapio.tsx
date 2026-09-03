@@ -101,6 +101,21 @@ function Cardapio() {
     .filter((s) => s.itens.length > 0)
     .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
 
+  // Emblema: no máximo um por produto, na prioridade Promo > Popular > Novo.
+  function emblemaDe(product: Product) {
+    if (product.is_promo) {
+      return { texto: "Promo", classe: "bg-primary text-primary-foreground" };
+    }
+    if (populares.includes(product.id)) {
+      return { texto: "Popular", classe: "bg-amber-100 text-amber-800" };
+    }
+    const dias = (Date.now() - new Date(product.created_at).getTime()) / 86_400_000;
+    if (dias <= 14) {
+      return { texto: "Novo", classe: "bg-emerald-100 text-emerald-800" };
+    }
+    return null;
+  }
+
   const semCategoria = vendaveis.filter((p) => !p.category_id);
   if (semCategoria.length > 0) {
     secoes.push({ id: "sem-categoria", nome: "Outros", itens: semCategoria });
