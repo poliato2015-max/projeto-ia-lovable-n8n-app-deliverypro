@@ -98,22 +98,24 @@ function Index() {
           <h2 className="text-2xl font-bold text-foreground">Por que pedir com a gente?</h2>
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {beneficios.map((b) => (
-              <li key={b.title} className="space-y-2 rounded-xl border bg-card p-5 shadow-sm">
-                <div className="flex items-center gap-3">
-                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-accent text-primary">
-                    <b.icon className="h-5 w-5" />
-                  </span>
+              <li key={b.title} className="overflow-hidden rounded-xl bg-card">
+                <div className="relative">
                   <img
                     src={b.image}
                     alt={`Ilustração de ${b.title}`}
                     loading="lazy"
                     width={512}
                     height={512}
-                    className="h-12 w-12 rounded-lg object-cover"
+                    className="h-40 w-full object-cover"
                   />
+                  <span className="absolute bottom-2 right-2 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-card/90 text-primary shadow-sm">
+                    <b.icon className="h-4 w-4" />
+                  </span>
                 </div>
-                <h3 className="font-semibold text-foreground">{b.title}</h3>
-                <p className="text-sm text-muted-foreground">{b.text}</p>
+                <div className="space-y-2 p-5">
+                  <h3 className="font-semibold text-foreground">{b.title}</h3>
+                  <p className="text-sm text-muted-foreground">{b.text}</p>
+                </div>
               </li>
             ))}
           </ul>
