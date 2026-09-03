@@ -64,9 +64,6 @@ export function AdminShell({
               </Link>
             ))}
           </nav>
-          <Button variant="outline" size="sm" className="mt-4 w-full" onClick={sair}>
-            Sair
-          </Button>
         </aside>
 
         <main className="min-w-0 flex-1">
