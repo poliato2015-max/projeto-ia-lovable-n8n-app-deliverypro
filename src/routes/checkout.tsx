@@ -208,6 +208,20 @@ function Checkout() {
             <ul className="divide-y rounded-lg border bg-card">
               {items.map((item) => (
                 <li key={item.lineId} className="flex items-start gap-3 p-4">
+                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-muted">
+                    {item.photoPath && fotos?.[item.photoPath] ? (
+                      <img
+                        src={fotos[item.photoPath]}
+                        alt={`Foto de ${item.name}`}
+                        loading="lazy"
+                        className="h-full w-full object-contain"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center">
+                        <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                      </div>
+                    )}
+                  </div>
                   <div className="min-w-0 flex-1 space-y-1">
                     <p className="truncate font-medium text-foreground">{item.name}</p>
                     {item.addons.length > 0 ? (
@@ -219,6 +233,7 @@ function Checkout() {
                       <p className="text-sm text-muted-foreground">Obs.: {item.notes}</p>
                     ) : null}
                   </div>
+
                   <div className="flex items-center gap-1">
                     <Button
                       type="button"
