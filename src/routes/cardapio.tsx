@@ -176,6 +176,121 @@ function Cardapio() {
 
 }
 
+type Emblema = { texto: string; classe: string } | null;
+
+/** Lista horizontal deslizável: mostra uma fatia do próximo card e esconde as setas quando tudo cabe. */
+function CategoriaCarrossel({
+  itens,
+  photoUrls,
+  emblemaDe,
+  onSelecionar,
+}: {
+  itens: Product[];
+  photoUrls: Record<string, string>;
+  emblemaDe: (product: Product) => Emblema;
+  onSelecionar: (product: Product) => void;
+}) {
+  const [emblaRef, embla] = useEmblaCarousel({ align: "start", containScroll: "trimSnaps" });
+  const [podeVoltar, setPodeVoltar] = useState(false);
+  const [podeAvancar, setPodeAvancar] = useState(false);
+
+  useEffect(() => {
+    if (!embla) return;
+    const atualizar = () => {
+      setPodeVoltar(embla.canScrollPrev());
+      setPodeAvancar(embla.canScrollNext());
+    };
+    atualizar();
+    embla.on("select", atualizar).on("reInit", atualizar);
+    return () => {
+      embla.off("select", atualizar).off("reInit", atualizar);
+    };
+  }, [embla, itens.length]);
+
+  const temSetas = podeVoltar || podeAvancar;
+
+  return (
+    <div className="relative">
+      <div className="overflow-hidden" ref={emblaRef}>
+        <ul className="flex touch-pan-y items-stretch gap-5">
+          {itens.map((product) => {
+            const emblema = emblemaDe(product);
+            return (
+              <li
+                key={product.id}
+                className="min-w-0 shrink-0 grow-0 basis-[78%] sm:basis-[46%] lg:basis-[38%]"
+              >
+                <button
+                  type="button"
+                  onClick={() => onSelecionar(product)}
+                  className="group flex h-full w-full flex-col overflow-hidden rounded-xl bg-card text-left transition hover:-translate-y-0.5 hover:border-primary"
+                >
+                  <div className="relative">
+                    <img
+                      src={product.photo_url ? photoUrls[product.photo_url] : undefined}
+                      alt={`Foto de ${product.name}`}
+                      loading="lazy"
+                      className="h-48 w-full bg-card object-contain"
+                    />
+                    {emblema ? (
+                      <span
+                        className={`absolute left-3 top-3 rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${emblema.classe}`}
+                      >
+                        {emblema.texto}
+                      </span>
+                    ) : null}
+                    <span className="absolute -bottom-5 right-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition group-hover:scale-105">
+                      <Plus className="h-5 w-5" />
+                    </span>
+                  </div>
+                  <div className="flex flex-1 flex-col gap-1 p-4 pt-5">
+                    <h3 className="pr-10 font-semibold text-foreground">{product.name}</h3>
+                    <p className="line-clamp-2 text-sm text-muted-foreground">
+                      {product.description}
+                    </p>
+                    <p className="mt-auto pt-3 text-lg font-bold text-foreground">
+                      {formatBRL(Number(product.price))}
+                    </p>
+                  </div>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
+      {temSetas ? (
+        <>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label="Ver produtos anteriores"
+            disabled={!podeVoltar}
+            onClick={() => embla?.scrollPrev()}
+            className="absolute -left-3 top-24 z-10 rounded-full bg-card shadow-md"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label="Ver mais produtos"
+            disabled={!podeAvancar}
+            onClick={() => embla?.scrollNext()}
+            className="absolute -right-3 top-24 z-10 rounded-full bg-card shadow-md"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </>
+      ) : null}
+    </div>
+  );
+}
+
+
+
 function ConfigDialog({
   product,
   addons,
