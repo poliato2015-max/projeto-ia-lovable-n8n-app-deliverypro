@@ -199,6 +199,24 @@ function AdminKanban() {
     queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
   }
 
+  /** Encerra o ciclo: o pedido entregue sai do quadro, que mostra só o que está ativo. */
+  async function marcarEntregue(order: Order) {
+    setProcessando(order.id);
+    const { error } = await supabase
+      .from("orders")
+      .update({ status: "entregue", delivered_at: new Date().toISOString() })
+      .eq("id", order.id);
+    setProcessando(null);
+
+    if (error) {
+      toast.error("Não foi possível concluir o pedido. Tente novamente.");
+      return;
+    }
+    toast.success(`Pedido #${order.order_number} entregue.`);
+    queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
+  }
+
+
   return (
     <AdminShell
       title="Pedidos"
