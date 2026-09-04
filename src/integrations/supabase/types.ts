@@ -207,6 +207,7 @@ export type Database = {
           complement: string | null
           created_at: string
           customer_id: string
+          delivered_at: string | null
           delivery_cep: string | null
           delivery_fee: number
           id: string
@@ -227,6 +228,7 @@ export type Database = {
           complement?: string | null
           created_at?: string
           customer_id: string
+          delivered_at?: string | null
           delivery_cep?: string | null
           delivery_fee?: number
           id?: string
@@ -247,6 +249,7 @@ export type Database = {
           complement?: string | null
           created_at?: string
           customer_id?: string
+          delivered_at?: string | null
           delivery_cep?: string | null
           delivery_fee?: number
           id?: string

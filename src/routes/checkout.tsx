@@ -1,12 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { ImageIcon, Minus, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useCart, lineTotal } from "@/lib/cart";
-import { formatBRL } from "@/lib/product-photos";
+import { formatBRL, getPhotoUrls } from "@/lib/product-photos";
+
 import { useSession } from "@/lib/use-session";
 import { useCepEntrega } from "@/lib/use-cep-entrega";
 import { SiteHeader } from "@/components/site-header";
@@ -90,8 +91,16 @@ function Checkout() {
     },
   });
 
+  const caminhosFotos = items.map((i) => i.photoPath).filter((p): p is string => !!p);
+  const { data: fotos } = useQuery({
+    queryKey: ["checkout-fotos", caminhosFotos.join(",")],
+    enabled: caminhosFotos.length > 0,
+    queryFn: () => getPhotoUrls(caminhosFotos),
+  });
+
   const { endereco, erro: erroCep, verificando, foraDoRaio, mensagemDistancia } =
     useCepEntrega(cep);
+
 
   const deliveryFee = settings?.free_shipping_enabled ? 0 : Number(settings?.delivery_fee ?? 0);
   const total = subtotal + deliveryFee;
@@ -208,6 +217,20 @@ function Checkout() {
             <ul className="divide-y rounded-lg border bg-card">
               {items.map((item) => (
                 <li key={item.lineId} className="flex items-start gap-3 p-4">
+                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-muted">
+                    {item.photoPath && fotos?.[item.photoPath] ? (
+                      <img
+                        src={fotos[item.photoPath]}
+                        alt={`Foto de ${item.name}`}
+                        loading="lazy"
+                        className="h-full w-full object-contain"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center">
+                        <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                      </div>
+                    )}
+                  </div>
                   <div className="min-w-0 flex-1 space-y-1">
                     <p className="truncate font-medium text-foreground">{item.name}</p>
                     {item.addons.length > 0 ? (
@@ -219,6 +242,7 @@ function Checkout() {
                       <p className="text-sm text-muted-foreground">Obs.: {item.notes}</p>
                     ) : null}
                   </div>
+
                   <div className="flex items-center gap-1">
                     <Button
                       type="button"

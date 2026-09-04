@@ -199,6 +199,24 @@ function AdminKanban() {
     queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
   }
 
+  /** Encerra o ciclo: o pedido entregue sai do quadro, que mostra só o que está ativo. */
+  async function marcarEntregue(order: Order) {
+    setProcessando(order.id);
+    const { error } = await supabase
+      .from("orders")
+      .update({ status: "entregue", delivered_at: new Date().toISOString() })
+      .eq("id", order.id);
+    setProcessando(null);
+
+    if (error) {
+      toast.error("Não foi possível concluir o pedido. Tente novamente.");
+      return;
+    }
+    toast.success(`Pedido #${order.order_number} entregue.`);
+    queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
+  }
+
+
   return (
     <AdminShell
       title="Pedidos"
@@ -210,7 +228,7 @@ function AdminKanban() {
       ) : (
         <div className="grid gap-4 lg:grid-cols-4">
           <section className="flex min-h-64 flex-col gap-3 rounded-lg border bg-card p-3 shadow-sm">
-            <header className="flex items-center justify-between rounded-md bg-slate-200 px-3 py-2 text-slate-800">
+            <header className="flex min-h-[3.5rem] items-center justify-between rounded-md bg-slate-200 px-3 py-2 text-slate-800">
               <h2 className="flex items-center gap-2 text-sm font-semibold">
                 <Inbox className="h-4 w-4" />
                 Aguardando aprovação
@@ -288,7 +306,7 @@ function AdminKanban() {
               >
                 <header
                   className={cn(
-                    "flex items-center justify-between rounded-md px-3 py-2",
+                    "flex min-h-[3.5rem] items-center justify-between rounded-md px-3 py-2",
                     coluna.header,
                   )}
                 >
@@ -314,21 +332,37 @@ function AdminKanban() {
                         setArrastando(null);
                         setColunaAlvo(null);
                       }}
-                      onClick={() => setDetalhe(order)}
                       className={cn(
-                        "cursor-pointer rounded-md border bg-card p-3 shadow-sm transition-opacity hover:border-primary",
+                        "rounded-md border bg-card p-3 shadow-sm transition-opacity hover:border-primary",
                         arrastando === order.id && "opacity-50",
                       )}
                     >
-                      <p className="text-sm font-semibold text-foreground">
-                        Pedido #{order.order_number}
-                      </p>
-                      <p className="truncate text-sm text-muted-foreground">
-                        {order.customers?.full_name}
-                      </p>
-                      <p className="mt-1 text-xs text-muted-foreground">{resumoItens(order)}</p>
+                      <button
+                        type="button"
+                        onClick={() => setDetalhe(order)}
+                        className="w-full cursor-pointer text-left"
+                      >
+                        <p className="text-sm font-semibold text-foreground">
+                          Pedido #{order.order_number}
+                        </p>
+                        <p className="truncate text-sm text-muted-foreground">
+                          {order.customers?.full_name}
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">{resumoItens(order)}</p>
+                      </button>
+                      {order.status === "saiu_para_entrega" ? (
+                        <Button
+                          size="sm"
+                          className="mt-3 w-full"
+                          disabled={processando === order.id}
+                          onClick={() => marcarEntregue(order)}
+                        >
+                          Marcar como entregue
+                        </Button>
+                      ) : null}
                     </article>
                   ))
+
                 )}
               </section>
             );

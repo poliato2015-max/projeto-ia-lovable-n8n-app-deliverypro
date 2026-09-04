@@ -53,7 +53,7 @@ export function CartSheet() {
                   src={item.photoPath ? photoUrls[item.photoPath] : undefined}
                   alt={`Foto de ${item.name}`}
                   loading="lazy"
-                  className="h-16 w-16 shrink-0 rounded-md bg-muted object-cover"
+                  className="h-16 w-16 shrink-0 rounded-md bg-muted object-contain"
                 />
                 <div className="min-w-0 flex-1 space-y-1">
                   <div className="flex items-start gap-2">
