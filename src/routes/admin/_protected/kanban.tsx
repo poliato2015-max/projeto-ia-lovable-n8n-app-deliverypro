@@ -314,21 +314,37 @@ function AdminKanban() {
                         setArrastando(null);
                         setColunaAlvo(null);
                       }}
-                      onClick={() => setDetalhe(order)}
                       className={cn(
-                        "cursor-pointer rounded-md border bg-card p-3 shadow-sm transition-opacity hover:border-primary",
+                        "rounded-md border bg-card p-3 shadow-sm transition-opacity hover:border-primary",
                         arrastando === order.id && "opacity-50",
                       )}
                     >
-                      <p className="text-sm font-semibold text-foreground">
-                        Pedido #{order.order_number}
-                      </p>
-                      <p className="truncate text-sm text-muted-foreground">
-                        {order.customers?.full_name}
-                      </p>
-                      <p className="mt-1 text-xs text-muted-foreground">{resumoItens(order)}</p>
+                      <button
+                        type="button"
+                        onClick={() => setDetalhe(order)}
+                        className="w-full cursor-pointer text-left"
+                      >
+                        <p className="text-sm font-semibold text-foreground">
+                          Pedido #{order.order_number}
+                        </p>
+                        <p className="truncate text-sm text-muted-foreground">
+                          {order.customers?.full_name}
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">{resumoItens(order)}</p>
+                      </button>
+                      {order.status === "saiu_para_entrega" ? (
+                        <Button
+                          size="sm"
+                          className="mt-3 w-full"
+                          disabled={processando === order.id}
+                          onClick={() => marcarEntregue(order)}
+                        >
+                          Marcar como entregue
+                        </Button>
+                      ) : null}
                     </article>
                   ))
+
                 )}
               </section>
             );
