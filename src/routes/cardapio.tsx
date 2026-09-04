@@ -335,7 +335,7 @@ function ConfigDialog({
         <img
           src={photoUrl}
           alt={`Foto de ${product.name}`}
-          className="h-40 w-full rounded-md bg-muted object-cover"
+          className="h-40 w-full rounded-md bg-card object-contain"
         />
 
         <div className="space-y-3">

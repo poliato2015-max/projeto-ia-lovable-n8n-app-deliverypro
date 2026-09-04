@@ -196,7 +196,7 @@ function AdminProdutos() {
                         <img
                           src={product.photo_url ? photoUrls[product.photo_url] : undefined}
                           alt={`Foto de ${product.name}`}
-                          className="h-14 w-14 shrink-0 rounded-md border bg-muted object-cover"
+                          className="h-14 w-14 shrink-0 rounded-md border bg-muted object-contain"
                         />
                         <div className="min-w-0 flex-1">
                           <p className="truncate font-medium text-foreground">{product.name}</p>
@@ -584,7 +584,7 @@ function ProductFormDialog({
               <img
                 src={currentPhotoUrl}
                 alt="Foto atual do produto"
-                className="h-20 w-20 rounded-md border object-cover"
+                className="h-20 w-20 rounded-md border object-contain"
               />
             ) : null}
           </div>

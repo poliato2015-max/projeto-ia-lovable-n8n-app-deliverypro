@@ -126,7 +126,7 @@ function MeusPedidos() {
                         <img
                           src={url}
                           alt={pedido.order_items[0]?.products?.name ?? "Produto do pedido"}
-                          className="h-full w-full object-cover"
+                          className="h-full w-full object-contain"
                           loading="lazy"
                         />
                       ) : (
