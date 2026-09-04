@@ -210,7 +210,7 @@ function AdminKanban() {
       ) : (
         <div className="grid gap-4 lg:grid-cols-4">
           <section className="flex min-h-64 flex-col gap-3 rounded-lg border bg-card p-3 shadow-sm">
-            <header className="flex items-center justify-between rounded-md bg-slate-200 px-3 py-2 text-slate-800">
+            <header className="flex min-h-[3.5rem] items-center justify-between rounded-md bg-slate-200 px-3 py-2 text-slate-800">
               <h2 className="flex items-center gap-2 text-sm font-semibold">
                 <Inbox className="h-4 w-4" />
                 Aguardando aprovação
@@ -288,7 +288,7 @@ function AdminKanban() {
               >
                 <header
                   className={cn(
-                    "flex items-center justify-between rounded-md px-3 py-2",
+                    "flex min-h-[3.5rem] items-center justify-between rounded-md px-3 py-2",
                     coluna.header,
                   )}
                 >
