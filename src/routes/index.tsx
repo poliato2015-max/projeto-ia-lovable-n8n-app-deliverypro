@@ -81,13 +81,14 @@ function Index() {
             }}
           />
           <div className="mx-auto max-w-5xl space-y-5 px-4 py-24 text-primary-foreground">
-            <h1 className="max-w-2xl text-4xl font-bold leading-tight drop-shadow-md sm:text-5xl">
+            <h1 className="text-4xl font-bold leading-tight drop-shadow-md sm:text-5xl">
               Hambúrgueres, pizzas e mais, feitos na hora e entregues quentinhos
             </h1>
-            <p className="max-w-xl text-lg text-primary-foreground/95 drop-shadow">
+            <p className="text-lg text-primary-foreground/95 drop-shadow">
               Monte seu pedido do jeito que você gosta e acompanhe cada etapa, do preparo até a sua
               porta.
             </p>
+
             <Button asChild size="lg" variant="secondary">
               <Link to="/cardapio">Ver Cardápio</Link>
             </Button>
