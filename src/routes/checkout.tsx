@@ -1,12 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { ImageIcon, Minus, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useCart, lineTotal } from "@/lib/cart";
-import { formatBRL } from "@/lib/product-photos";
+import { formatBRL, getPhotoUrls } from "@/lib/product-photos";
+
 import { useSession } from "@/lib/use-session";
 import { useCepEntrega } from "@/lib/use-cep-entrega";
 import { SiteHeader } from "@/components/site-header";
@@ -90,8 +91,16 @@ function Checkout() {
     },
   });
 
+  const caminhosFotos = items.map((i) => i.photoPath).filter((p): p is string => !!p);
+  const { data: fotos } = useQuery({
+    queryKey: ["checkout-fotos", caminhosFotos.join(",")],
+    enabled: caminhosFotos.length > 0,
+    queryFn: () => getPhotoUrls(caminhosFotos),
+  });
+
   const { endereco, erro: erroCep, verificando, foraDoRaio, mensagemDistancia } =
     useCepEntrega(cep);
+
 
   const deliveryFee = settings?.free_shipping_enabled ? 0 : Number(settings?.delivery_fee ?? 0);
   const total = subtotal + deliveryFee;
