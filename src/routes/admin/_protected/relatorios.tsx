@@ -49,7 +49,9 @@ const STATUS_LABEL: Record<string, string> = {
   pedidos_a_fazer: "Pedidos a fazer",
   fazendo: "Fazendo",
   saiu_para_entrega: "Saiu para a entrega",
+  entregue: "Entregue",
   rejeitado: "Rejeitado",
+
 };
 
 // Resumo curto dos itens, no mesmo formato do card do Kanban.
