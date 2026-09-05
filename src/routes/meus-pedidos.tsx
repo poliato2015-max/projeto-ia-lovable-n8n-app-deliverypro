@@ -71,11 +71,30 @@ function resumoItens(pedido: Pedido) {
 
 function MeusPedidos() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { user, loading } = useSession();
+  const [confirmando, setConfirmando] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/conta", replace: true });
   }, [loading, user, navigate]);
+
+  async function confirmarRecebimento(pedido: Pedido) {
+    setConfirmando(pedido.id);
+    const { error } = await supabase
+      .from("orders")
+      .update({ status: "entregue" })
+      .eq("id", pedido.id);
+    setConfirmando(null);
+
+    if (error) {
+      toast.error("Não foi possível confirmar o recebimento. Tente novamente.");
+      return;
+    }
+    toast.success(`Pedido #${pedido.order_number} confirmado. Bom apetite!`);
+    queryClient.invalidateQueries({ queryKey: ["meus-pedidos"] });
+  }
+
 
   const { data: pedidos, isLoading } = useQuery({
     queryKey: ["meus-pedidos", user?.id],
