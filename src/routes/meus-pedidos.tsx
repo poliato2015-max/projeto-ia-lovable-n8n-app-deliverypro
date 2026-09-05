@@ -177,7 +177,18 @@ function MeusPedidos() {
                     <p className="mt-2 font-semibold text-foreground">
                       {formatBRL(Number(pedido.total))}
                     </p>
+                    {pedido.status === "saiu_para_entrega" ? (
+                      <Button
+                        size="sm"
+                        className="mt-3"
+                        disabled={confirmando === pedido.id}
+                        onClick={() => confirmarRecebimento(pedido)}
+                      >
+                        Confirmar recebimento
+                      </Button>
+                    ) : null}
                   </div>
+
                 </li>
               ))}
             </ul>
