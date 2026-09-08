@@ -99,6 +99,7 @@ function AdminEntrega() {
         delivery_fee: feeValue,
         free_shipping_enabled: freeShipping,
         delivery_radius_km: rangeValue,
+        n8n_webhook_url: webhookUrl.trim() === "" ? null : webhookUrl.trim(),
         store_lat: localizacao.lat,
         store_lng: localizacao.lng,
         updated_at: new Date().toISOString(),
