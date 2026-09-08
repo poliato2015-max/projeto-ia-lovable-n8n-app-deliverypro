@@ -68,6 +68,7 @@ function AdminEntrega() {
     setFee(String(settings.delivery_fee));
     setFreeShipping(settings.free_shipping_enabled);
     setRange(String(settings.delivery_radius_km));
+    setWebhookUrl(settings.n8n_webhook_url ?? "");
   }, [settings]);
 
   async function salvar(event: React.FormEvent) {
