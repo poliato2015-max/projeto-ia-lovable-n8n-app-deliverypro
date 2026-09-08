@@ -57,7 +57,7 @@ BEGIN
   WHERE oi.order_id = NEW.id;
 
   PERFORM net.http_post(
-    url := 'https://oracle-n8n-marcelo.duckdns.org/webhook/pedidos_delivery',
+    url := '<configurado em delivery_settings.n8n_webhook_url>',
     headers := '{"Content-Type": "application/json"}'::jsonb,
     body := jsonb_build_object(
       'event', v_event,

@@ -45,6 +45,7 @@ function AdminEntrega() {
   const [fee, setFee] = useState("");
   const [freeShipping, setFreeShipping] = useState(false);
   const [range, setRange] = useState("");
+  const [webhookUrl, setWebhookUrl] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
 
@@ -67,6 +68,7 @@ function AdminEntrega() {
     setFee(String(settings.delivery_fee));
     setFreeShipping(settings.free_shipping_enabled);
     setRange(String(settings.delivery_radius_km));
+    setWebhookUrl(settings.n8n_webhook_url ?? "");
   }, [settings]);
 
   async function salvar(event: React.FormEvent) {
@@ -97,6 +99,7 @@ function AdminEntrega() {
         delivery_fee: feeValue,
         free_shipping_enabled: freeShipping,
         delivery_radius_km: rangeValue,
+        n8n_webhook_url: webhookUrl.trim() === "" ? null : webhookUrl.trim(),
         store_lat: localizacao.lat,
         store_lng: localizacao.lng,
         updated_at: new Date().toISOString(),
@@ -168,6 +171,19 @@ function AdminEntrega() {
             <p className="text-xs text-muted-foreground">
               Pedidos com endereço acima desta distância da loja são bloqueados no cadastro e no
               checkout.
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="webhook-url">Endereço de avisos (WhatsApp)</Label>
+            <Input
+              id="webhook-url"
+              placeholder="https://..."
+              value={webhookUrl}
+              onChange={(e) => setWebhookUrl(e.target.value)}
+            />
+            <p className="text-xs text-muted-foreground">
+              Enquanto estiver vazio, nenhum aviso automático é enviado ao cliente.
             </p>
           </div>
 

@@ -89,6 +89,7 @@ export type Database = {
           delivery_radius_km: number
           free_shipping_enabled: boolean
           id: string
+          n8n_webhook_url: string | null
           store_cep: string
           store_lat: number | null
           store_lng: number | null
@@ -99,6 +100,7 @@ export type Database = {
           delivery_radius_km?: number
           free_shipping_enabled?: boolean
           id?: string
+          n8n_webhook_url?: string | null
           store_cep: string
           store_lat?: number | null
           store_lng?: number | null
@@ -109,6 +111,7 @@ export type Database = {
           delivery_radius_km?: number
           free_shipping_enabled?: boolean
           id?: string
+          n8n_webhook_url?: string | null
           store_cep?: string
           store_lat?: number | null
           store_lng?: number | null
