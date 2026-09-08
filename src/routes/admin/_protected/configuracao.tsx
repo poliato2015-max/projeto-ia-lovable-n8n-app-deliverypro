@@ -45,6 +45,7 @@ function AdminEntrega() {
   const [fee, setFee] = useState("");
   const [freeShipping, setFreeShipping] = useState(false);
   const [range, setRange] = useState("");
+  const [webhookUrl, setWebhookUrl] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
 
