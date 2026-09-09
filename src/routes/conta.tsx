@@ -183,7 +183,7 @@ function FormNovaSenha({ onConcluido }: { onConcluido: () => void }) {
     }
     const { error } = await supabase.auth.updateUser({ password: senha });
     setEnviando(false);
-    if (error) return setErro("Não foi possível alterar a senha. Peça um novo link.");
+    if (error) return setErro(traduzirErroSenha(error.message));
 
     window.history.replaceState(null, "", "/conta");
     toast.success("Senha alterada com sucesso!");
