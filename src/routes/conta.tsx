@@ -215,6 +215,12 @@ function FormNovaSenha({ onConcluido }: { onConcluido: () => void }) {
           onChange={(e) => setConfirmar(e.target.value)}
         />
       </div>
+      <RegrasSenha senha={senha} />
+      {confirmar.length > 0 && senha !== confirmar ? (
+        <p className="text-sm text-destructive">
+          A senha e a confirmação da senha não são iguais.
+        </p>
+      ) : null}
       {erro ? <p className="text-sm text-destructive">{erro}</p> : null}
       <Button type="submit" className="w-full" disabled={enviando}>
         {enviando ? "Salvando..." : "Salvar nova senha"}
