@@ -12,6 +12,35 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  REGRAS_SENHA_TEXTO,
+  checklistSenha,
+  traduzirErroSenha,
+  validarSenha,
+} from "@/lib/password-rules";
+
+/** Checklist visual das regras de senha. */
+function RegrasSenha({ senha }: { senha: string }) {
+  const itens = checklistSenha(senha);
+  return (
+    <div className="rounded-lg border bg-muted/40 p-3">
+      <p className="mb-2 text-xs font-medium text-foreground">{REGRAS_SENHA_TEXTO}</p>
+      <ul className="space-y-1">
+        {itens.map((item) => (
+          <li
+            key={item.rotulo}
+            className={`flex items-center gap-2 text-xs ${
+              item.ok ? "text-primary" : "text-muted-foreground"
+            }`}
+          >
+            <span aria-hidden="true">{item.ok ? "✓" : "•"}</span>
+            {item.rotulo}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/conta")({
   ssr: false,
@@ -141,8 +170,8 @@ function FormNovaSenha({ onConcluido }: { onConcluido: () => void }) {
   async function salvar(e: React.FormEvent) {
     e.preventDefault();
     setErro(null);
-    if (senha.length < 6) return setErro("A senha deve ter no mínimo 6 caracteres.");
-    if (senha !== confirmar) return setErro("As senhas não conferem.");
+    const invalida = validarSenha(senha, confirmar);
+    if (invalida) return setErro(invalida);
 
     setEnviando(true);
     const { data: sessao } = await supabase.auth.getSession();
@@ -154,7 +183,7 @@ function FormNovaSenha({ onConcluido }: { onConcluido: () => void }) {
     }
     const { error } = await supabase.auth.updateUser({ password: senha });
     setEnviando(false);
-    if (error) return setErro("Não foi possível alterar a senha. Peça um novo link.");
+    if (error) return setErro(traduzirErroSenha(error.message));
 
     window.history.replaceState(null, "", "/conta");
     toast.success("Senha alterada com sucesso!");
@@ -186,6 +215,12 @@ function FormNovaSenha({ onConcluido }: { onConcluido: () => void }) {
           onChange={(e) => setConfirmar(e.target.value)}
         />
       </div>
+      <RegrasSenha senha={senha} />
+      {confirmar.length > 0 && senha !== confirmar ? (
+        <p className="text-sm text-destructive">
+          A senha e a confirmação da senha não são iguais.
+        </p>
+      ) : null}
       {erro ? <p className="text-sm text-destructive">{erro}</p> : null}
       <Button type="submit" className="w-full" disabled={enviando}>
         {enviando ? "Salvando..." : "Salvar nova senha"}
@@ -310,8 +345,8 @@ function FormCadastrar() {
     if (!endereco) return setErro("Confirme um CEP válido.");
     if (foraDoRaio) return setErro(mensagemDistancia);
     if (!/^[0-9]+$/.test(numero)) return setErro("Informe o número do endereço (apenas dígitos).");
-    if (senha.length < 6) return setErro("A senha deve ter no mínimo 6 caracteres.");
-    if (senha !== confirmar) return setErro("As senhas não conferem.");
+    const invalida = validarSenha(senha, confirmar);
+    if (invalida) return setErro(invalida);
 
     setEnviando(true);
     const { data, error } = await supabase.auth.signUp({
@@ -492,6 +527,12 @@ function FormCadastrar() {
           onChange={(e) => setConfirmar(e.target.value)}
         />
       </div>
+      <RegrasSenha senha={senha} />
+      {confirmar.length > 0 && senha !== confirmar ? (
+        <p className="text-sm text-destructive">
+          A senha e a confirmação da senha não são iguais.
+        </p>
+      ) : null}
 
       {erro ? <p className="text-sm text-destructive">{erro}</p> : null}
       <Button type="submit" className="w-full" disabled={enviando || foraDoRaio}>
