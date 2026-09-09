@@ -170,8 +170,8 @@ function FormNovaSenha({ onConcluido }: { onConcluido: () => void }) {
   async function salvar(e: React.FormEvent) {
     e.preventDefault();
     setErro(null);
-    if (senha.length < 6) return setErro("A senha deve ter no mínimo 6 caracteres.");
-    if (senha !== confirmar) return setErro("As senhas não conferem.");
+    const invalida = validarSenha(senha, confirmar);
+    if (invalida) return setErro(invalida);
 
     setEnviando(true);
     const { data: sessao } = await supabase.auth.getSession();
