@@ -345,8 +345,8 @@ function FormCadastrar() {
     if (!endereco) return setErro("Confirme um CEP válido.");
     if (foraDoRaio) return setErro(mensagemDistancia);
     if (!/^[0-9]+$/.test(numero)) return setErro("Informe o número do endereço (apenas dígitos).");
-    if (senha.length < 6) return setErro("A senha deve ter no mínimo 6 caracteres.");
-    if (senha !== confirmar) return setErro("As senhas não conferem.");
+    const invalida = validarSenha(senha, confirmar);
+    if (invalida) return setErro(invalida);
 
     setEnviando(true);
     const { data, error } = await supabase.auth.signUp({
@@ -527,6 +527,12 @@ function FormCadastrar() {
           onChange={(e) => setConfirmar(e.target.value)}
         />
       </div>
+      <RegrasSenha senha={senha} />
+      {confirmar.length > 0 && senha !== confirmar ? (
+        <p className="text-sm text-destructive">
+          A senha e a confirmação da senha não são iguais.
+        </p>
+      ) : null}
 
       {erro ? <p className="text-sm text-destructive">{erro}</p> : null}
       <Button type="submit" className="w-full" disabled={enviando || foraDoRaio}>
