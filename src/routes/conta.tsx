@@ -12,6 +12,35 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  REGRAS_SENHA_TEXTO,
+  checklistSenha,
+  traduzirErroSenha,
+  validarSenha,
+} from "@/lib/password-rules";
+
+/** Checklist visual das regras de senha. */
+function RegrasSenha({ senha }: { senha: string }) {
+  const itens = checklistSenha(senha);
+  return (
+    <div className="rounded-lg border bg-muted/40 p-3">
+      <p className="mb-2 text-xs font-medium text-foreground">{REGRAS_SENHA_TEXTO}</p>
+      <ul className="space-y-1">
+        {itens.map((item) => (
+          <li
+            key={item.rotulo}
+            className={`flex items-center gap-2 text-xs ${
+              item.ok ? "text-primary" : "text-muted-foreground"
+            }`}
+          >
+            <span aria-hidden="true">{item.ok ? "✓" : "•"}</span>
+            {item.rotulo}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/conta")({
   ssr: false,
