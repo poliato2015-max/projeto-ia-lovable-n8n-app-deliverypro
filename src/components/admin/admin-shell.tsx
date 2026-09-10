@@ -9,6 +9,7 @@ import {
 import type { ReactNode } from "react";
 
 import { SiteHeader } from "@/components/site-header";
+import { AdminLayout } from "@/components/layout-container";
 import { cn } from "@/lib/utils";
 
 type AdminNavItem = {
@@ -41,8 +42,8 @@ export function AdminShell({
 }) {
   return (
     <div className="min-h-screen bg-client-bg">
-      <SiteHeader />
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-8 md:flex-row">
+      <SiteHeader layout="admin" />
+      <AdminLayout className="flex flex-col gap-6 py-8 md:flex-row">
         <aside className="md:w-56 md:shrink-0">
           <div className="mb-4">
             <p className="text-sm font-semibold text-foreground">Painel administrativo</p>
@@ -67,9 +68,9 @@ export function AdminShell({
         </aside>
 
         <main className="min-w-0 flex-1">
-          <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">{title}</h1>
+          <header className="mb-6 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:flex sm:flex-wrap sm:justify-between">
+            <div className="min-w-0">
+              <h1 className="truncate text-2xl font-bold text-foreground">{title}</h1>
               {description ? (
                 <p className="text-sm text-muted-foreground">{description}</p>
               ) : null}
@@ -78,7 +79,7 @@ export function AdminShell({
           </header>
           {children}
         </main>
-      </div>
+      </AdminLayout>
     </div>
   );
 }

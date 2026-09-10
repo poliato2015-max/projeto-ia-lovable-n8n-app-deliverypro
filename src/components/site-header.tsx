@@ -6,9 +6,16 @@ import { UtensilsCrossed } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/use-session";
 import { Button } from "@/components/ui/button";
+import { AdminLayout, PublicLayout } from "@/components/layout-container";
 
 /** Cabeçalho persistente das telas do cliente. */
-export function SiteHeader({ actions }: { actions?: ReactNode }) {
+export function SiteHeader({
+  actions,
+  layout = "public",
+}: {
+  actions?: ReactNode;
+  layout?: "public" | "admin";
+}) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [adminEmail, setAdminEmail] = useState<string | null>(null);
@@ -40,14 +47,17 @@ export function SiteHeader({ actions }: { actions?: ReactNode }) {
     navigate({ to: "/", replace: true });
   }
 
+  const Layout = layout === "admin" ? AdminLayout : PublicLayout;
+
   return (
     <header className="sticky top-0 z-40 border-b bg-card/95 backdrop-blur">
-      <div className="mx-auto flex max-w-5xl items-center gap-4 px-4 py-3">
-        <Link to="/" className="flex items-center gap-2">
+      <Layout className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 py-3 sm:flex sm:gap-4">
+        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+        <Link to="/" className="flex min-w-0 items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <UtensilsCrossed className="h-4 w-4" />
           </span>
-          <span className="text-lg font-bold text-foreground">DeliveryPro</span>
+          <span className="truncate text-lg font-bold text-foreground">DeliveryPro</span>
         </Link>
         <Link
           to="/cardapio"
@@ -65,8 +75,9 @@ export function SiteHeader({ actions }: { actions?: ReactNode }) {
             Meus Pedidos
           </Link>
         ) : null}
+        </div>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2 sm:ml-auto">
           {adminEmail !== null ? (
             <>
               <Button asChild variant="ghost" size="sm">
@@ -88,7 +99,7 @@ export function SiteHeader({ actions }: { actions?: ReactNode }) {
           )}
           {actions}
         </div>
-      </div>
+      </Layout>
     </header>
   );
 }
