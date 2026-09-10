@@ -2,9 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Minus } from "lucide-react";
 import { toast } from "sonner";
-
 
 import { useServerFn } from "@tanstack/react-start";
 
@@ -15,6 +14,7 @@ import { useCart } from "@/lib/cart";
 import { SiteHeader } from "@/components/site-header";
 import { PublicLayout } from "@/components/layout-container";
 import { CartSheet } from "@/components/cart-sheet";
+import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
