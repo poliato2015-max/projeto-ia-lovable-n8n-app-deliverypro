@@ -21,7 +21,7 @@ export function ProductCard({ product, photoUrl, emblema, onClick, children }: P
     <button
       type="button"
       onClick={onClick}
-      className="group flex h-full w-full flex-col overflow-hidden rounded-xl bg-card text-left transition hover:-translate-y-0.5 hover:border-primary"
+      className="group relative flex h-full w-full flex-col overflow-hidden rounded-xl bg-card text-left transition hover:-translate-y-0.5 hover:border-primary"
     >
       <div className="relative aspect-[4/3] w-full overflow-hidden">
         <img
@@ -37,10 +37,10 @@ export function ProductCard({ product, photoUrl, emblema, onClick, children }: P
             {emblema.texto}
           </span>
         ) : null}
-        <span className="absolute -bottom-5 right-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition group-hover:scale-105">
-          <Plus className="h-5 w-5" />
-        </span>
       </div>
+      <span className="pointer-events-none absolute right-4 top-[calc(75%-1.25rem)] z-10 inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition group-hover:scale-105">
+        <Plus className="h-5 w-5" />
+      </span>
       <div className="flex flex-1 flex-col gap-1 p-4 pt-5">
         <h3 className="pr-10 font-semibold text-foreground">{product.name}</h3>
         <p className="line-clamp-2 text-sm text-muted-foreground">{product.description}</p>

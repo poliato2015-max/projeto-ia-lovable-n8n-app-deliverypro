@@ -240,9 +240,9 @@ function CategoriaCarrossel({
             aria-label="Ver produtos anteriores"
             disabled={!podeVoltar}
             onClick={() => embla?.scrollPrev()}
-            className="absolute -left-3 top-24 z-10 rounded-full bg-card shadow-md"
+            className="absolute -left-5 top-24 z-10 h-12 w-12 rounded-full bg-card shadow-md"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-6 w-6" />
           </Button>
           <Button
             type="button"
@@ -251,9 +251,9 @@ function CategoriaCarrossel({
             aria-label="Ver mais produtos"
             disabled={!podeAvancar}
             onClick={() => embla?.scrollNext()}
-            className="absolute -right-3 top-24 z-10 rounded-full bg-card shadow-md"
+            className="absolute -right-5 top-24 z-10 h-12 w-12 rounded-full bg-card shadow-md"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-6 w-6" />
           </Button>
         </>
       ) : null}
