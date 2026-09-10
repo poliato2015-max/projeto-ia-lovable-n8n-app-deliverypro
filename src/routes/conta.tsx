@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -299,9 +299,6 @@ function FormEntrar({ redirecionar }: { redirecionar?: string }) {
       >
         Esqueci minha senha
       </Link>
-    </form>
-  );
-}
     </form>
   );
 }
