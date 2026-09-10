@@ -62,14 +62,30 @@ function AdminEntrega() {
     },
   });
 
+  const { data: webhook } = useQuery({
+    queryKey: ["delivery-webhook-admin"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("delivery_webhook")
+        .select("id, url")
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
   useEffect(() => {
     if (!settings) return;
     setStoreCep(settings.store_cep);
     setFee(String(settings.delivery_fee));
     setFreeShipping(settings.free_shipping_enabled);
     setRange(String(settings.delivery_radius_km));
-    setWebhookUrl(settings.n8n_webhook_url ?? "");
   }, [settings]);
+
+  useEffect(() => {
+    setWebhookUrl(webhook?.url ?? "");
+  }, [webhook]);
 
   async function salvar(event: React.FormEvent) {
     event.preventDefault();
@@ -99,20 +115,29 @@ function AdminEntrega() {
         delivery_fee: feeValue,
         free_shipping_enabled: freeShipping,
         delivery_radius_km: rangeValue,
-        n8n_webhook_url: webhookUrl.trim() === "" ? null : webhookUrl.trim(),
         store_lat: localizacao.lat,
         store_lng: localizacao.lng,
         updated_at: new Date().toISOString(),
       })
       .eq("id", settings.id);
+
+    const urlValor = webhookUrl.trim() === "" ? null : webhookUrl.trim();
+    const { error: erroWebhook } = webhook
+      ? await supabase
+          .from("delivery_webhook")
+          .update({ url: urlValor })
+          .eq("id", webhook.id)
+      : await supabase.from("delivery_webhook").insert({ url: urlValor });
+
     setSalvando(false);
 
-    if (error) {
+    if (error || erroWebhook) {
       setErro("Não foi possível salvar as configurações. Tente novamente.");
       return;
     }
     toast.success("Configurações de entrega salvas.");
     queryClient.invalidateQueries({ queryKey: ["delivery-settings-admin"] });
+    queryClient.invalidateQueries({ queryKey: ["delivery-webhook-admin"] });
     queryClient.invalidateQueries({ queryKey: ["delivery-settings"] });
     queryClient.invalidateQueries({ queryKey: ["delivery_settings"] });
   }
