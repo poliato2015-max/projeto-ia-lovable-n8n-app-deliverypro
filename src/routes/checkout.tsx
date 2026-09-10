@@ -11,6 +11,7 @@ import { formatBRL, getPhotoUrls } from "@/lib/product-photos";
 import { useSession } from "@/lib/use-session";
 import { useCepEntrega } from "@/lib/use-cep-entrega";
 import { SiteHeader } from "@/components/site-header";
+import { PublicLayout } from "@/components/layout-container";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -130,30 +131,32 @@ function Checkout() {
     return (
       <div className="min-h-screen bg-client-bg">
         <SiteHeader />
-        <main className="flex flex-col items-center justify-center gap-4 px-6 py-20 text-center">
-          <div className="w-full max-w-md space-y-4 rounded-2xl border bg-card p-8 shadow-sm">
-            <h1 className="text-3xl font-bold text-foreground">Pedido confirmado!</h1>
-            <p className="text-muted-foreground">
-              Seu pedido é o número{" "}
-              <span className="font-semibold text-foreground">#{confirmado.orderNumber}</span>.
-            </p>
-            <p className="text-muted-foreground">
-              Total:{" "}
-              <span className="font-semibold text-foreground">{formatBRL(confirmado.total)}</span>
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Estamos aguardando a aprovação do restaurante. Em breve seu pedido entra em preparo.
-            </p>
-            <div className="flex justify-center gap-2">
-              <Button asChild>
-                <Link to="/cardapio">Voltar ao cardápio</Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link to="/meus-pedidos">Meus Pedidos</Link>
-              </Button>
+        <PublicLayout className="flex flex-col items-center justify-center gap-4 py-20 text-center">
+          <main>
+            <div className="w-full max-w-md space-y-4 rounded-2xl border bg-card p-8 shadow-sm">
+              <h1 className="text-3xl font-bold text-foreground">Pedido confirmado!</h1>
+              <p className="text-muted-foreground">
+                Seu pedido é o número{" "}
+                <span className="font-semibold text-foreground">#{confirmado.orderNumber}</span>.
+              </p>
+              <p className="text-muted-foreground">
+                Total:{" "}
+                <span className="font-semibold text-foreground">{formatBRL(confirmado.total)}</span>
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Estamos aguardando a aprovação do restaurante. Em breve seu pedido entra em preparo.
+              </p>
+              <div className="flex justify-center gap-2">
+                <Button asChild>
+                  <Link to="/cardapio">Voltar ao cardápio</Link>
+                </Button>
+                <Button asChild variant="outline">
+                  <Link to="/meus-pedidos">Meus Pedidos</Link>
+                </Button>
+              </div>
             </div>
-          </div>
-        </main>
+          </main>
+        </PublicLayout>
       </div>
     );
   }
@@ -206,8 +209,8 @@ function Checkout() {
   return (
     <div className="min-h-screen bg-client-bg">
       <SiteHeader />
-      <main className="px-4 py-10">
-        <div className="mx-auto max-w-2xl space-y-8">
+      <PublicLayout className="py-10">
+        <main className="space-y-8">
           <header className="space-y-2">
             <h1 className="text-3xl font-bold text-foreground">Revisão do pedido</h1>
           </header>
@@ -398,8 +401,8 @@ function Checkout() {
           >
             {enviando ? "Enviando pedido..." : "Confirmar pedido"}
           </Button>
-        </div>
-      </main>
+        </main>
+      </PublicLayout>
     </div>
   );
 }

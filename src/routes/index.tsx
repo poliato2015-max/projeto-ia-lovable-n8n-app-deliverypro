@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { BookOpen, CreditCard, MessageCircle, Leaf } from "lucide-react";
 
 import { SiteHeader } from "@/components/site-header";
+import { PublicLayout } from "@/components/layout-container";
 import { Button } from "@/components/ui/button";
 import heroBurger from "@/assets/hero-burger.jpg";
 import benefitMenu from "@/assets/benefit-menu.jpg";
@@ -80,7 +81,7 @@ function Index() {
                 "linear-gradient(100deg, color-mix(in oklab, var(--primary) 82%, transparent) 0%, color-mix(in oklab, var(--primary) 45%, transparent) 45%, color-mix(in oklab, #1A1A1A 25%, transparent) 100%)",
             }}
           />
-          <div className="mx-auto max-w-5xl space-y-5 px-4 py-24 text-primary-foreground">
+          <PublicLayout className="space-y-5 py-24 text-primary-foreground">
             <h1 className="text-4xl font-bold leading-tight drop-shadow-md sm:text-5xl">
               Hambúrgueres, pizzas e mais, feitos na hora e entregues quentinhos
             </h1>
@@ -92,11 +93,12 @@ function Index() {
             <Button asChild size="lg" variant="secondary">
               <Link to="/cardapio">Ver Cardápio</Link>
             </Button>
-          </div>
+          </PublicLayout>
         </section>
 
-        <section className="mx-auto max-w-5xl space-y-6 px-4 py-12">
-          <h2 className="text-2xl font-bold text-foreground">Por que pedir com a gente?</h2>
+        <PublicLayout className="py-12">
+          <section className="space-y-6">
+            <h2 className="text-2xl font-bold text-foreground">Por que pedir com a gente?</h2>
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {beneficios.map((b) => (
               <li key={b.title} className="overflow-hidden rounded-xl bg-card">
@@ -119,20 +121,23 @@ function Index() {
                 </div>
               </li>
             ))}
-          </ul>
-        </section>
+            </ul>
+          </section>
+        </PublicLayout>
 
-        <section className="mx-auto max-w-5xl px-4 pb-16">
-          <div className="space-y-4 rounded-2xl border bg-card p-8 text-center shadow-sm">
-            <h2 className="text-2xl font-bold text-foreground">Pronto pra pedir?</h2>
-            <p className="text-muted-foreground">
-              Seu pedido está a poucos cliques de distância.
-            </p>
-            <Button asChild size="lg">
-              <Link to="/cardapio">Começar Pedido</Link>
-            </Button>
-          </div>
-        </section>
+        <PublicLayout className="pb-16">
+          <section>
+            <div className="space-y-4 rounded-2xl border bg-card p-8 text-center shadow-sm">
+              <h2 className="text-2xl font-bold text-foreground">Pronto pra pedir?</h2>
+              <p className="text-muted-foreground">
+                Seu pedido está a poucos cliques de distância.
+              </p>
+              <Button asChild size="lg">
+                <Link to="/cardapio">Começar Pedido</Link>
+              </Button>
+            </div>
+          </section>
+        </PublicLayout>
       </main>
     </div>
   );

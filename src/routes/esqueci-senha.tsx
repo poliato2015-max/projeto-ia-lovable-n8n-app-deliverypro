@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
+import { PublicLayout } from "@/components/layout-container";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -62,7 +63,8 @@ function EsqueciSenhaPage() {
   return (
     <div className="min-h-screen bg-client-bg">
       <SiteHeader />
-      <main className="px-4 py-10">
+      <PublicLayout className="py-10">
+        <main>
         <div className="mx-auto w-full max-w-lg rounded-2xl border bg-card p-6 shadow-sm">
           <h1 className="mb-1 text-2xl font-bold text-foreground">Redefinir senha</h1>
           <p className="mb-6 text-sm text-muted-foreground">
@@ -113,7 +115,8 @@ function EsqueciSenhaPage() {
             </p>
           </form>
         </div>
-      </main>
+        </main>
+      </PublicLayout>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/use-session";
 import { useCepEntrega } from "@/lib/use-cep-entrega";
 import { SiteHeader } from "@/components/site-header";
+import { PublicLayout } from "@/components/layout-container";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -124,7 +125,8 @@ function ContaPage() {
   return (
     <div className="min-h-screen bg-client-bg">
       <SiteHeader />
-      <main className="px-4 py-10">
+      <PublicLayout className="py-10">
+        <main>
         <div className="mx-auto w-full max-w-lg rounded-2xl border bg-card p-6 shadow-sm">
           {recuperacao ? (
             <>
@@ -155,7 +157,8 @@ function ContaPage() {
             </>
           )}
         </div>
-      </main>
+        </main>
+      </PublicLayout>
     </div>
   );
 }
