@@ -111,7 +111,7 @@ function NovaSenhaPage() {
   return (
     <div className="min-h-screen bg-client-bg">
       <SiteHeader />
-      <PublicLayout className="py-10" asChild={undefined}>
+      <PublicLayout className="py-10">
         <main>
         <div className="mx-auto w-full max-w-lg rounded-2xl border bg-card p-6 shadow-sm">
           <h1 className="mb-1 text-2xl font-bold text-foreground">Nova Senha</h1>

@@ -125,7 +125,7 @@ function MeusPedidos() {
   return (
     <div className="min-h-screen bg-client-bg">
       <SiteHeader />
-      <PublicLayout className="py-10" asChild={undefined}>
+      <PublicLayout className="py-10">
         <main className="space-y-6">
           <h1 className="text-3xl font-bold text-foreground">Meus Pedidos</h1>
 

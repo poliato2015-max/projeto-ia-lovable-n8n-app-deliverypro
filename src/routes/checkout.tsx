@@ -131,7 +131,7 @@ function Checkout() {
     return (
       <div className="min-h-screen bg-client-bg">
         <SiteHeader />
-        <PublicLayout className="flex flex-col items-center justify-center gap-4 py-20 text-center" asChild={undefined}>
+        <PublicLayout className="flex flex-col items-center justify-center gap-4 py-20 text-center">
           <main>
           <div className="w-full max-w-md space-y-4 rounded-2xl border bg-card p-8 shadow-sm">
             <h1 className="text-3xl font-bold text-foreground">Pedido confirmado!</h1>
@@ -209,7 +209,7 @@ function Checkout() {
   return (
     <div className="min-h-screen bg-client-bg">
       <SiteHeader />
-      <PublicLayout className="py-10" asChild={undefined}>
+      <PublicLayout className="py-10">
         <main className="space-y-8">
           <header className="space-y-2">
             <h1 className="text-3xl font-bold text-foreground">Revisão do pedido</h1>

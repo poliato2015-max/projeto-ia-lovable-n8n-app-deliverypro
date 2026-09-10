@@ -96,7 +96,7 @@ function Index() {
           </PublicLayout>
         </section>
 
-        <PublicLayout className="space-y-6 py-12" asChild={undefined}>
+        <PublicLayout className="space-y-6 py-12">
           <section>
           <h2 className="text-2xl font-bold text-foreground">Por que pedir com a gente?</h2>
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
