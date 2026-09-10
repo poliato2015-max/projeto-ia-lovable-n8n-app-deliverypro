@@ -13,6 +13,7 @@ import { produtosPopulares } from "@/lib/populares.functions";
 import { formatBRL, getPhotoUrls } from "@/lib/product-photos";
 import { useCart } from "@/lib/cart";
 import { SiteHeader } from "@/components/site-header";
+import { PublicLayout } from "@/components/layout-container";
 import { CartSheet } from "@/components/cart-sheet";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -135,8 +136,8 @@ function Cardapio() {
   return (
     <div className="min-h-screen bg-client-bg">
       <SiteHeader actions={<CartSheet />} />
-      <main className="px-4 py-10">
-        <div className="mx-auto max-w-3xl space-y-8">
+      <PublicLayout className="py-10" asChild={undefined}>
+        <main className="space-y-8">
           <header className="space-y-2">
             <h1 className="text-3xl font-bold text-foreground">Cardápio</h1>
             <p className="text-muted-foreground">
@@ -164,15 +165,14 @@ function Cardapio() {
             ))
 
           )}
-        </div>
-
         <ConfigDialog
           product={selecionado}
           addons={selecionado ? addonsDo(selecionado.id) : []}
           photoUrl={selecionado?.photo_url ? photoUrls[selecionado.photo_url] : undefined}
           onClose={() => setSelecionado(null)}
         />
-      </main>
+        </main>
+      </PublicLayout>
     </div>
   );
 

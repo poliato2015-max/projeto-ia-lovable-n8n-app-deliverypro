@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/use-session";
 import { formatBRL, getPhotoUrls } from "@/lib/product-photos";
 import { SiteHeader } from "@/components/site-header";
+import { PublicLayout } from "@/components/layout-container";
 import { Button } from "@/components/ui/button";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -124,8 +125,8 @@ function MeusPedidos() {
   return (
     <div className="min-h-screen bg-client-bg">
       <SiteHeader />
-      <main className="px-4 py-10">
-        <div className="mx-auto max-w-3xl space-y-6">
+      <PublicLayout className="py-10" asChild={undefined}>
+        <main className="space-y-6">
           <h1 className="text-3xl font-bold text-foreground">Meus Pedidos</h1>
 
           {isLoading ? (
@@ -193,8 +194,8 @@ function MeusPedidos() {
               ))}
             </ul>
           )}
-        </div>
-      </main>
+        </main>
+      </PublicLayout>
     </div>
   );
 }
