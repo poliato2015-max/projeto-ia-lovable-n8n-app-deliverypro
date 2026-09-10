@@ -383,7 +383,39 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      delivery_settings_public: {
+        Row: {
+          delivery_fee: number | null
+          delivery_radius_km: number | null
+          free_shipping_enabled: boolean | null
+          id: string | null
+          store_cep: string | null
+          store_lat: number | null
+          store_lng: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          delivery_fee?: number | null
+          delivery_radius_km?: number | null
+          free_shipping_enabled?: boolean | null
+          id?: string | null
+          store_cep?: string | null
+          store_lat?: number | null
+          store_lng?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          delivery_fee?: number | null
+          delivery_radius_km?: number | null
+          free_shipping_enabled?: boolean | null
+          id?: string | null
+          store_cep?: string | null
+          store_lat?: number | null
+          store_lng?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       create_order: {
