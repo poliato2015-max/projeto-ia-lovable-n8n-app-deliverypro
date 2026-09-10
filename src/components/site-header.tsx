@@ -57,11 +57,11 @@ export function SiteHeader({
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <UtensilsCrossed className="h-4 w-4" />
           </span>
-          <span className="truncate text-base font-bold text-foreground sm:text-lg">DeliveryPro</span>
+          <span className="truncate text-sm font-bold text-foreground sm:text-lg">DeliveryPro</span>
         </Link>
         <Link
           to="/cardapio"
-          className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+          className="text-xs font-medium text-muted-foreground transition-colors hover:text-primary sm:text-sm"
           activeProps={{ className: "text-primary" }}
         >
           Cardápio
@@ -93,7 +93,7 @@ export function SiteHeader({
               Sair
             </Button>
           ) : (
-            <Button asChild variant="ghost" size="sm">
+            <Button asChild variant="ghost" size="sm" className="px-1 sm:px-3">
               <Link to="/conta">Entrar</Link>
             </Button>
           )}
