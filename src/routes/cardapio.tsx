@@ -302,11 +302,13 @@ function ConfigDialog({
           <DialogDescription>{product.description}</DialogDescription>
         </DialogHeader>
 
-        <img
-          src={photoUrl}
-          alt={`Foto de ${product.name}`}
-          className="h-40 w-full rounded-md bg-card object-contain"
-        />
+        <div className="aspect-[4/3] w-full overflow-hidden rounded-md">
+          <img
+            src={photoUrl}
+            alt={`Foto de ${product.name}`}
+            className="h-full w-full object-cover object-center"
+          />
+        </div>
 
         <div className="space-y-3">
           <h3 className="text-sm font-semibold text-foreground">Adicionais</h3>
