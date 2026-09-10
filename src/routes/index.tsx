@@ -96,9 +96,9 @@ function Index() {
           </PublicLayout>
         </section>
 
-        <PublicLayout className="space-y-6 py-12">
-          <section>
-          <h2 className="text-2xl font-bold text-foreground">Por que pedir com a gente?</h2>
+        <PublicLayout className="py-12">
+          <section className="space-y-6">
+            <h2 className="text-2xl font-bold text-foreground">Por que pedir com a gente?</h2>
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {beneficios.map((b) => (
               <li key={b.title} className="overflow-hidden rounded-xl bg-card">
@@ -121,21 +121,21 @@ function Index() {
                 </div>
               </li>
             ))}
-          </ul>
+            </ul>
           </section>
         </PublicLayout>
 
         <PublicLayout className="pb-16">
           <section>
-          <div className="space-y-4 rounded-2xl border bg-card p-8 text-center shadow-sm">
-            <h2 className="text-2xl font-bold text-foreground">Pronto pra pedir?</h2>
-            <p className="text-muted-foreground">
-              Seu pedido está a poucos cliques de distância.
-            </p>
-            <Button asChild size="lg">
-              <Link to="/cardapio">Começar Pedido</Link>
-            </Button>
-          </div>
+            <div className="space-y-4 rounded-2xl border bg-card p-8 text-center shadow-sm">
+              <h2 className="text-2xl font-bold text-foreground">Pronto pra pedir?</h2>
+              <p className="text-muted-foreground">
+                Seu pedido está a poucos cliques de distância.
+              </p>
+              <Button asChild size="lg">
+                <Link to="/cardapio">Começar Pedido</Link>
+              </Button>
+            </div>
           </section>
         </PublicLayout>
       </main>

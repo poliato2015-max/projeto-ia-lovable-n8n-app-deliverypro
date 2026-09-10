@@ -51,13 +51,13 @@ export function SiteHeader({
 
   return (
     <header className="sticky top-0 z-40 border-b bg-card/95 backdrop-blur">
-      <Layout className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 py-3 sm:flex sm:gap-4">
-        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-        <Link to="/" className="flex min-w-0 items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+      <Layout className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2 py-3 sm:flex sm:gap-4">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-4">
+        <Link to="/" className="flex min-w-0 items-center gap-1.5 sm:gap-2">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <UtensilsCrossed className="h-4 w-4" />
           </span>
-          <span className="truncate text-lg font-bold text-foreground">DeliveryPro</span>
+          <span className="truncate text-base font-bold text-foreground sm:text-lg">DeliveryPro</span>
         </Link>
         <Link
           to="/cardapio"
@@ -77,7 +77,7 @@ export function SiteHeader({
         ) : null}
         </div>
 
-        <div className="flex shrink-0 items-center gap-2 sm:ml-auto">
+        <div className="flex shrink-0 items-center gap-1 sm:ml-auto sm:gap-2">
           {adminEmail !== null ? (
             <>
               <Button asChild variant="ghost" size="sm">
