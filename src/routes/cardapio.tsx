@@ -215,49 +215,19 @@ function CategoriaCarrossel({
     <div className="relative">
       <div className="overflow-hidden" ref={emblaRef}>
         <ul className="flex touch-pan-y items-stretch gap-5">
-          {itens.map((product) => {
-            const emblema = emblemaDe(product);
-            return (
-              <li
-                key={product.id}
-                className="min-w-0 shrink-0 grow-0 basis-[78%] sm:basis-[46%] lg:basis-[38%]"
-              >
-                <button
-                  type="button"
-                  onClick={() => onSelecionar(product)}
-                  className="group flex h-full w-full flex-col overflow-hidden rounded-xl bg-card text-left transition hover:-translate-y-0.5 hover:border-primary"
-                >
-                  <div className="relative">
-                    <img
-                      src={product.photo_url ? photoUrls[product.photo_url] : undefined}
-                      alt={`Foto de ${product.name}`}
-                      loading="lazy"
-                      className="h-48 w-full bg-card object-contain"
-                    />
-                    {emblema ? (
-                      <span
-                        className={`absolute left-3 top-3 rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${emblema.classe}`}
-                      >
-                        {emblema.texto}
-                      </span>
-                    ) : null}
-                    <span className="absolute -bottom-5 right-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition group-hover:scale-105">
-                      <Plus className="h-5 w-5" />
-                    </span>
-                  </div>
-                  <div className="flex flex-1 flex-col gap-1 p-4 pt-5">
-                    <h3 className="pr-10 font-semibold text-foreground">{product.name}</h3>
-                    <p className="line-clamp-2 text-sm text-muted-foreground">
-                      {product.description}
-                    </p>
-                    <p className="mt-auto pt-3 text-lg font-bold text-foreground">
-                      {formatBRL(Number(product.price))}
-                    </p>
-                  </div>
-                </button>
-              </li>
-            );
-          })}
+          {itens.map((product) => (
+            <li
+              key={product.id}
+              className="min-w-0 shrink-0 grow-0 basis-[78%] sm:basis-[46%] lg:basis-[38%]"
+            >
+              <ProductCard
+                product={product}
+                photoUrl={product.photo_url ? photoUrls[product.photo_url] : undefined}
+                emblema={emblemaDe(product)}
+                onClick={() => onSelecionar(product)}
+              />
+            </li>
+          ))}
         </ul>
       </div>
 
