@@ -89,7 +89,6 @@ export type Database = {
           delivery_radius_km: number
           free_shipping_enabled: boolean
           id: string
-          n8n_webhook_url: string | null
           store_cep: string
           store_lat: number | null
           store_lng: number | null
@@ -100,7 +99,6 @@ export type Database = {
           delivery_radius_km?: number
           free_shipping_enabled?: boolean
           id?: string
-          n8n_webhook_url?: string | null
           store_cep: string
           store_lat?: number | null
           store_lng?: number | null
@@ -111,11 +109,28 @@ export type Database = {
           delivery_radius_km?: number
           free_shipping_enabled?: boolean
           id?: string
-          n8n_webhook_url?: string | null
           store_cep?: string
           store_lat?: number | null
           store_lng?: number | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      delivery_webhook: {
+        Row: {
+          id: string
+          updated_at: string
+          url: string | null
+        }
+        Insert: {
+          id?: string
+          updated_at?: string
+          url?: string | null
+        }
+        Update: {
+          id?: string
+          updated_at?: string
+          url?: string | null
         }
         Relationships: []
       }
@@ -383,39 +398,7 @@ export type Database = {
       }
     }
     Views: {
-      delivery_settings_public: {
-        Row: {
-          delivery_fee: number | null
-          delivery_radius_km: number | null
-          free_shipping_enabled: boolean | null
-          id: string | null
-          store_cep: string | null
-          store_lat: number | null
-          store_lng: number | null
-          updated_at: string | null
-        }
-        Insert: {
-          delivery_fee?: number | null
-          delivery_radius_km?: number | null
-          free_shipping_enabled?: boolean | null
-          id?: string | null
-          store_cep?: string | null
-          store_lat?: number | null
-          store_lng?: number | null
-          updated_at?: string | null
-        }
-        Update: {
-          delivery_fee?: number | null
-          delivery_radius_km?: number | null
-          free_shipping_enabled?: boolean | null
-          id?: string | null
-          store_cep?: string | null
-          store_lat?: number | null
-          store_lng?: number | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       create_order: {
