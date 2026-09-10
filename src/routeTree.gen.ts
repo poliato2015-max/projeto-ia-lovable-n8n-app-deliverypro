@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as NovaSenhaRouteImport } from './routes/nova-senha'
 import { Route as MeusPedidosRouteImport } from './routes/meus-pedidos'
+import { Route as EsqueciSenhaRouteImport } from './routes/esqueci-senha'
 import { Route as ContaRouteImport } from './routes/conta'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CardapioRouteImport } from './routes/cardapio'
@@ -27,9 +29,19 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NovaSenhaRoute = NovaSenhaRouteImport.update({
+  id: '/nova-senha',
+  path: '/nova-senha',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MeusPedidosRoute = MeusPedidosRouteImport.update({
   id: '/meus-pedidos',
   path: '/meus-pedidos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EsqueciSenhaRoute = EsqueciSenhaRouteImport.update({
+  id: '/esqueci-senha',
+  path: '/esqueci-senha',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContaRoute = ContaRouteImport.update({
@@ -90,7 +102,9 @@ export interface FileRoutesByFullPath {
   '/cardapio': typeof CardapioRoute
   '/checkout': typeof CheckoutRoute
   '/conta': typeof ContaRoute
+  '/esqueci-senha': typeof EsqueciSenhaRoute
   '/meus-pedidos': typeof MeusPedidosRoute
+  '/nova-senha': typeof NovaSenhaRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AdminProtectedRouteRouteWithChildren
   '/admin/configuracao': typeof AdminProtectedConfiguracaoRoute
@@ -104,7 +118,9 @@ export interface FileRoutesByTo {
   '/cardapio': typeof CardapioRoute
   '/checkout': typeof CheckoutRoute
   '/conta': typeof ContaRoute
+  '/esqueci-senha': typeof EsqueciSenhaRoute
   '/meus-pedidos': typeof MeusPedidosRoute
+  '/nova-senha': typeof NovaSenhaRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/configuracao': typeof AdminProtectedConfiguracaoRoute
   '/admin/kanban': typeof AdminProtectedKanbanRoute
@@ -118,7 +134,9 @@ export interface FileRoutesById {
   '/cardapio': typeof CardapioRoute
   '/checkout': typeof CheckoutRoute
   '/conta': typeof ContaRoute
+  '/esqueci-senha': typeof EsqueciSenhaRoute
   '/meus-pedidos': typeof MeusPedidosRoute
+  '/nova-senha': typeof NovaSenhaRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin/_protected': typeof AdminProtectedRouteRouteWithChildren
   '/admin/_protected/configuracao': typeof AdminProtectedConfiguracaoRoute
@@ -134,7 +152,9 @@ export interface FileRouteTypes {
     | '/cardapio'
     | '/checkout'
     | '/conta'
+    | '/esqueci-senha'
     | '/meus-pedidos'
+    | '/nova-senha'
     | '/sitemap.xml'
     | '/admin'
     | '/admin/configuracao'
@@ -148,7 +168,9 @@ export interface FileRouteTypes {
     | '/cardapio'
     | '/checkout'
     | '/conta'
+    | '/esqueci-senha'
     | '/meus-pedidos'
+    | '/nova-senha'
     | '/sitemap.xml'
     | '/admin/configuracao'
     | '/admin/kanban'
@@ -161,7 +183,9 @@ export interface FileRouteTypes {
     | '/cardapio'
     | '/checkout'
     | '/conta'
+    | '/esqueci-senha'
     | '/meus-pedidos'
+    | '/nova-senha'
     | '/sitemap.xml'
     | '/admin/_protected'
     | '/admin/_protected/configuracao'
@@ -176,7 +200,9 @@ export interface RootRouteChildren {
   CardapioRoute: typeof CardapioRoute
   CheckoutRoute: typeof CheckoutRoute
   ContaRoute: typeof ContaRoute
+  EsqueciSenhaRoute: typeof EsqueciSenhaRoute
   MeusPedidosRoute: typeof MeusPedidosRoute
+  NovaSenhaRoute: typeof NovaSenhaRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   AdminProtectedRouteRoute: typeof AdminProtectedRouteRouteWithChildren
 }
@@ -190,11 +216,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/nova-senha': {
+      id: '/nova-senha'
+      path: '/nova-senha'
+      fullPath: '/nova-senha'
+      preLoaderRoute: typeof NovaSenhaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/meus-pedidos': {
       id: '/meus-pedidos'
       path: '/meus-pedidos'
       fullPath: '/meus-pedidos'
       preLoaderRoute: typeof MeusPedidosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/esqueci-senha': {
+      id: '/esqueci-senha'
+      path: '/esqueci-senha'
+      fullPath: '/esqueci-senha'
+      preLoaderRoute: typeof EsqueciSenhaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/conta': {
@@ -294,7 +334,9 @@ const rootRouteChildren: RootRouteChildren = {
   CardapioRoute: CardapioRoute,
   CheckoutRoute: CheckoutRoute,
   ContaRoute: ContaRoute,
+  EsqueciSenhaRoute: EsqueciSenhaRoute,
   MeusPedidosRoute: MeusPedidosRoute,
+  NovaSenhaRoute: NovaSenhaRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   AdminProtectedRouteRoute: AdminProtectedRouteRouteWithChildren,
 }

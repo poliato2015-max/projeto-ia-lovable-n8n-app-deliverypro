@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -265,21 +265,6 @@ function FormEntrar({ redirecionar }: { redirecionar?: string }) {
     navigate({ to: destino as never, replace: true });
   }
 
-  async function recuperar() {
-    if (!email.trim()) {
-      setErro("Informe seu e-mail para receber o link de recuperação.");
-      return;
-    }
-    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: `${window.location.origin}/conta`,
-    });
-    if (error) {
-      toast.error("Não foi possível enviar o e-mail de recuperação.");
-      return;
-    }
-    toast.success("Enviamos um link de recuperação para o seu e-mail.");
-  }
-
   return (
     <form onSubmit={entrar} className="space-y-4">
       <div className="space-y-2">
@@ -308,13 +293,12 @@ function FormEntrar({ redirecionar }: { redirecionar?: string }) {
       <Button type="submit" className="w-full" disabled={enviando}>
         {enviando ? "Entrando..." : "Entrar"}
       </Button>
-      <button
-        type="button"
-        onClick={recuperar}
-        className="w-full text-sm text-primary underline"
+      <Link
+        to="/esqueci-senha"
+        className="block w-full text-center text-sm text-primary underline"
       >
         Esqueci minha senha
-      </button>
+      </Link>
     </form>
   );
 }
