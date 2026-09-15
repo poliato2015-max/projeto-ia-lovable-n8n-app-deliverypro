@@ -28,8 +28,6 @@ AUTENTICAÇÃO E RLS:
 
 - Só usuário com papel admin (via has_role) pode ler/editar/apagar em todas as tabelas, e é o único que pode inserir/editar/apagar em products e delivery_settings.
 
-- Crie uma tela de login de admin (e-mail/senha) em /admin/login, sem autocadastro público. Crie o usuário inicial com e-mail: a92424345@gmail.com e senha: Po140470 , e insira o papel 'admin' pra ele em user_roles. Qualquer rota /admin/* deve redirecionar pro login se não estiver autenticado como admin.
-
 Ao terminar, verifique no navegador: login funciona em /admin/login com essas credenciais; as 6 tabelas existem no Supabase com RLS ativado; a linha inicial de delivery_settings foi criada.
 
 This project was built with [Lovable](https://lovable.dev).
