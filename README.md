@@ -407,7 +407,7 @@ O banco de dados utiliza PostgreSQL por meio do Supabase.
 | `order_items` | Armazena os produtos incluídos em cada pedido e seus preços no momento da compra. |
 | `order_item_addons` | Armazena os adicionais selecionados em cada item do pedido. |
 | `delivery_settings` | Armazena as configurações de entrega da loja em uma tabela de linha única. |
-| `delivery_webhook` | Armazena o endereço webhook no n8n para disparo das mensagens whatsapp.|
+| `delivery_webhook` | Armazena o endereço webhook do n8n para disparo das mensagens whatsapp.|
 | `user_roles` | Armazena os papéis administrativos associados às contas autenticadas. |
 
 ## Relacionamentos principais
