@@ -347,36 +347,36 @@ O n8n é responsável por construir o texto final e realizar o envio da mensagem
 O DeliveryPro utiliza uma arquitetura web com frontend hospedado na plataforma Lovable e backend gerenciado pelo Supabase.
 
 ```text
-        ┌────────────────────────────┐ 
-        │           Cliente          │
-        │  Navegador desktop/mobile  │
-        └──────────────┬─────────────┘
-                       │
-                       ▼
-        ┌────────────────────────────┐
-        │        Interface Web       │
-        │  React + TypeScript + Vite │
-        │  Tailwind CSS + shadcn/ui  │
-        └──────────────┬─────────────┘
-                       │
-                       ▼
-┌──────────────────────────────────────────────┐
-│                  Supabase                    │
-│ Auth | PostgreSQL | RLS | Realtime | Storage │
-│                                              │
-└───────────────────────┬──────────────────────┘
-                        │
-           ┌────────────┴───────────┐
-           ▼                        ▼
-┌─────────────────────┐  ┌─────────────────────┐
-│       BrasilAPI     │  │ PostgreSQL + pg_net │
-│     CEP e geocod.   │  │  Gatilho de webhook │
-└─────────────────────┘  └──────────┬──────────┘
-                                    ▼
-                         ┌─────────────────────┐
-                         │         n8n         │
-                         │    WhatsApp webhook │
-                         └─────────────────────┘
+                                                ┌────────────────────────────┐ 
+                                                │           Cliente          │
+                                                │  Navegador desktop/mobile  │
+                                                └──────────────┬─────────────┘
+                                                               │
+                                                               ▼
+                                                ┌────────────────────────────┐
+                                                │        Interface Web       │
+                                                │  React + TypeScript + Vite │
+                                                │  Tailwind CSS + shadcn/ui  │
+                                                └──────────────┬─────────────┘
+                                                               │
+                                                               ▼
+                                       ┌──────────────────────────────────────────────┐
+                                       │                  Supabase                    │
+                                       │ Auth | PostgreSQL | RLS | Realtime | Storage │
+                                       │                                              │
+                                       └───────────────────────┬──────────────────────┘
+                                                               │
+                                                  ┌────────────┴───────────┐
+                                                  ▼                        ▼
+                                       ┌─────────────────────┐  ┌─────────────────────┐
+                                       │       BrasilAPI     │  │ PostgreSQL + pg_net │
+                                       │     CEP e geocod.   │  │  Gatilho de webhook │
+                                       └─────────────────────┘  └──────────┬──────────┘
+                                                                           ▼
+                                                                ┌─────────────────────┐
+                                                                │         n8n         │
+                                                                │    WhatsApp webhook │
+                                                                └─────────────────────┘
 ```
 
 ### Camadas principais
