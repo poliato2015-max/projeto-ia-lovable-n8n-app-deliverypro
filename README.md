@@ -1,4 +1,4 @@
-# DeliveryPro
+# 🛵 DeliveryPro
 
 > Plataforma web full-stack para gerenciamento do ciclo completo de pedidos de delivery, desde a montagem do carrinho pelo cliente até a confirmação da entrega, com operação administrativa em Kanban, validação geográfica de entrega, relatórios e notificações automáticas via WhatsApp.
 
@@ -12,7 +12,7 @@
 
 ---
 
-## Sobre o projeto
+## 📋 Sobre o projeto
 
 O **DeliveryPro** é uma aplicação web de pedidos para delivery desenvolvida para atender a operação de uma loja única. A plataforma cobre as principais etapas do negócio: apresentação do cardápio, configuração de produtos e adicionais, cadastro de clientes, montagem do carrinho, checkout, aprovação de pedidos, acompanhamento da produção, confirmação de recebimento, notificações automáticas e relatórios gerenciais.
 
@@ -20,7 +20,7 @@ O sistema possui duas áreas principais. A área pública permite que visitantes
 
 O projeto foi desenvolvido de forma incremental com apoio do **Lovable**, utilizando o **Supabase** como backend gerenciado e o **n8n** como orquestrador das notificações enviadas por WhatsApp.
 
-## Acesso à aplicação
+## 🌐 Acesso à aplicação
 
 A aplicação está disponível em:
 
@@ -28,7 +28,7 @@ A aplicação está disponível em:
 
 > A Fase 1 do DeliveryPro foi concluída e disponibiliza o fluxo principal de pedidos, gerenciamento administrativo, acompanhamento por Kanban, validação de entrega, relatórios e notificações via WhatsApp. O projeto terá continuidade na Fase 2, que contemplará novas melhorias e evoluções.
 
-## Objetivo
+## 🏁 Objetivo
 
 O objetivo do DeliveryPro é centralizar o recebimento e o acompanhamento de pedidos de uma loja de delivery em um único fluxo digital.
 
@@ -36,7 +36,7 @@ O sistema permite que o cliente monte o pedido, informe seus dados, selecione a 
 
 A solução foi projetada para reduzir atividades manuais, organizar o fluxo de produção e manter o cliente informado nos principais marcos do pedido.
 
-## Problema de negócio
+## 💡 Problema de negócio
 
 Em uma operação de delivery, o recebimento de pedidos, a conferência dos itens, a comunicação com o cliente e o controle da produção podem ficar dispersos entre diferentes canais e controles manuais.
 
@@ -51,7 +51,7 @@ Esse cenário pode causar problemas como:
 
 O DeliveryPro foi desenvolvido para organizar essas etapas em uma aplicação integrada, com regras de negócio aplicadas tanto na interface quanto no banco de dados.
 
-## Solução proposta
+## 🛠️ Solução proposta
 
 O DeliveryPro transforma o pedido de delivery em um fluxo controlado:
 
@@ -146,9 +146,23 @@ API Oficial da Meta / WhatsApp]
 e permanece no histórico e relatórios]
 ```
 
-## Principais funcionalidades
+## # ✨ Principais funcionalidades
+### 1. Landing Page
+A Landing Page é a porta de entrada do DeliveryPro. Ela apresenta a proposta da aplicação e orienta o visitante a iniciar um pedido.
+O destaque principal informa que o sistema oferece hambúrgueres, pizzas e outros produtos preparados na hora e entregues ao cliente. A página também reforça a possibilidade de montar o pedido de acordo com a preferência do cliente e acompanhar sua evolução desde o preparo até a entrega.
 
-### 1. Cardápio público
+A seção “Por que pedir com a gente?” apresenta os principais benefícios da solução:
+- Cardápio digital: permite montar o pedido diretamente pelo navegador, incluindo os adicionais disponíveis;
+- Pagamento na entrega: possibilita escolher entre crédito, débito ou Pix e realizar o pagamento quando o pedido chegar;
+- Confirmação por WhatsApp: informa o cliente quando o pedido é aprovado e quando sai para entrega;
+- Ingredientes frescos: destaca a preparação dos produtos no momento do pedido.
+
+A página disponibiliza botões de chamada para ação, como “Ver Cardápio” e “Começar Pedido”, direcionando o visitante para o fluxo de seleção dos produtos.
+
+### 📸 Screenshot
+
+
+### 2. Cardápio público
 
 O cardápio pode ser acessado sem autenticação e apresenta os produtos organizados por categorias cadastradas pelo administrador.
 
