@@ -2,12 +2,13 @@
 
 > Plataforma web full-stack para gerenciamento do ciclo completo de pedidos de delivery, desde a montagem do carrinho pelo cliente até a confirmação da entrega, com operação administrativa em Kanban, validação geográfica de entrega, relatórios e notificações automáticas via WhatsApp.
 
-[![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)](#)
+[![Status](https://img.shields.io/badge/status-fase%201%20concluída%20%7C%20fase%202%20planejada-yellow )](#)
 [![React](https://img.shields.io/badge/React-TypeScript-61DAFB?logo=react&logoColor=white)](#)
 [![Vite](https://img.shields.io/badge/Vite-build%2Fdev-646CFF?logo=vite&logoColor=white)](#)
 [![Tailwind%20CSS](https://img.shields.io/badge/Tailwind%20CSS-estilização-06B6D4?logo=tailwindcss&logoColor=white)](#)
 [![Supabase](https://img.shields.io/badge/Supabase-backend-3FCF8E?logo=supabase&logoColor=white)](#)
 [![n8n](https://img.shields.io/badge/n8n-automação-EA4B71?logo=n8n&logoColor=white)](#)
+[![WhatsApp](https://img.shields.io/badge/WhatsApp%20Business-API%20Oficial%20da%20Meta-25D366?logo=whatsapp&logoColor=white )](#)
 
 ---
 
@@ -25,7 +26,7 @@ A aplicação está disponível em:
 
 **https://app-deliverypro.lovable.app/**
 
-> O projeto encontra-se em desenvolvimento. O ambiente publicado pode sofrer alterações conforme novas funcionalidades e ajustes sejam implementados.
+> A Fase 1 do DeliveryPro foi concluída e disponibiliza o fluxo principal de pedidos, gerenciamento administrativo, acompanhamento por Kanban, validação de entrega, relatórios e notificações via WhatsApp. O projeto terá continuidade na Fase 2, que contemplará novas melhorias e evoluções.
 
 ## Objetivo
 
@@ -54,29 +55,95 @@ O DeliveryPro foi desenvolvido para organizar essas etapas em uma aplicação in
 
 O DeliveryPro transforma o pedido de delivery em um fluxo controlado:
 
+## Fluxo do cliente
+O fluxo abaixo representa a jornada do cliente desde o acesso ao cardápio até a confirmação do recebimento. A decisão de aprovar ou rejeitar pertence ao administrador, mas aparece no fluxo porque altera diretamente a experiência do cliente.
+
 ```mermaid
 flowchart TD
-    A([Cliente acessa o cardápio]) --> B[Seleciona produtos e adicionais]
-    B --> C[Monta o carrinho]
-    C --> D{Cliente autenticado?}
-    D -- Não --> E[Cadastro ou login]
-    D -- Sim --> F[Checkout]
-    E --> F
-    F --> G[Validação de endereço e raio de entrega]
-    G --> H[Seleção da forma de pagamento]
-    H --> I[Pedido criado]
-    I --> J[Aguardando aprovação]
-    J --> K{Administrador analisa}
-    K -- Rejeita --> L[Pedido rejeitado]
-    K -- Aprova --> M[Pedidos a fazer]
-    M --> N[Fazendo]
-    N --> O[Saiu para entrega]
-    O --> P{Confirmação de recebimento}
-    P --> Q[Pedido entregue]
-    J -.-> R[Notificação via webhook n8n]
-    M -.-> R
-    O -.-> R
-    Q -.-> R
+    A([Cliente acessa a aplicação]) --> B[Consulta o cardápio público]
+    B --> C[Seleciona produtos, quantidades e adicionais]
+    C --> D[Informa observações e monta o carrinho]
+    D --> E{Cliente autenticado?}
+
+    E -- Não --> F[Realiza cadastro ou login]
+    E -- Sim --> G[Prossegue para o checkout]
+    F --> G
+
+    G --> H[Confere dados de contato e endereço]
+    H --> I[Validação do CEP e do raio de entrega]
+    I --> J{Endereço dentro do raio?}
+
+    J -- Não --> K[Cadastro ou finalização bloqueada]
+    J -- Sim --> L[Seleciona a forma de pagamento]
+    L --> M[Revisa os itens, adicionais, taxas e total]
+    M --> N[Confirma o pedido]
+    N --> O[Pedido criado  
+Aguardando aprovação]
+
+    O --> P{Decisão do administrador}
+
+    P -- Rejeitado --> Q[Pedido rejeitado]
+    P -- Aprovado --> R[Pedido aprovado]
+
+    Q --> W[Notificação via webhook n8n  
+API Oficial da Meta / WhatsApp]
+
+    R --> X[Notificação via webhook n8n  
+API Oficial da Meta / WhatsApp]
+    R --> S[Pedido em produção]
+    S --> T[Pedido saiu para entrega]
+
+    T --> Y[Notificação via webhook n8n  
+API Oficial da Meta / WhatsApp]
+    T --> U[Cliente acompanha o pedido]
+    U --> V[Cliente confirma o recebimento]
+    V --> Z[Pedido entregue]
+
+    Z --> AA[Notificação via webhook n8n  
+API Oficial da Meta / WhatsApp]
+
+```
+## Fluxo do administrador
+O administrador utiliza o painel administrativo para controlar o ciclo operacional dos pedidos. A partir da área de aprovação, ele revisa os dados do pedido, verifica os itens, adicionais, observações, forma de pagamento e endereço de entrega antes de decidir se o pedido será aceito ou rejeitado.
+
+Quando o pedido é aprovado, ele entra no quadro Kanban e pode ser movimentado entre as etapas de produção por meio de arrastar e soltar. Quando é rejeitado, permanece fora do Kanban ativo e o cliente recebe uma notificação específica.
+
+O administrador também pode acompanhar pedidos em tempo real, atualizar o status da produção, confirmar a saída para entrega e concluir o pedido como entregue. A confirmação de entrega também pode ser realizada pelo cliente na área Meus Pedidos.
+
+```mermaid
+flowchart TD
+    A([Administrador acessa o painel]) --> B[Visualiza pedidos aguardando aprovação]
+    B --> C[Seleciona um pedido]
+    C --> D[Revisa itens, adicionais,  
+observações, endereço e pagamento]
+    D --> E{Decisão do administrador}
+
+    E -- Rejeitar --> F[Pedido rejeitado]
+    F --> G[Notificação via webhook n8n  
+API Oficial da Meta / WhatsApp]
+    G --> H[Pedido permanece no histórico  
+e fora do Kanban ativo]
+
+    E -- Aprovar --> I[Pedido aprovado]
+    I --> J[Notificação via webhook n8n  
+API Oficial da Meta / WhatsApp]
+    I --> K[Pedidos a fazer]
+
+    K --> L{Movimentação no Kanban}
+    L --> M[Fazendo]
+    M --> N[Saiu para entrega]
+
+    N --> O[Notificação via webhook n8n  
+API Oficial da Meta / WhatsApp]
+    N --> P{Confirmação de entrega}
+
+    P -- Administrador confirma --> Q[Pedido entregue]
+    P -- Cliente confirma em Meus Pedidos --> Q
+
+    Q --> R[Notificação via webhook n8n  
+API Oficial da Meta / WhatsApp]
+    R --> S[Pedido sai do Kanban ativo  
+e permanece no histórico e relatórios]
 ```
 
 ## Principais funcionalidades
