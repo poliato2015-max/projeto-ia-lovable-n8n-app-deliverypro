@@ -1,54 +1,518 @@
 # DeliveryPro
 
-CONTEXTO: Estou construindo um app de cardápio digital para delivery de hambúrguer e adicionais, com painel administrativo e fluxo de pedido pro cliente. Este prompt é só a fundação de dados — ainda sem telas de cardápio, checkout ou Kanban.
+> Plataforma web full-stack para gerenciamento do ciclo completo de pedidos de delivery, desde a montagem do carrinho pelo cliente até a confirmação da entrega, com operação administrativa em Kanban, validação geográfica de entrega, relatórios e notificações automáticas via WhatsApp.
 
-Crie as seguintes tabelas no Supabase. Nomes de tabelas e campos em inglês; toda mensagem/texto visível ao usuário em português.
+[![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)](#)
+[![React](https://img.shields.io/badge/React-TypeScript-61DAFB?logo=react&logoColor=white)](#)
+[![Vite](https://img.shields.io/badge/Vite-build%2Fdev-646CFF?logo=vite&logoColor=white)](#)
+[![Tailwind%20CSS](https://img.shields.io/badge/Tailwind%20CSS-estilização-06B6D4?logo=tailwindcss&logoColor=white)](#)
+[![Supabase](https://img.shields.io/badge/Supabase-backend-3FCF8E?logo=supabase&logoColor=white)](#)
+[![n8n](https://img.shields.io/badge/n8n-automação-EA4B71?logo=n8n&logoColor=white)](#)
 
-1) products: id, name, description (ingredientes), price (numeric, com constraint price > 0), category (texto: 'hamburguer' ou 'adicional'), photo_url (texto, nullable), is_active (boolean, default true), created_at
+---
 
-2) customers: id, full_name, email, phone (texto, exatamente 11 dígitos numéricos), cep (texto, exatamente 8 dígitos numéricos), created_at
+## Sobre o projeto
 
-3) delivery_settings: id, store_cep (texto, 8 dígitos), delivery_fee (numeric), free_shipping_enabled (boolean, default false), delivery_range_limit (integer — por enquanto só um valor numérico placeholder, sem lógica de cálculo real ainda), updated_at.
+O **DeliveryPro** é uma aplicação web de pedidos para delivery desenvolvida para atender a operação de uma loja única. A plataforma cobre as principais etapas do negócio: apresentação do cardápio, configuração de produtos e adicionais, cadastro de clientes, montagem do carrinho, checkout, aprovação de pedidos, acompanhamento da produção, confirmação de recebimento, notificações automáticas e relatórios gerenciais.
 
-Insira uma linha inicial: store_cep '00000000', delivery_fee 0, free_shipping_enabled false, delivery_range_limit 100.
+O sistema possui duas áreas principais. A área pública permite que visitantes naveguem pelo cardápio e montem seus carrinhos. A área administrativa oferece recursos para gerenciar produtos, pedidos, configurações de entrega, administradores e indicadores operacionais.
 
-4) orders: id, order_number (identity/serial legível, começando em 1001), customer_id (fk para customers), status (texto: 'aguardando_aprovacao' | 'pedidos_a_fazer' | 'fazendo' | 'saiu_para_entrega', default 'aguardando_aprovacao'), payment_method (texto: 'credito' | 'debito' | 'pix'), payment_status (texto: 'pendente' | 'pago', default 'pendente'), delivery_fee (numeric), total (numeric), created_at, approved_at (nullable), out_for_delivery_at (nullable)
+O projeto foi desenvolvido de forma incremental com apoio do **Lovable**, utilizando o **Supabase** como backend gerenciado e o **n8n** como orquestrador das notificações enviadas por WhatsApp.
 
-5) order_items: id, order_id (fk para orders), product_id (fk para products), quantity (integer), unit_price (numeric — cópia do preço do produto no momento do pedido, não muda se o preço do produto mudar depois)
+## Acesso à aplicação
 
-6) user_roles: id, user_id (fk para auth.users), role (texto, único valor possível por enquanto: 'admin')
+A aplicação está disponível em:
 
-AUTENTICAÇÃO E RLS:
+**https://app-deliverypro.lovable.app/**
 
-- Ative Row Level Security em TODAS as tabelas, sem exceção.
+> O projeto encontra-se em desenvolvimento. O ambiente publicado pode sofrer alterações conforme novas funcionalidades e ajustes sejam implementados.
 
-- Crie uma função SECURITY DEFINER (ex: has_role(uid, role)) que verifica o papel do usuário lendo user_roles, e use essa função — não uma consulta direta — dentro das políticas de RLS de outras tabelas, pra evitar recursão.
+## Objetivo
 
-- Anônimo (não logado) pode: inserir em customers, orders e order_items; ler products (só is_active = true) e delivery_settings. Não pode ler, editar nem apagar customers, orders ou order_items.
+O objetivo do DeliveryPro é centralizar o recebimento e o acompanhamento de pedidos de uma loja de delivery em um único fluxo digital.
 
-- Só usuário com papel admin (via has_role) pode ler/editar/apagar em todas as tabelas, e é o único que pode inserir/editar/apagar em products e delivery_settings.
+O sistema permite que o cliente monte o pedido, informe seus dados, selecione a forma de pagamento e acompanhe a evolução da entrega. Para o administrador, a plataforma oferece controle sobre o cardápio, aprovação dos pedidos, produção, entrega, configurações operacionais e resultados do negócio.
 
-Ao terminar, verifique no navegador: login funciona em /admin/login com essas credenciais; as 6 tabelas existem no Supabase com RLS ativado; a linha inicial de delivery_settings foi criada.
+A solução foi projetada para reduzir atividades manuais, organizar o fluxo de produção e manter o cliente informado nos principais marcos do pedido.
 
-This project was built with [Lovable](https://lovable.dev).
+## Problema de negócio
 
-**Live app**: https://projeto-ia-lovable-n8n-app-deliverypro.lovable.app
+Em uma operação de delivery, o recebimento de pedidos, a conferência dos itens, a comunicação com o cliente e o controle da produção podem ficar dispersos entre diferentes canais e controles manuais.
 
-## Build with Lovable
+Esse cenário pode causar problemas como:
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/10d8cdda-a592-47a1-876e-882daf765782).
+- pedidos recebidos sem validação adequada da área de entrega;
+- dificuldade para acompanhar o status de cada pedido;
+- falhas na comunicação sobre aprovação e saída para entrega;
+- inconsistência entre o preço atual do produto e o preço praticado no momento da compra;
+- falta de histórico de pedidos por cliente;
+- ausência de indicadores consolidados para acompanhamento da operação.
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+O DeliveryPro foi desenvolvido para organizar essas etapas em uma aplicação integrada, com regras de negócio aplicadas tanto na interface quanto no banco de dados.
 
-## Development
+## Solução proposta
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+O DeliveryPro transforma o pedido de delivery em um fluxo controlado:
 
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+```mermaid
+flowchart TD
+    A([Cliente acessa o cardápio]) --> B[Seleciona produtos e adicionais]
+    B --> C[Monta o carrinho]
+    C --> D{Cliente autenticado?}
+    D -- Não --> E[Cadastro ou login]
+    D -- Sim --> F[Checkout]
+    E --> F
+    F --> G[Validação de endereço e raio de entrega]
+    G --> H[Seleção da forma de pagamento]
+    H --> I[Pedido criado]
+    I --> J[Aguardando aprovação]
+    J --> K{Administrador analisa}
+    K -- Rejeita --> L[Pedido rejeitado]
+    K -- Aprova --> M[Pedidos a fazer]
+    M --> N[Fazendo]
+    N --> O[Saiu para entrega]
+    O --> P{Confirmação de recebimento}
+    P --> Q[Pedido entregue]
+    J -.-> R[Notificação via webhook n8n]
+    M -.-> R
+    O -.-> R
+    Q -.-> R
 ```
+
+## Principais funcionalidades
+
+### 1. Cardápio público
+
+O cardápio pode ser acessado sem autenticação e apresenta os produtos organizados por categorias cadastradas pelo administrador.
+
+Cada produto pode possuir nome, descrição, preço, foto, categoria e informações de disponibilidade. O sistema também permite exibir um único emblema por produto, seguindo a prioridade **Promoção**, **Popular** e **Novo**.
+
+Os produtos de cada categoria são apresentados em carrosséis horizontais. O comportamento inclui navegação por setas, suporte a arrastar em dispositivos móveis e indicação visual da existência de outros produtos. Quando todos os produtos cabem no espaço disponível, o carrossel não é exibido.
+
+### Screenshot
+
+COLOCAR LINK
+
+### 2. Produtos, categorias e adicionais
+
+O administrador pode cadastrar e editar produtos e categorias. Um produto pode ser desativado sem ser excluído, preservando sua utilização no histórico de pedidos.
+
+Os adicionais são tratados como modificadores vinculados a produtos específicos. Dessa forma, um adicional não é vendido de forma independente: ele pode ser selecionado somente quando estiver associado ao produto-base correspondente.
+
+O preço do produto deve ser maior que zero. Essa regra é validada na interface e reforçada pela restrição `CHECK (price > 0)` no banco de dados.
+
+### 3. Cadastro, login e recuperação de senha
+
+Clientes e administradores utilizam a mesma tela de entrada. Após a autenticação, o sistema identifica o papel da conta e direciona o usuário para a área correspondente.
+
+O cadastro público de clientes solicita:
+
+- nome completo;
+- e-mail;
+- telefone ou WhatsApp;
+- CEP;
+- número e complemento do endereço;
+- senha e confirmação de senha.
+
+O cadastro de administrador não é público. Uma conta de cliente existente só pode ser promovida ou ter o papel administrativo revogado por um administrador autorizado.
+
+A aplicação também possui fluxo de recuperação de senha com uma rota para solicitação e outra para definição da nova senha.
+
+### Screenshot
+
+COLOCAR LINK
+
+### 4. Carrinho e montagem do pedido
+
+O cliente pode adicionar produtos ao carrinho, definir quantidades, escolher adicionais e informar observações livres para cada item.
+
+O carrinho permanece em memória durante a sessão até a confirmação do pedido. A seleção de adicionais respeita os vínculos cadastrados entre o produto-base e seus modificadores.
+
+### 5. Checkout
+
+A finalização do pedido exige autenticação. O sistema não permite concluir um pedido como convidado.
+
+Durante o checkout, os dados de nome, telefone e endereço são pré-preenchidos a partir da conta do cliente. Eles podem ser ajustados para o pedido atual sem alterar o cadastro permanente.
+
+O cliente deve selecionar uma forma de pagamento entre:
+
+- cartão de crédito;
+- cartão de débito;
+- Pix.
+
+O pagamento é realizado na entrega. A aplicação não processa cobranças online.
+
+A tela de revisão apresenta a foto de cada produto, os adicionais, as observações, a taxa de entrega e o total do pedido. Após a confirmação, o pedido recebe um número sequencial legível e inicia com o status **aguardando aprovação**.
+
+### Screenshot
+
+COLOCAR LINK
+
+### 6. Validação de endereço e área de entrega
+
+A aplicação utiliza a **BrasilAPI** para consultar o CEP e obter dados de endereço e coordenadas geográficas.
+
+O administrador configura o CEP da loja, a taxa de entrega, a opção de frete grátis e o raio máximo de atendimento em quilômetros. No cadastro do cliente, o sistema calcula a distância entre a loja e o endereço informado.
+
+Quando a distância supera o raio configurado, o cadastro é bloqueado e a interface informa a distância calculada e o limite permitido.
+
+### 7. Aprovação e produção em Kanban
+
+Um pedido recém-criado não entra diretamente em produção. Ele permanece aguardando a decisão do administrador.
+
+Após a aprovação, o pedido passa para o quadro Kanban administrativo. O quadro possui três etapas operacionais principais, com cartões reordenáveis por arrastar e soltar:
+
+- **Pedidos a fazer**;
+- **Fazendo**;
+- **Saiu para entrega**.
+
+A área de pedidos aguardando aprovação possui identificação visual própria. Cada etapa utiliza cor e ícone distintos para facilitar a leitura rápida do quadro.
+
+Cada cartão exibe o número do pedido, o nome do cliente e um resumo dos itens. O administrador pode rejeitar pedidos ainda pendentes ou movimentar pedidos aprovados durante a produção.
+
+O ciclo operacional é encerrado no status **entregue**. O pedido deixa o Kanban ativo, mas permanece disponível no histórico do cliente e nos relatórios administrativos.
+
+### Screenshot
+
+COLOCAR LINK
+
+### 8. Meus pedidos e confirmação de recebimento
+
+O cliente autenticado possui acesso à área **Meus Pedidos**, que lista exclusivamente seus próprios pedidos, com os registros mais recentes primeiro.
+
+Cada registro apresenta o número do pedido, a imagem do produto principal e um indicador de status utilizando a mesma paleta visual do Kanban administrativo.
+
+Quando o pedido está em **saiu para entrega**, o cliente pode confirmar o recebimento. Essa é a única alteração de status permitida diretamente pelo cliente. A transição autorizada é:
+
+```text
+saiu_para_entrega → entregue
+```
+
+Qualquer tentativa de alterar outro campo ou executar uma transição diferente é rejeitada pelo banco de dados.
+
+### Screenshot
+
+COLOCAR LINK
+
+### 9. Notificações via WhatsApp
+
+O sistema envia notificações automáticas em três momentos do ciclo do pedido:
+
+1. aprovação do pedido;
+2. saída do pedido para entrega;
+3. confirmação da entrega.
+
+O disparo é realizado por um gatilho do PostgreSQL após a atualização do pedido. A extensão `pg_net` faz a chamada HTTP para o webhook configurado do n8n. Dessa forma, o envio não depende de uma sessão de navegador aberta pelo administrador.
+
+O aplicativo envia ao n8n um payload estruturado contendo:
+
+- evento ocorrido;
+- número do pedido;
+- nome do cliente;
+- telefone em formato internacional;
+- total;
+- forma de pagamento legível;
+- observações;
+- resumo dos itens;
+- resumo dos adicionais.
+
+O n8n é responsável por construir o texto final e realizar o envio da mensagem via WhatsApp. O disparo é assíncrono e best-effort. Na versão atual, não existe retentativa automática nem alerta visual de falha na aplicação.
+
+### 10. Relatórios gerenciais
+
+O painel administrativo apresenta indicadores filtráveis por período, incluindo:
+
+- total de pedidos;
+- receita bruta;
+- ticket médio;
+- pedidos por dia;
+- distribuição por status;
+- ranking de produtos mais vendidos;
+- ranking de adicionais mais vendidos.
+
+Os contadores de status são atualizados em tempo real e funcionam de forma independente do filtro de período. Esse comportamento utiliza o recurso Realtime do Supabase com assinatura na tabela de pedidos.
+
+Os rankings podem ser exportados nos formatos **XLSX** e **CSV**.
+
+### Screenshot
+
+COLOCAR LINK
+
+### 11. Gestão de administradores
+
+Um administrador pode localizar uma conta de cliente já cadastrada e conceder a ela o papel administrativo. O mesmo recurso permite revogar esse papel.
+
+O sistema impede a remoção do último administrador restante, preservando a possibilidade de gerenciamento do painel.
+
+## Arquitetura da solução
+
+O DeliveryPro utiliza uma arquitetura web com frontend hospedado na plataforma Lovable e backend gerenciado pelo Supabase.
+
+```text
+┌────────────────────────────┐
+│           Cliente          │
+│    Navegador desktop/mobile│
+└──────────────┬─────────────┘
+               │
+               ▼
+┌────────────────────────────┐
+│        Interface Web       │
+│ React + TypeScript + Vite  │
+│ Tailwind CSS + shadcn/ui  │
+└──────────────┬─────────────┘
+               │
+               ▼
+┌────────────────────────────────────────┐
+│               Supabase                 │
+│ Auth | PostgreSQL | RLS | Realtime     │
+│ Storage                                │
+└──────────────┬─────────────────────────┘
+               │
+       ┌───────┴────────┐
+       ▼                ▼
+┌───────────────┐  ┌────────────────────┐
+│   BrasilAPI   │  │ PostgreSQL + pg_net│
+│ CEP e geocod. │  │ Gatilho de webhook │
+└───────────────┘  └─────────┬──────────┘
+                              ▼
+                     ┌──────────────────┐
+                     │       n8n        │
+                     │ WhatsApp webhook │
+                     └──────────────────┘
+```
+
+### Camadas principais
+
+**Frontend.** Responsável pela interface pública, autenticação, cardápio, carrinho, checkout, área do cliente e painel administrativo. A interface foi construída com React e TypeScript, utilizando Vite para desenvolvimento e build, Tailwind CSS para estilização e shadcn/ui como biblioteca de componentes baseada em Radix UI.
+
+**Autenticação.** O Supabase Auth gerencia cadastro, login, sessão e recuperação de senha.
+
+**Dados e regras.** O PostgreSQL armazena produtos, categorias, clientes, pedidos, itens, adicionais, configurações de entrega e papéis de usuário. As regras críticas são reforçadas no banco por constraints, políticas de RLS e funções protegidas.
+
+**Atualizações em tempo real.** O Supabase Realtime atualiza os contadores de status exibidos nos relatórios administrativos.
+
+**Armazenamento.** O Supabase Storage mantém as fotos dos produtos em bucket privado. A aplicação gera URLs assinadas dinamicamente durante o carregamento.
+
+**Integrações.** A BrasilAPI fornece dados de CEP e coordenadas. O n8n recebe os eventos de pedidos por webhook e realiza o envio das mensagens de WhatsApp.
+
+## Modelo de dados
+
+O banco de dados utiliza PostgreSQL por meio do Supabase.
+
+| Entidade | Responsabilidade |
+|---|---|
+| `products` | Armazena produtos, preços, fotos, categorias, disponibilidade e indicação de adicional. |
+| `categories` | Armazena as categorias livremente cadastradas para o cardápio. |
+| `product_addons` | Relaciona produtos-base aos adicionais permitidos. |
+| `customers` | Armazena os dados cadastrais e o endereço dos clientes. |
+| `orders` | Armazena pedidos, status, valores, pagamento e datas do ciclo operacional. |
+| `order_items` | Armazena os produtos incluídos em cada pedido e seus preços no momento da compra. |
+| `order_item_addons` | Armazena os adicionais selecionados em cada item do pedido. |
+| `delivery_settings` | Armazena as configurações de entrega da loja em uma tabela de linha única. |
+| `user_roles` | Armazena os papéis administrativos associados às contas autenticadas. |
+
+### Relacionamentos principais
+
+```mermaid
+erDiagram
+    CUSTOMERS ||--o{ ORDERS : realiza
+    ORDERS ||--|{ ORDER_ITEMS : possui
+    ORDER_ITEMS ||--o{ ORDER_ITEM_ADDONS : recebe
+    PRODUCTS ||--o{ ORDER_ITEMS : compoe
+    PRODUCTS ||--o{ PRODUCT_ADDONS : produto_base
+    PRODUCTS ||--o{ PRODUCT_ADDONS : adicional
+    CATEGORIES ||--o{ PRODUCTS : classifica
+    AUTH_USERS ||--o| CUSTOMERS : representa
+    AUTH_USERS ||--o{ USER_ROLES : possui
+```
+
+O preço unitário do produto e dos adicionais é copiado para as tabelas do pedido no momento da compra. Essa decisão preserva o valor histórico mesmo quando o preço do cadastro do produto é alterado posteriormente.
+
+## Segurança e controle de acesso
+
+A segurança dos dados é baseada no Supabase Auth, em políticas de **Row Level Security (RLS)** e em funções protegidas no PostgreSQL.
+
+### Modelo de papéis
+
+Os papéis administrativos são mantidos em uma tabela dedicada chamada `user_roles`. A função `has_role(user_id, role)` utiliza `SECURITY DEFINER` e possui `search_path` explícito. Esse isolamento evita recursão quando as políticas de RLS consultam a existência de um papel administrativo.
+
+### Isolamento por usuário
+
+Clientes autenticados podem consultar apenas seus próprios pedidos e dados permitidos. Administradores possuem acesso operacional às entidades necessárias para gerenciar a loja.
+
+Produtos ativos e categorias podem ser consultados publicamente para exibição do cardápio. Dados sensíveis de clientes e pedidos não ficam disponíveis de forma irrestrita para usuários anônimos.
+
+### Proteção das alterações de pedido
+
+A função `guard_customer_order_update` é executada antes das alterações em `orders` e aplica as seguintes regras:
+
+1. administradores podem operar os pedidos conforme suas permissões;
+2. o cliente só pode alterar um pedido pertencente à própria conta;
+3. a única transição permitida ao cliente é `saiu_para_entrega` para `entregue`;
+4. a linha é reconstruída a partir do estado anterior, permitindo a alteração somente de `status` e `delivered_at`.
+
+Com isso, uma requisição direta à API não consegue modificar preço, cliente, total, pagamento ou outros campos protegidos.
+
+### Credenciais e endpoints
+
+A URL do webhook n8n é armazenada como dado em `delivery_settings.n8n_webhook_url`, e não como valor fixo em arquivos de migração versionados.
+
+O arquivo `.env` não deve ser versionado. O projeto utiliza `.env.example` para documentar os nomes das variáveis sem incluir valores reais.
+
+As variáveis client-side do Supabase são públicas por natureza e não substituem o controle de acesso. A proteção efetiva é realizada pelas políticas de RLS e pelas regras do banco.
+
+## Integrações externas
+
+### Supabase
+
+O Supabase fornece:
+
+- autenticação de clientes e administradores;
+- banco de dados PostgreSQL;
+- Row Level Security;
+- atualizações em tempo real com Realtime;
+- armazenamento privado de fotos no Storage;
+- execução de gatilhos e funções no banco.
+
+### BrasilAPI
+
+A BrasilAPI é utilizada para geocodificar CEPs no cadastro de clientes e na configuração do endereço da loja.
+
+Endpoint utilizado:
+
+```text
+GET https://brasilapi.com.br/api/cep/v2/{cep}
+```
+
+Os dados aproveitados incluem CEP, estado, cidade, bairro, rua, latitude e longitude. Uma resposta não bem-sucedida é tratada como CEP não encontrado e bloqueia o envio do formulário.
+
+### n8n e WhatsApp
+
+O n8n recebe requisições `POST` enviadas pelo gatilho do banco de dados. A URL do webhook é configurável e lida no momento do disparo.
+
+A aplicação não constrói a mensagem final nem realiza diretamente o envio pelo WhatsApp. Essa responsabilidade pertence ao fluxo configurado no n8n.
+
+Na versão atual, o webhook não possui autenticação ou assinatura implementada. Trata-se de uma integração de estudo, sem SLA contratado e sem retentativa automática.
+
+## Tecnologias utilizadas
+
+| Tecnologia | Utilização |
+|---|---|
+| **React** | Construção da interface web. |
+| **TypeScript** | Linguagem e tipagem do frontend. |
+| **Vite** | Ambiente de desenvolvimento e processo de build. |
+| **Tailwind CSS** | Estilização responsiva e composição visual. |
+| **shadcn/ui** | Biblioteca de componentes baseada em Radix UI. |
+| **Bun** | Gerenciamento de pacotes e execução dos scripts do projeto. |
+| **Supabase Auth** | Cadastro, login, sessão e recuperação de senha. |
+| **Supabase PostgreSQL** | Persistência dos dados da aplicação. |
+| **Row Level Security** | Controle de acesso por usuário e papel. |
+| **Supabase Realtime** | Atualização em tempo real dos contadores de status. |
+| **Supabase Storage** | Armazenamento privado das fotos de produtos. |
+| **pg_net** | Chamadas HTTP disparadas diretamente pelo banco. |
+| **n8n** | Orquestração das notificações via WhatsApp. |
+| **BrasilAPI** | Consulta de CEP e geocodificação. |
+| **Lovable** | Desenvolvimento assistido por Inteligência Artificial. |
+| **GitHub** | Versionamento e documentação do projeto. |
+
+## Decisões arquiteturais
+
+### Conta própria do Supabase
+
+O projeto utiliza uma conta própria do Supabase em vez de depender exclusivamente do ambiente gerenciado pelo Lovable. Essa escolha oferece maior controle sobre autenticação, banco de dados, políticas de acesso, webhooks e portabilidade do backend.
+
+### Cliente autenticado para finalizar o pedido
+
+A exigência de autenticação foi adotada para viabilizar o histórico de pedidos e a área **Meus Pedidos**. Os dados da conta também podem ser reaproveitados no checkout sem exigir o preenchimento completo a cada pedido.
+
+### Adicionais como modificadores
+
+Os adicionais foram modelados como modificadores vinculados a produtos específicos. Essa estrutura representa melhor o funcionamento de uma loja em que um adicional não é comercializado isoladamente.
+
+### Notificações disparadas pelo banco
+
+O disparo por gatilho do PostgreSQL foi escolhido em vez de uma requisição feita pelo navegador do administrador. Assim, a atualização do pedido pode iniciar a notificação mesmo que a aba do painel seja fechada logo depois.
+
+### URL do webhook como configuração
+
+A URL do n8n é mantida como dado de configuração. Essa decisão evita que o endpoint fique exposto em arquivos de migração e permite alterá-lo sem modificar o código da aplicação.
+
+### Proteção por reconstrução da linha
+
+A proteção de alterações feitas pelo cliente reconstrói a linha a partir do estado anterior. Essa abordagem descarta silenciosamente campos não autorizados, em vez de apenas validar a entrada recebida.
+
+## Desenvolvimento assistido por Inteligência Artificial
+
+O DeliveryPro foi construído de forma incremental com apoio do Lovable, explorando o uso de Inteligência Artificial em diferentes etapas do desenvolvimento de software.
+
+A abordagem foi utilizada para apoiar a estruturação da aplicação, a implementação de funcionalidades, a evolução da interface, a integração com serviços externos, a análise de problemas e o refinamento da experiência de uso.
+
+Além de utilizar serviços externos para compor o produto, o projeto também representa um estudo sobre o impacto de ferramentas de IA no processo de criação e evolução de aplicações web.
+
+## Validação da aplicação
+
+Os principais fluxos previstos para o sistema foram definidos e validados considerando os seguintes cenários:
+
+- cadastro de cliente com CEP dentro do raio de entrega;
+- bloqueio de cadastro com CEP fora do raio permitido;
+- bloqueio de cadastro com e-mail já existente;
+- autenticação de clientes e administradores pela mesma tela;
+- recuperação de senha;
+- navegação pelo cardápio sem autenticação;
+- seleção de produtos, quantidades, adicionais e observações;
+- revisão e confirmação do pedido;
+- aprovação ou rejeição pelo administrador;
+- movimentação de pedidos no Kanban;
+- confirmação de recebimento pelo cliente;
+- envio de notificações nos três marcos do pedido;
+- atualização dos contadores em tempo real;
+- consulta de relatórios e exportação dos rankings;
+- alteração do CEP da loja com atualização das coordenadas;
+- impedimento de remoção do último administrador;
+- bloqueio de alterações indevidas feitas por um cliente diretamente pela API.
+
+## Escopo e limitações conhecidas
+
+O projeto foi dimensionado para uma única loja e para uma operação de pequeno porte. Não houve avaliação para cenários de alta concorrência ou múltiplas franquias.
+
+Estão fora do escopo atual:
+
+- processamento de pagamentos online;
+- aplicativo dedicado para entregadores;
+- suporte a múltiplas lojas ou franquias;
+- sistema de avaliações de produtos;
+- política de privacidade formalizada;
+- processo formal de exclusão de dados conforme solicitações da LGPD.
+
+Também existem limitações técnicas conhecidas:
+
+- o disparo do webhook é best-effort e não possui retentativa automática;
+- falhas no envio do WhatsApp não são sinalizadas na interface;
+- BrasilAPI é um serviço público e comunitário sem SLA formal;
+- o n8n está configurado em ambiente de teste ou estudo;
+- a proteção nativa contra senhas vazadas depende do plano Pro do Supabase e não está habilitada no plano atual;
+- dados pessoais reais podem ser processados sem uma política de privacidade publicada.
+
+Essas limitações devem ser consideradas antes de utilizar a aplicação como sistema de produção em escala comercial.
+
+## Possíveis evoluções
+
+Entre as evoluções possíveis para o DeliveryPro estão:
+
+- implementação de processamento de pagamentos online;
+- criação de aplicativo ou painel específico para entregadores;
+- suporte a múltiplas lojas e franquias;
+- inclusão de avaliações e comentários de produtos;
+- criação de mecanismos de retentativa e monitoramento dos webhooks;
+- autenticação ou assinatura das chamadas para o n8n;
+- ampliação dos recursos de auditoria e histórico de alterações;
+- formalização de política de privacidade e fluxos relacionados à LGPD;
+- adoção de proteção contra senhas comprometidas após atualização do plano do Supabase;
+- evolução da camada de relatórios e indicadores operacionais.
+
+## Autor
+
+Desenvolvido por **Marcelo Poliato de Oliveira** como projeto prático de desenvolvimento assistido por Inteligência Artificial generativa.
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Marcelo%20Poliato-0077B5?logo=linkedin)](https://www.linkedin.com/in/marcelo-poliato)
+[![GitHub](https://img.shields.io/badge/GitHub-poliato2015--max-181717?logo=github)](https://github.com/poliato2015-max)
