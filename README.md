@@ -497,9 +497,6 @@ Na versão atual, o webhook não possui autenticação ou assinatura implementad
 
 ![Fluxo N8N](https://raw.githubusercontent.com/poliato2015-max/imagens/main/projeto-ia-lovable-n8n-app-deliverypro/projeto_ia_lovable_n8n_app_deliverypro_fluxo_n8n.png)
 
-<img src="https://raw.githubusercontent.com/poliato2015-max/imagens/main/projeto-ia-lovable-n8n-app-deliverypro/projeto_ia_lovable_n8n_app_deliverypro_fluxo_n8n.png" alt="Texto Alternativo" width="919" height="570">
-
-
 ## Tecnologias utilizadas
 
 | Tecnologia | Utilização |
