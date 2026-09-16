@@ -294,18 +294,31 @@ Cada cartão exibe o número do pedido, o nome do cliente e um resumo dos itens.
 
 O ciclo operacional é encerrado no status **entregue**. O pedido deixa o Kanban ativo, mas permanece disponível no histórico do cliente e nos relatórios administrativos.
 
+### 📸 Screenshot
+
 ![Kanban](https://raw.githubusercontent.com/poliato2015-max/imagens/main/projeto-ia-lovable-n8n-app-deliverypro/projeto_ia_lovable_n8n_app_deliverypro_kanban.png)
 
-### 7.4 Validação de endereço e área de entrega
+### 7.4 Configuração
 
-A aplicação utiliza a **BrasilAPI** para consultar o CEP e obter dados de endereço e coordenadas geográficas.
+- Validação de endereço e área de entrega
 
 O administrador configura o CEP da loja, a taxa de entrega, a opção de frete grátis e o raio máximo de atendimento em quilômetros. No cadastro do cliente, o sistema calcula a distância entre a loja e o endereço informado.
 
+A aplicação utiliza a **BrasilAPI** para consultar o CEP e obter dados de endereço e coordenadas geográficas.
+
 Quando a distância supera o raio configurado, o cadastro é bloqueado e a interface informa a distância calculada e o limite permitido.
 
+- Gestão de administradores
 
-### 10. Notificações via WhatsApp
+Um administrador pode localizar uma conta de cliente já cadastrada e conceder a ela o papel administrativo. O mesmo recurso permite revogar esse papel.
+
+O sistema impede a remoção do último administrador restante, preservando a possibilidade de gerenciamento do painel.
+
+### 📸 Screenshot
+
+![Configuração](https://raw.githubusercontent.com/poliato2015-max/imagens/main/projeto-ia-lovable-n8n-app-deliverypro/projeto_ia_lovable_n8n_app_deliverypro_configuracao.png)
+
+## 📱 Notificações via WhatsApp
 
 O sistema envia notificações automáticas em três momentos do ciclo do pedido:
 
@@ -329,15 +342,7 @@ O aplicativo envia ao n8n um payload estruturado contendo:
 
 O n8n é responsável por construir o texto final e realizar o envio da mensagem via WhatsApp. O disparo é assíncrono e best-effort. Na versão atual, não existe retentativa automática nem alerta visual de falha na aplicação.
 
-
-
-### 12. Gestão de administradores
-
-Um administrador pode localizar uma conta de cliente já cadastrada e conceder a ela o papel administrativo. O mesmo recurso permite revogar esse papel.
-
-O sistema impede a remoção do último administrador restante, preservando a possibilidade de gerenciamento do painel.
-
-## Arquitetura da solução
+## 🖧 Arquitetura da solução
 
 O DeliveryPro utiliza uma arquitetura web com frontend hospedado na plataforma Lovable e backend gerenciado pelo Supabase.
 
@@ -404,7 +409,7 @@ O banco de dados utiliza PostgreSQL por meio do Supabase.
 | `delivery_settings` | Armazena as configurações de entrega da loja em uma tabela de linha única. |
 | `user_roles` | Armazena os papéis administrativos associados às contas autenticadas. |
 
-### Relacionamentos principais
+## Relacionamentos principais
 
 ```mermaid
 erDiagram
@@ -425,17 +430,17 @@ O preço unitário do produto e dos adicionais é copiado para as tabelas do ped
 
 A segurança dos dados é baseada no Supabase Auth, em políticas de **Row Level Security (RLS)** e em funções protegidas no PostgreSQL.
 
-### Modelo de papéis
+## Modelo de papéis
 
 Os papéis administrativos são mantidos em uma tabela dedicada chamada `user_roles`. A função `has_role(user_id, role)` utiliza `SECURITY DEFINER` e possui `search_path` explícito. Esse isolamento evita recursão quando as políticas de RLS consultam a existência de um papel administrativo.
 
-### Isolamento por usuário
+## Isolamento por usuário
 
 Clientes autenticados podem consultar apenas seus próprios pedidos e dados permitidos. Administradores possuem acesso operacional às entidades necessárias para gerenciar a loja.
 
 Produtos ativos e categorias podem ser consultados publicamente para exibição do cardápio. Dados sensíveis de clientes e pedidos não ficam disponíveis de forma irrestrita para usuários anônimos.
 
-### Proteção das alterações de pedido
+## Proteção das alterações de pedido
 
 A função `guard_customer_order_update` é executada antes das alterações em `orders` e aplica as seguintes regras:
 
@@ -446,7 +451,7 @@ A função `guard_customer_order_update` é executada antes das alterações em 
 
 Com isso, uma requisição direta à API não consegue modificar preço, cliente, total, pagamento ou outros campos protegidos.
 
-### Credenciais e endpoints
+## Credenciais e endpoints
 
 A URL do webhook n8n é armazenada como dado em `delivery_settings.n8n_webhook_url`, e não como valor fixo em arquivos de migração versionados.
 
@@ -486,6 +491,10 @@ O n8n recebe requisições `POST` enviadas pelo gatilho do banco de dados. A URL
 A aplicação não constrói a mensagem final nem realiza diretamente o envio pelo WhatsApp. Essa responsabilidade pertence ao fluxo configurado no n8n.
 
 Na versão atual, o webhook não possui autenticação ou assinatura implementada. Trata-se de uma integração de estudo, sem SLA contratado e sem retentativa automática.
+
+### 📸 Screenshot
+
+![Fluxo N8N](https://raw.githubusercontent.com/poliato2015-max/imagens/main/projeto-ia-lovable-n8n-app-deliverypro/projeto_ia_lovable_n8n_app_deliverypro_fluxo_n8n.png)
 
 ## Tecnologias utilizadas
 
@@ -600,12 +609,12 @@ Entre as evoluções possíveis para o DeliveryPro estão:
 - autenticação ou assinatura das chamadas para o n8n;
 - ampliação dos recursos de auditoria e histórico de alterações;
 - formalização de política de privacidade e fluxos relacionados à LGPD;
-- adoção de proteção contra senhas comprometidas após atualização do plano do Supabase;
 - evolução da camada de relatórios e indicadores operacionais.
 
-## Autor
+---
 
-Desenvolvido por **Marcelo Poliato de Oliveira** como projeto prático de desenvolvimento assistido por Inteligência Artificial generativa.
+# <img src="https://github.com/poliato2015-max.png" width="40" height="40" style="border-radius: 50%;" alt="Marcelo Poliato"> Autor
+Desenvolvido por **Marcelo Poliato de Oliveira** como projeto prático de desenvolvimento assistido por IA Generativa.
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Marcelo%20Poliato-0077B5?logo=linkedin)](https://www.linkedin.com/in/marcelo-poliato)
 [![GitHub](https://img.shields.io/badge/GitHub-poliato2015--max-181717?logo=github)](https://github.com/poliato2015-max)
