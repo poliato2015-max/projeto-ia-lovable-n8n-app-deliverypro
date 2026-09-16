@@ -146,7 +146,7 @@ API Oficial da Meta / WhatsApp]
 e permanece no histórico e relatórios]
 ```
 
-## # ✨ Principais funcionalidades
+## ✨ Principais funcionalidades
 ### 1. Landing Page
 A Landing Page é a porta de entrada do DeliveryPro. Ela apresenta a proposta da aplicação e orienta o visitante a iniciar um pedido.
 O destaque principal informa que o sistema oferece hambúrgueres, pizzas e outros produtos preparados na hora e entregues ao cliente. A página também reforça a possibilidade de montar o pedido de acordo com a preferência do cliente e acompanhar sua evolução desde o preparo até a entrega.
@@ -172,7 +172,7 @@ O cadastro público de clientes solicita:
 - nome completo;
 - e-mail;
 - telefone/WhatsApp;
-- CEP *;
+- CEP;
 - número e complemento do endereço;
 - senha e confirmação de senha.
 
@@ -204,9 +204,9 @@ O cliente pode adicionar produtos ao carrinho, definir quantidades, escolher adi
 
 O carrinho permanece em memória durante a sessão até a confirmação do pedido. A seleção de adicionais respeita os vínculos cadastrados entre o produto-base e seus modificadores.
 
-![Checkout](https://raw.githubusercontent.com/poliato2015-max/imagens/main/projeto-ia-lovable-n8n-app-deliverypro/projeto_ia_lovable_n8n_app_deliverypro_carrinho_2.png)
+![Carrinho](https://raw.githubusercontent.com/poliato2015-max/imagens/main/projeto-ia-lovable-n8n-app-deliverypro/projeto_ia_lovable_n8n_app_deliverypro_carrinho_2.png)
 
-### 5. Checkout
+### 5. Checkout ( Revisar pedido )
 
 A finalização do pedido exige autenticação. O sistema não permite concluir um pedido como convidado.
 
@@ -224,9 +224,9 @@ A tela de revisão apresenta a foto de cada produto, os adicionais, as observaç
 
 ### 📸 Screenshot
 
-COLOCAR LINK
+![Checkout](https://raw.githubusercontent.com/poliato2015-max/imagens/main/projeto-ia-lovable-n8n-app-deliverypro/projeto_ia_lovable_n8n_app_deliverypro_checkout.png)
 
-### 9. Meus pedidos e confirmação de recebimento
+### 6. Meus pedidos e confirmação de recebimento
 
 O cliente autenticado possui acesso à área **Meus Pedidos**, que lista exclusivamente seus próprios pedidos, com os registros mais recentes primeiro.
 
@@ -240,19 +240,33 @@ saiu_para_entrega → entregue
 
 Qualquer tentativa de alterar outro campo ou executar uma transição diferente é rejeitada pelo banco de dados.
 
-### Screenshot
+### 📸 Screenshot
 
-COLOCAR LINK
+![Meus Pedidos](https://raw.githubusercontent.com/poliato2015-max/imagens/main/projeto-ia-lovable-n8n-app-deliverypro/projeto_ia_lovable_n8n_app_deliverypro_meus_pedidos.png)
 
-### 7. Validação de endereço e área de entrega
+## 7. 🛠️ Painel Admistrativo
 
-A aplicação utiliza a **BrasilAPI** para consultar o CEP e obter dados de endereço e coordenadas geográficas.
+### 7.1 Relatórios gerenciais
 
-O administrador configura o CEP da loja, a taxa de entrega, a opção de frete grátis e o raio máximo de atendimento em quilômetros. No cadastro do cliente, o sistema calcula a distância entre a loja e o endereço informado.
+A sessão de relatórios apresenta indicadores filtráveis por período, incluindo:
 
-Quando a distância supera o raio configurado, o cadastro é bloqueado e a interface informa a distância calculada e o limite permitido.
+- total de pedidos;
+- receita bruta;
+- ticket médio;
+- pedidos por dia;
+- distribuição por status;
+- ranking de produtos mais vendidos;
+- ranking de adicionais mais vendidos.
 
-### 4. Produtos, categorias e adicionais
+Os contadores de status são atualizados em tempo real e funcionam de forma independente do filtro de período. Esse comportamento utiliza o recurso Realtime do Supabase com assinatura na tabela de pedidos.
+
+Os detalhes dos pedidos podem ser exportados nos formatos **XLSX** e **CSV**.
+
+### 📸 Screenshot
+
+![Relatório](https://raw.githubusercontent.com/poliato2015-max/imagens/main/projeto-ia-lovable-n8n-app-deliverypro/projeto_ia_lovable_n8n_app_deliverypro_relatorio.png)
+
+### 7.2 Produtos, categorias e adicionais ((((((((((((( REVER TEXTO )))))))))))))
 
 O administrador pode cadastrar e editar produtos e categorias. Um produto pode ser desativado sem ser excluído, preservando sua utilização no histórico de pedidos.
 
@@ -260,7 +274,11 @@ Os adicionais são tratados como modificadores vinculados a produtos específico
 
 O preço do produto deve ser maior que zero. Essa regra é validada na interface e reforçada pela restrição `CHECK (price > 0)` no banco de dados.
 
-### 8. Aprovação e produção em Kanban
+### 📸 Screenshot
+
+COLOCAR LINK
+
+### 7.3 Aprovação e produção em Kanban
 
 Um pedido recém-criado não entra diretamente em produção. Ele permanece aguardando a decisão do administrador.
 
@@ -276,9 +294,16 @@ Cada cartão exibe o número do pedido, o nome do cliente e um resumo dos itens.
 
 O ciclo operacional é encerrado no status **entregue**. O pedido deixa o Kanban ativo, mas permanece disponível no histórico do cliente e nos relatórios administrativos.
 
-### Screenshot
+![Kanban](https://raw.githubusercontent.com/poliato2015-max/imagens/main/projeto-ia-lovable-n8n-app-deliverypro/projeto_ia_lovable_n8n_app_deliverypro_kanban.png)
 
-COLOCAR LINK
+### 7.4 Validação de endereço e área de entrega
+
+A aplicação utiliza a **BrasilAPI** para consultar o CEP e obter dados de endereço e coordenadas geográficas.
+
+O administrador configura o CEP da loja, a taxa de entrega, a opção de frete grátis e o raio máximo de atendimento em quilômetros. No cadastro do cliente, o sistema calcula a distância entre a loja e o endereço informado.
+
+Quando a distância supera o raio configurado, o cadastro é bloqueado e a interface informa a distância calculada e o limite permitido.
+
 
 ### 10. Notificações via WhatsApp
 
@@ -304,25 +329,7 @@ O aplicativo envia ao n8n um payload estruturado contendo:
 
 O n8n é responsável por construir o texto final e realizar o envio da mensagem via WhatsApp. O disparo é assíncrono e best-effort. Na versão atual, não existe retentativa automática nem alerta visual de falha na aplicação.
 
-### 11. Relatórios gerenciais
 
-O painel administrativo apresenta indicadores filtráveis por período, incluindo:
-
-- total de pedidos;
-- receita bruta;
-- ticket médio;
-- pedidos por dia;
-- distribuição por status;
-- ranking de produtos mais vendidos;
-- ranking de adicionais mais vendidos.
-
-Os contadores de status são atualizados em tempo real e funcionam de forma independente do filtro de período. Esse comportamento utiliza o recurso Realtime do Supabase com assinatura na tabela de pedidos.
-
-Os rankings podem ser exportados nos formatos **XLSX** e **CSV**.
-
-### Screenshot
-
-COLOCAR LINK
 
 ### 12. Gestão de administradores
 
