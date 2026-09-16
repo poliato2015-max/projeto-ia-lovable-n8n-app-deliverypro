@@ -161,28 +161,9 @@ A página disponibiliza botões de chamada para ação, como “Ver Cardápio”
 
 ### 📸 Screenshot
 
+![landing Page](https://raw.githubusercontent.com/poliato2015-max/imagens/main/projeto-ia-lovable-n8n-app-deliverypro/projeto_ia_lovable_n8n_app_deliverypro_landing_page.png)
 
-### 2. Cardápio público
-
-O cardápio pode ser acessado sem autenticação e apresenta os produtos organizados por categorias cadastradas pelo administrador.
-
-Cada produto pode possuir nome, descrição, preço, foto, categoria e informações de disponibilidade. O sistema também permite exibir um único emblema por produto, seguindo a prioridade **Promoção**, **Popular** e **Novo**.
-
-Os produtos de cada categoria são apresentados em carrosséis horizontais. O comportamento inclui navegação por setas, suporte a arrastar em dispositivos móveis e indicação visual da existência de outros produtos. Quando todos os produtos cabem no espaço disponível, o carrossel não é exibido.
-
-### Screenshot
-
-COLOCAR LINK
-
-### 2. Produtos, categorias e adicionais
-
-O administrador pode cadastrar e editar produtos e categorias. Um produto pode ser desativado sem ser excluído, preservando sua utilização no histórico de pedidos.
-
-Os adicionais são tratados como modificadores vinculados a produtos específicos. Dessa forma, um adicional não é vendido de forma independente: ele pode ser selecionado somente quando estiver associado ao produto-base correspondente.
-
-O preço do produto deve ser maior que zero. Essa regra é validada na interface e reforçada pela restrição `CHECK (price > 0)` no banco de dados.
-
-### 3. Cadastro, login e recuperação de senha
+### 2. Cadastro, login e recuperação de senha
 
 Clientes e administradores utilizam a mesma tela de entrada. Após a autenticação, o sistema identifica o papel da conta e direciona o usuário para a área correspondente.
 
@@ -190,24 +171,40 @@ O cadastro público de clientes solicita:
 
 - nome completo;
 - e-mail;
-- telefone ou WhatsApp;
-- CEP;
+- telefone/WhatsApp;
+- CEP *;
 - número e complemento do endereço;
 - senha e confirmação de senha.
+
+> Durante o cadastro, o cliente informa o CEP e o sistema consulta a BrasilAPI para obter os dados de endereço correspondentes. As informações de rua, bairro, cidade e estado são preenchidas automaticamente com base no retorno da API, enquanto o cliente precisa informar manualmente o número e o complemento do endereço.
 
 O cadastro de administrador não é público. Uma conta de cliente existente só pode ser promovida ou ter o papel administrativo revogado por um administrador autorizado.
 
 A aplicação também possui fluxo de recuperação de senha com uma rota para solicitação e outra para definição da nova senha.
 
-### Screenshot
+### 📸 Screenshot
 
-COLOCAR LINK
+![Login](https://raw.githubusercontent.com/poliato2015-max/imagens/main/projeto-ia-lovable-n8n-app-deliverypro/projeto_ia_lovable_n8n_app_deliverypro_cadastro_login.png)
 
-### 4. Carrinho e montagem do pedido
+### 3. Cardápio público
+
+O cardápio pode ser acessado sem autenticação e apresenta os produtos organizados por categorias cadastradas pelo administrador.
+
+Cada produto pode possuir nome, descrição, preço, foto, categoria e informações de disponibilidade. O sistema também permite exibir um único emblema por produto, seguindo a prioridade **Promoção**, **Popular** e **Novo**.
+
+Os produtos de cada categoria são apresentados em carrosséis horizontais. O comportamento inclui navegação por setas, suporte a arrastar em dispositivos móveis e indicação visual da existência de outros produtos. Quando todos os produtos cabem no espaço disponível, o carrossel não é exibido.
+
+### 📸 Screenshot
+
+![Cardápio](https://raw.githubusercontent.com/poliato2015-max/imagens/main/projeto-ia-lovable-n8n-app-deliverypro/projeto_ia_lovable_n8n_app_deliverypro_cardapio.png)
+
+### 4. Montagem do Pedido e Carrinho
 
 O cliente pode adicionar produtos ao carrinho, definir quantidades, escolher adicionais e informar observações livres para cada item.
 
 O carrinho permanece em memória durante a sessão até a confirmação do pedido. A seleção de adicionais respeita os vínculos cadastrados entre o produto-base e seus modificadores.
+
+![Checkout](https://raw.githubusercontent.com/poliato2015-max/imagens/main/projeto-ia-lovable-n8n-app-deliverypro/projeto_ia_lovable_n8n_app_deliverypro_carrinho_2.png)
 
 ### 5. Checkout
 
@@ -225,11 +222,29 @@ O pagamento é realizado na entrega. A aplicação não processa cobranças onli
 
 A tela de revisão apresenta a foto de cada produto, os adicionais, as observações, a taxa de entrega e o total do pedido. Após a confirmação, o pedido recebe um número sequencial legível e inicia com o status **aguardando aprovação**.
 
+### 📸 Screenshot
+
+COLOCAR LINK
+
+### 9. Meus pedidos e confirmação de recebimento
+
+O cliente autenticado possui acesso à área **Meus Pedidos**, que lista exclusivamente seus próprios pedidos, com os registros mais recentes primeiro.
+
+Cada registro apresenta o número do pedido, a imagem do produto principal e um indicador de status utilizando a mesma paleta visual do Kanban administrativo.
+
+Quando o pedido está em **saiu para entrega**, o cliente pode confirmar o recebimento. Essa é a única alteração de status permitida diretamente pelo cliente. A transição autorizada é:
+
+```text
+saiu_para_entrega → entregue
+```
+
+Qualquer tentativa de alterar outro campo ou executar uma transição diferente é rejeitada pelo banco de dados.
+
 ### Screenshot
 
 COLOCAR LINK
 
-### 6. Validação de endereço e área de entrega
+### 7. Validação de endereço e área de entrega
 
 A aplicação utiliza a **BrasilAPI** para consultar o CEP e obter dados de endereço e coordenadas geográficas.
 
@@ -237,7 +252,15 @@ O administrador configura o CEP da loja, a taxa de entrega, a opção de frete g
 
 Quando a distância supera o raio configurado, o cadastro é bloqueado e a interface informa a distância calculada e o limite permitido.
 
-### 7. Aprovação e produção em Kanban
+### 4. Produtos, categorias e adicionais
+
+O administrador pode cadastrar e editar produtos e categorias. Um produto pode ser desativado sem ser excluído, preservando sua utilização no histórico de pedidos.
+
+Os adicionais são tratados como modificadores vinculados a produtos específicos. Dessa forma, um adicional não é vendido de forma independente: ele pode ser selecionado somente quando estiver associado ao produto-base correspondente.
+
+O preço do produto deve ser maior que zero. Essa regra é validada na interface e reforçada pela restrição `CHECK (price > 0)` no banco de dados.
+
+### 8. Aprovação e produção em Kanban
 
 Um pedido recém-criado não entra diretamente em produção. Ele permanece aguardando a decisão do administrador.
 
@@ -257,25 +280,7 @@ O ciclo operacional é encerrado no status **entregue**. O pedido deixa o Kanban
 
 COLOCAR LINK
 
-### 8. Meus pedidos e confirmação de recebimento
-
-O cliente autenticado possui acesso à área **Meus Pedidos**, que lista exclusivamente seus próprios pedidos, com os registros mais recentes primeiro.
-
-Cada registro apresenta o número do pedido, a imagem do produto principal e um indicador de status utilizando a mesma paleta visual do Kanban administrativo.
-
-Quando o pedido está em **saiu para entrega**, o cliente pode confirmar o recebimento. Essa é a única alteração de status permitida diretamente pelo cliente. A transição autorizada é:
-
-```text
-saiu_para_entrega → entregue
-```
-
-Qualquer tentativa de alterar outro campo ou executar uma transição diferente é rejeitada pelo banco de dados.
-
-### Screenshot
-
-COLOCAR LINK
-
-### 9. Notificações via WhatsApp
+### 10. Notificações via WhatsApp
 
 O sistema envia notificações automáticas em três momentos do ciclo do pedido:
 
@@ -299,7 +304,7 @@ O aplicativo envia ao n8n um payload estruturado contendo:
 
 O n8n é responsável por construir o texto final e realizar o envio da mensagem via WhatsApp. O disparo é assíncrono e best-effort. Na versão atual, não existe retentativa automática nem alerta visual de falha na aplicação.
 
-### 10. Relatórios gerenciais
+### 11. Relatórios gerenciais
 
 O painel administrativo apresenta indicadores filtráveis por período, incluindo:
 
@@ -319,7 +324,7 @@ Os rankings podem ser exportados nos formatos **XLSX** e **CSV**.
 
 COLOCAR LINK
 
-### 11. Gestão de administradores
+### 12. Gestão de administradores
 
 Um administrador pode localizar uma conta de cliente já cadastrada e conceder a ela o papel administrativo. O mesmo recurso permite revogar esse papel.
 
