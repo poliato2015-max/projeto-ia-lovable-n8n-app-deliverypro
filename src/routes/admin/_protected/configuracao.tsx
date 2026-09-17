@@ -62,6 +62,12 @@ function AdminEntrega() {
   });
 
   useEffect(() => {
+    if (!settings) return;
+    setStoreCep(settings.store_cep);
+    setFee(String(settings.delivery_fee));
+    setFreeShipping(settings.free_shipping_enabled);
+    setRange(String(settings.delivery_radius_km));
+  }, [settings]);
 
   async function salvar(event: React.FormEvent) {
     event.preventDefault();
@@ -97,23 +103,14 @@ function AdminEntrega() {
       })
       .eq("id", settings.id);
 
-    const urlValor = webhookUrl.trim() === "" ? null : webhookUrl.trim();
-    const { error: erroWebhook } = webhook
-      ? await supabase
-          .from("delivery_webhook")
-          .update({ url: urlValor })
-          .eq("id", webhook.id)
-      : await supabase.from("delivery_webhook").insert({ url: urlValor });
-
     setSalvando(false);
 
-    if (error || erroWebhook) {
+    if (error) {
       setErro("Não foi possível salvar as configurações. Tente novamente.");
       return;
     }
     toast.success("Configurações de entrega salvas.");
     queryClient.invalidateQueries({ queryKey: ["delivery-settings-admin"] });
-    queryClient.invalidateQueries({ queryKey: ["delivery-webhook-admin"] });
     queryClient.invalidateQueries({ queryKey: ["delivery-settings"] });
     queryClient.invalidateQueries({ queryKey: ["delivery_settings"] });
   }
