@@ -139,6 +139,11 @@ function AdminProdutos() {
 
   async function excluir() {
     if (!toDelete) return;
+    if (produtosEmPedidos.has(toDelete.id)) {
+      toast.error("Este produto já foi usado em pedidos e não pode ser excluído.");
+      setToDelete(null);
+      return;
+    }
     const { error } = await supabase.from("products").delete().eq("id", toDelete.id);
     if (error) {
       toast.error("Não foi possível excluir o produto.");
