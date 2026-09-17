@@ -106,6 +106,23 @@ function AdminProdutos() {
     enabled: products.length > 0,
   });
 
+  // Produtos já usados em algum pedido (como item ou adicional) não podem ser excluídos.
+  const { data: produtosEmPedidos = new Set<string>() } = useQuery({
+    queryKey: ["admin", "produtos-em-pedidos"],
+    queryFn: async () => {
+      const [itens, adicionais] = await Promise.all([
+        supabase.from("order_items").select("product_id"),
+        supabase.from("order_item_addons").select("addon_product_id"),
+      ]);
+      if (itens.error) throw itens.error;
+      if (adicionais.error) throw adicionais.error;
+      return new Set<string>([
+        ...(itens.data ?? []).map((i) => i.product_id),
+        ...(adicionais.data ?? []).map((a) => a.addon_product_id),
+      ]);
+    },
+  });
+
   const abas = [
     ...categories.map((c) => ({ value: c.id, label: c.name })),
     { value: ABA_ADICIONAIS, label: "Adicionais" },
