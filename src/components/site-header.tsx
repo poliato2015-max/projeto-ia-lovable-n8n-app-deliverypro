@@ -18,32 +18,34 @@ export function SiteHeader({
 }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [adminEmail, setAdminEmail] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const { user } = useSession();
   const clienteLogado = !!user;
+  const email = user?.email ?? "";
 
   useEffect(() => {
     let ativo = true;
+    if (!user) {
+      setIsAdmin(false);
+      return;
+    }
     (async () => {
-      const { data } = await supabase.auth.getUser();
-      const user = data.user;
-      if (!user) return;
-      const { data: isAdmin } = await supabase.rpc("has_role", {
+      const { data } = await supabase.rpc("has_role", {
         _user_id: user.id,
         _role: "admin",
       });
-      if (ativo && isAdmin) setAdminEmail(user.email ?? "");
+      if (ativo) setIsAdmin(!!data);
     })();
     return () => {
       ativo = false;
     };
-  }, []);
+  }, [user]);
 
   async function sair() {
     await queryClient.cancelQueries();
     queryClient.clear();
     await supabase.auth.signOut();
-    setAdminEmail(null);
+    setIsAdmin(false);
     navigate({ to: "/", replace: true });
   }
 
