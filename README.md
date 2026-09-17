@@ -278,9 +278,6 @@ A tela principal apresenta os produtos em uma lista organizada, exibindo:
 - situação atual, como ativo ou inativo;
 - ações de edição e exclusão.
 
-> A desativação de um produto impede que o item seja exibido para novos pedidos, sem removê-lo do banco de dados. Dessa forma, os pedidos realizados anteriormente continuam preservando os produtos e valores registrados no momento da compra.
-> A exclusão é permitida apenas para produtos que ainda não foram registrados em algum pedido, caso contrário o botão excluir ficará desabilidado. 
-
 ### 📸 Screenshot
 
 ![Lista Produtos](https://raw.githubusercontent.com/poliato2015-max/imagens/main/projeto-ia-lovable-n8n-app-deliverypro/projeto_ia_lovable_n8n_app_deliverypro_lista_produtos.png)
@@ -298,20 +295,20 @@ O cadastro e a edição são realizados por meio de uma janela modal com os camp
 - situação do produto;
 - indicação de promoção.
 
-A imagem do produto é obrigatória no cadastro e na edição, o arquivo deve estar nos formatos JPG, PNG ou WebP, com tamanho máximo de 5 MB.. A foto é armazenada no Supabase Storage e exibida no cardápio por meio de uma URL assinada gerada durante o carregamento.
+A imagem do produto é obrigatória no cadastro e na edição, o arquivo deve estar nos formatos JPG, PNG ou WebP, com tamanho máximo de 5 MB. A foto é armazenada no Supabase Storage e exibida no cardápio por meio de uma URL assinada gerada durante o carregamento.
 
 Quando o produto não é marcado como adicional, o administrador pode associar a ele um ou mais adicionais disponíveis. Essa associação define quais modificadores poderão ser selecionados pelo cliente durante a montagem do pedido.
 
-Categorias
+#### Categorias
 As categorias são cadastradas livremente pelo administrador e permitem organizar o cardápio conforme o tipo de produto, como bebidas, hambúrgueres, massas, pizzas, salgados e adicionais.
 A categoria é obrigatória para produtos comuns. Para produtos marcados como adicionais, o campo de categoria pode permanecer sem preenchimento, conforme a regra definida no modelo de dados.
 
-Adicionais
+#### Adicionais
 Os adicionais são tratados como modificadores vinculados a produtos-base específicos. Portanto, não são vendidos de forma independente. Um adicional somente pode ser selecionado pelo cliente quando estiver associado ao produto correspondente.
 Essa estrutura permite, por exemplo, definir quais adicionais podem acompanhar determinado hambúrguer, pizza ou outro produto do cardápio.
 Os adicionais também possuem preço próprio. Quando são incluídos em um pedido, o valor praticado no momento da compra é copiado para o registro do pedido e permanece preservado no histórico.
 
-Validações e regras de negócio
+#### Validações e regras de negócio
 O preço de cada produto deve ser maior que zero. Essa regra é validada na interface e reforçada no banco de dados pela restrição:
 
 > CHECK (price > 0)
@@ -319,18 +316,16 @@ O preço de cada produto deve ser maior que zero. Essa regra é validada na inte
 Além disso:
 - produtos inativos não aparecem para novos pedidos;
 - produtos desativados permanecem disponíveis para consulta no histórico;
+- produtos não podem ser excluídos se foram registrados em algum pedido;
 - adicionais só podem ser selecionados quando associados ao produto-base;
 - o preço do produto é preservado no momento da compra;
 - o preço dos adicionais também é preservado no momento da compra;
 - o cardápio exibe no máximo um emblema por produto;
 - a prioridade dos emblemas é Promo, Popular e Novo.
 
-Tela principal de gerenciamento de produtos
-
-
-Tela de cadastro e edição de produto
 ### 📸 Screenshot
 
+![Edita Produtos](https://raw.githubusercontent.com/poliato2015-max/imagens/main/projeto-ia-lovable-n8n-app-deliverypro/projeto_ia_lovable_n8n_app_deliverypro_edita_produtos.png)
 
 ### 7.3 Aprovação e produção em Kanban
 
