@@ -77,18 +77,22 @@ export function SiteHeader({
             Meus Pedidos
           </Link>
         ) : null}
+        {clienteLogado && isAdmin ? (
+          <Link
+            to="/admin"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+            activeProps={{ className: "text-primary" }}
+          >
+            Área Admin
+          </Link>
+        ) : null}
         </div>
 
         <div className="flex shrink-0 items-center gap-1 sm:ml-auto sm:gap-2">
-          {adminEmail !== null ? (
-            <>
-              <Button asChild variant="ghost" size="sm">
-                <Link to="/admin">Área Admin</Link>
-              </Button>
-              <span className="hidden max-w-[180px] truncate text-xs text-muted-foreground sm:inline">
-                {adminEmail}
-              </span>
-            </>
+          {clienteLogado && email ? (
+            <span className="hidden max-w-[180px] truncate text-xs text-muted-foreground sm:inline">
+              {email}
+            </span>
           ) : null}
           {clienteLogado ? (
             <Button variant="outline" size="sm" onClick={sair}>
