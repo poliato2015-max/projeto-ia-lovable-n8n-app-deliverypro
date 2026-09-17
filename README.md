@@ -266,17 +266,71 @@ Os detalhes dos pedidos podem ser exportados nos formatos **XLSX** e **CSV**.
 
 ![Relatório](https://raw.githubusercontent.com/poliato2015-max/imagens/main/projeto-ia-lovable-n8n-app-deliverypro/projeto_ia_lovable_n8n_app_deliverypro_relatorio.png)
 
-### 7.2 Produtos, categorias e adicionais ((((((((((((( REVER TEXTO )))))))))))))
+### 7.2 Produtos, categorias e adicionais
 
-O administrador pode cadastrar e editar produtos e categorias. Um produto pode ser desativado sem ser excluído, preservando sua utilização no histórico de pedidos.
+A área administrativa de produtos permite controlar os itens exibidos no cardápio. O administrador pode cadastrar novos produtos, editar ou excluir informações existentes, pesquisar por nome e filtrar os registros por categoria.
 
-Os adicionais são tratados como modificadores vinculados a produtos específicos. Dessa forma, um adicional não é vendido de forma independente: ele pode ser selecionado somente quando estiver associado ao produto-base correspondente.
+A tela principal apresenta os produtos em uma lista organizada, exibindo:
+- foto do produto;
+- nome;
+- categoria;
+- preço;
+- situação atual, como ativo ou inativo;
+- ações de edição e exclusão.
 
-O preço do produto deve ser maior que zero. Essa regra é validada na interface e reforçada pela restrição `CHECK (price > 0)` no banco de dados.
+> A desativação de um produto impede que o item seja exibido para novos pedidos, sem removê-lo do banco de dados. Dessa forma, os pedidos realizados anteriormente continuam preservando os produtos e valores registrados no momento da compra.
+> A exclusão é permitida apenas para produtos que ainda não foram registrados em algum pedido, caso contrário o botão excluir ficará desabilidado. 
 
 ### 📸 Screenshot
 
-COLOCAR LINK
+![Lista Produtos](https://raw.githubusercontent.com/poliato2015-max/imagens/main/projeto-ia-lovable-n8n-app-deliverypro/projeto_ia_lovable_n8n_app_deliverypro_lista_produtos.png)
+
+### Cadastro e edição de produtos
+
+O cadastro e a edição são realizados por meio de uma janela modal com os campos necessários para configurar o item do cardápio:
+- nome;
+- descrição ou ingredientes;
+- indicação se o produto é um adicional;
+- categoria;
+- preço;
+- foto do produto;
+- adicionais disponíveis;
+- situação do produto;
+- indicação de promoção.
+
+A imagem do produto é obrigatória no cadastro e na edição, o arquivo deve estar nos formatos JPG, PNG ou WebP, com tamanho máximo de 5 MB.. A foto é armazenada no Supabase Storage e exibida no cardápio por meio de uma URL assinada gerada durante o carregamento.
+
+Quando o produto não é marcado como adicional, o administrador pode associar a ele um ou mais adicionais disponíveis. Essa associação define quais modificadores poderão ser selecionados pelo cliente durante a montagem do pedido.
+
+Categorias
+As categorias são cadastradas livremente pelo administrador e permitem organizar o cardápio conforme o tipo de produto, como bebidas, hambúrgueres, massas, pizzas, salgados e adicionais.
+A categoria é obrigatória para produtos comuns. Para produtos marcados como adicionais, o campo de categoria pode permanecer sem preenchimento, conforme a regra definida no modelo de dados.
+
+Adicionais
+Os adicionais são tratados como modificadores vinculados a produtos-base específicos. Portanto, não são vendidos de forma independente. Um adicional somente pode ser selecionado pelo cliente quando estiver associado ao produto correspondente.
+Essa estrutura permite, por exemplo, definir quais adicionais podem acompanhar determinado hambúrguer, pizza ou outro produto do cardápio.
+Os adicionais também possuem preço próprio. Quando são incluídos em um pedido, o valor praticado no momento da compra é copiado para o registro do pedido e permanece preservado no histórico.
+
+Validações e regras de negócio
+O preço de cada produto deve ser maior que zero. Essa regra é validada na interface e reforçada no banco de dados pela restrição:
+
+> CHECK (price > 0)
+
+Além disso:
+- produtos inativos não aparecem para novos pedidos;
+- produtos desativados permanecem disponíveis para consulta no histórico;
+- adicionais só podem ser selecionados quando associados ao produto-base;
+- o preço do produto é preservado no momento da compra;
+- o preço dos adicionais também é preservado no momento da compra;
+- o cardápio exibe no máximo um emblema por produto;
+- a prioridade dos emblemas é Promo, Popular e Novo.
+
+Tela principal de gerenciamento de produtos
+
+
+Tela de cadastro e edição de produto
+### 📸 Screenshot
+
 
 ### 7.3 Aprovação e produção em Kanban
 
