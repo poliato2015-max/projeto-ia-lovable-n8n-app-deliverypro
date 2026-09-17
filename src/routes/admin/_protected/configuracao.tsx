@@ -45,7 +45,6 @@ function AdminEntrega() {
   const [fee, setFee] = useState("");
   const [freeShipping, setFreeShipping] = useState(false);
   const [range, setRange] = useState("");
-  const [webhookUrl, setWebhookUrl] = useState("");
   const [erro, setErro] = useState<string | null>(null);
   const [salvando, setSalvando] = useState(false);
 
@@ -62,30 +61,7 @@ function AdminEntrega() {
     },
   });
 
-  const { data: webhook } = useQuery({
-    queryKey: ["delivery-webhook-admin"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("delivery_webhook")
-        .select("id, url")
-        .limit(1)
-        .maybeSingle();
-      if (error) throw error;
-      return data;
-    },
-  });
-
   useEffect(() => {
-    if (!settings) return;
-    setStoreCep(settings.store_cep);
-    setFee(String(settings.delivery_fee));
-    setFreeShipping(settings.free_shipping_enabled);
-    setRange(String(settings.delivery_radius_km));
-  }, [settings]);
-
-  useEffect(() => {
-    setWebhookUrl(webhook?.url ?? "");
-  }, [webhook]);
 
   async function salvar(event: React.FormEvent) {
     event.preventDefault();
