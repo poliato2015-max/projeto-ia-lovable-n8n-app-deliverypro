@@ -172,18 +172,6 @@ function AdminEntrega() {
             </p>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="webhook-url">Endereço de avisos (WhatsApp)</Label>
-            <Input
-              id="webhook-url"
-              placeholder="https://..."
-              value={webhookUrl}
-              onChange={(e) => setWebhookUrl(e.target.value)}
-            />
-            <p className="text-xs text-muted-foreground">
-              Enquanto estiver vazio, nenhum aviso automático é enviado ao cliente.
-            </p>
-          </div>
 
           {erro ? <p className="text-sm text-destructive">{erro}</p> : null}
 
