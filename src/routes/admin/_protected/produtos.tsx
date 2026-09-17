@@ -247,6 +247,12 @@ function AdminProdutos() {
                             variant="ghost"
                             size="icon"
                             aria-label={`Excluir ${product.name}`}
+                            disabled={produtosEmPedidos.has(product.id)}
+                            title={
+                              produtosEmPedidos.has(product.id)
+                                ? "Este produto já foi usado em pedidos e não pode ser excluído."
+                                : `Excluir ${product.name}`
+                            }
                             onClick={() => setToDelete(product)}
                           >
                             <Trash2 className="h-4 w-4" />
