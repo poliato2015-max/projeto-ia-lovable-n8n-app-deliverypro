@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { UtensilsCrossed } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { CartSheet } from "@/components/cart-sheet";
 import { useSession } from "@/lib/use-session";
 import { Button } from "@/components/ui/button";
 import { AdminLayout, PublicLayout } from "@/components/layout-container";
