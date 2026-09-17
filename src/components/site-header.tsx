@@ -104,6 +104,7 @@ export function SiteHeader({
               <Link to="/conta">Entrar</Link>
             </Button>
           )}
+          {clienteLogado ? <CartSheet /> : null}
           {actions}
         </div>
       </Layout>

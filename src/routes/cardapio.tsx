@@ -135,7 +135,7 @@ function Cardapio() {
 
   return (
     <div className="min-h-screen bg-client-bg">
-      <SiteHeader actions={<CartSheet />} />
+      <SiteHeader />
       <PublicLayout className="py-10">
         <main className="space-y-8">
           <header className="space-y-2">
