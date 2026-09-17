@@ -13,7 +13,7 @@ import { formatBRL, getPhotoUrls } from "@/lib/product-photos";
 import { useCart } from "@/lib/cart";
 import { SiteHeader } from "@/components/site-header";
 import { PublicLayout } from "@/components/layout-container";
-import { CartSheet } from "@/components/cart-sheet";
+
 import { ProductCard } from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
