@@ -54,18 +54,6 @@ const STATUS_LABEL: Record<string, string> = {
 
 };
 
-// Resumo curto dos itens, no mesmo formato do card do Kanban.
-function resumoItens(order: OrderRow) {
-  const partes = order.order_items.map((item) => {
-    const adicionais = item.order_item_addons
-      .map((a) => a.products?.name)
-      .filter(Boolean)
-      .join(", ");
-    return `${item.quantity}x ${item.products?.name ?? "Item"}${adicionais ? ` (+ ${adicionais})` : ""}`;
-  });
-  return partes.join(" • ") || "—";
-}
-
 
 const EXCLUIDOS = ["aguardando_aprovacao", "rejeitado"];
 
@@ -384,41 +372,6 @@ function AdminRelatorios() {
                 </section>
               ))}
             </div>
-
-            <section className="overflow-x-auto rounded-lg border bg-card">
-              <h2 className="border-b px-4 py-3 text-sm font-semibold text-foreground">
-                Pedidos do período
-              </h2>
-              <table className="w-full min-w-[760px] text-sm">
-                <thead className="border-b bg-muted/50 text-left text-xs uppercase text-muted-foreground">
-                  <tr>
-                    <th className="px-4 py-2 font-medium">Data</th>
-                    <th className="px-4 py-2 font-medium">Pedido</th>
-                    <th className="px-4 py-2 font-medium">Cliente</th>
-                    <th className="px-4 py-2 font-medium">Produtos</th>
-                    <th className="px-4 py-2 font-medium">Total</th>
-                    <th className="px-4 py-2 font-medium">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {todos.map((o) => (
-                    <tr key={o.order_number} className="border-b last:border-0">
-                      <td className="px-4 py-2 text-muted-foreground">
-                        {new Date(o.created_at).toLocaleString("pt-BR")}
-                      </td>
-                      <td className="px-4 py-2 font-medium text-foreground">#{o.order_number}</td>
-                      <td className="px-4 py-2 text-muted-foreground">{o.customers?.full_name}</td>
-                      <td className="px-4 py-2 text-muted-foreground">{resumoItens(o)}</td>
-                      <td className="px-4 py-2 text-foreground">{formatBRL(Number(o.total))}</td>
-                      <td className="px-4 py-2 text-muted-foreground">
-                        {STATUS_LABEL[o.status] ?? o.status}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </section>
-
           </>
         )}
       </div>
