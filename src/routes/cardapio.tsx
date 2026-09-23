@@ -296,21 +296,27 @@ function ConfigDialog({
 
   return (
     <Dialog open={!!product} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>{product.name}</DialogTitle>
-          <DialogDescription>{product.description}</DialogDescription>
+      <DialogContent className="max-h-[90vh] overflow-y-auto w-full max-w-lg sm:max-w-xl p-4 sm:p-6">
+        <DialogHeader className="pb-2">
+          <DialogTitle className="text-base sm:text-lg">{product.name}</DialogTitle>
+          <DialogDescription className="text-xs sm:text-sm">{product.description}</DialogDescription>
         </DialogHeader>
 
-        <div className="aspect-[4/3] w-full overflow-hidden rounded-md">
-          <img
-            src={photoUrl}
-            alt={`Foto de ${product.name}`}
-            className="h-full w-full object-cover object-center"
-          />
+        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-muted">
+          {photoUrl ? (
+            <img
+              src={photoUrl}
+              alt={`Foto de ${product.name}`}
+              className="h-full w-full object-cover object-center"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center">
+              <span className="text-muted-foreground">Sem imagem</span>
+            </div>
+          )}
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-4 pt-2">
           <h3 className="text-sm font-semibold text-foreground">Adicionais</h3>
           {addons.length === 0 ? (
             <p className="text-sm text-muted-foreground">
@@ -331,10 +337,10 @@ function ConfigDialog({
                       )
                     }
                   />
-                  <Label htmlFor={`addon-${addon.id}`} className="flex-1 cursor-pointer">
+                  <Label htmlFor={`addon-${addon.id}`} className="flex-1 min-w-0 cursor-pointer truncate">
                     {addon.name}
                   </Label>
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-sm text-muted-foreground whitespace-nowrap">
                     + {formatBRL(Number(addon.price))}
                   </span>
                 </li>
@@ -344,17 +350,19 @@ function ConfigDialog({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="notes">Observações (opcional)</Label>
+          <Label htmlFor="notes" className="text-sm">Observações (opcional)</Label>
           <Textarea
             id="notes"
             value={notes}
             maxLength={300}
             placeholder="Ex.: sem cebola"
             onChange={(e) => setNotes(e.target.value)}
+            rows={3}
+            className="resize-none"
           />
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 rounded-lg bg-muted/50">
           <div className="flex items-center gap-2">
             <Button
               type="button"
@@ -365,7 +373,7 @@ function ConfigDialog({
             >
               <Minus className="h-4 w-4" />
             </Button>
-            <span aria-live="polite" className="w-8 text-center text-sm font-medium">
+            <span aria-live="polite" className="w-10 text-center text-base font-medium">
               {quantity}
             </span>
             <Button
@@ -378,10 +386,10 @@ function ConfigDialog({
               <Plus className="h-4 w-4" />
             </Button>
           </div>
-          <p className="text-lg font-semibold text-foreground">{formatBRL(total)}</p>
+          <p className="text-lg font-semibold text-foreground whitespace-nowrap">{formatBRL(total)}</p>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="pt-2">
           <Button
             type="button"
             className="w-full"
