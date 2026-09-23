@@ -12,6 +12,9 @@ node_modules
 dist
 dist-ssr
 *.local
+.vercel
+.output
+.nitro
 
 # Editor / OS
 .vscode/*

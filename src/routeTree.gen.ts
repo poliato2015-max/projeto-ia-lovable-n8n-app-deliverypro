@@ -9,49 +9,24 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as NovaSenhaRouteImport } from './routes/nova-senha'
-import { Route as MeusPedidosRouteImport } from './routes/meus-pedidos'
-import { Route as EsqueciSenhaRouteImport } from './routes/esqueci-senha'
-import { Route as ContaRouteImport } from './routes/conta'
-import { Route as CheckoutRouteImport } from './routes/checkout'
-import { Route as CardapioRouteImport } from './routes/cardapio'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CardapioRouteImport } from './routes/cardapio'
+import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as ContaRouteImport } from './routes/conta'
+import { Route as EsqueciSenhaRouteImport } from './routes/esqueci-senha'
+import { Route as MeusPedidosRouteImport } from './routes/meus-pedidos'
+import { Route as NovaSenhaRouteImport } from './routes/nova-senha'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AdminProtectedRouteRouteImport } from './routes/admin/_protected/route'
 import { Route as AdminProtectedIndexRouteImport } from './routes/admin/_protected/index'
-import { Route as AdminProtectedRelatoriosRouteImport } from './routes/admin/_protected/relatorios'
-import { Route as AdminProtectedProdutosRouteImport } from './routes/admin/_protected/produtos'
-import { Route as AdminProtectedKanbanRouteImport } from './routes/admin/_protected/kanban'
 import { Route as AdminProtectedConfiguracaoRouteImport } from './routes/admin/_protected/configuracao'
+import { Route as AdminProtectedKanbanRouteImport } from './routes/admin/_protected/kanban'
+import { Route as AdminProtectedProdutosRouteImport } from './routes/admin/_protected/produtos'
+import { Route as AdminProtectedRelatoriosRouteImport } from './routes/admin/_protected/relatorios'
 
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NovaSenhaRoute = NovaSenhaRouteImport.update({
-  id: '/nova-senha',
-  path: '/nova-senha',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MeusPedidosRoute = MeusPedidosRouteImport.update({
-  id: '/meus-pedidos',
-  path: '/meus-pedidos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EsqueciSenhaRoute = EsqueciSenhaRouteImport.update({
-  id: '/esqueci-senha',
-  path: '/esqueci-senha',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContaRoute = ContaRouteImport.update({
-  id: '/conta',
-  path: '/conta',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CheckoutRoute = CheckoutRouteImport.update({
-  id: '/checkout',
-  path: '/checkout',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CardapioRoute = CardapioRouteImport.update({
@@ -59,9 +34,34 @@ const CardapioRoute = CardapioRouteImport.update({
   path: '/cardapio',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContaRoute = ContaRouteImport.update({
+  id: '/conta',
+  path: '/conta',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EsqueciSenhaRoute = EsqueciSenhaRouteImport.update({
+  id: '/esqueci-senha',
+  path: '/esqueci-senha',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeusPedidosRoute = MeusPedidosRouteImport.update({
+  id: '/meus-pedidos',
+  path: '/meus-pedidos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NovaSenhaRoute = NovaSenhaRouteImport.update({
+  id: '/nova-senha',
+  path: '/nova-senha',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminProtectedRouteRoute = AdminProtectedRouteRouteImport.update({
@@ -74,26 +74,26 @@ const AdminProtectedIndexRoute = AdminProtectedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminProtectedRouteRoute,
 } as any)
-const AdminProtectedRelatoriosRoute =
-  AdminProtectedRelatoriosRouteImport.update({
-    id: '/relatorios',
-    path: '/relatorios',
+const AdminProtectedConfiguracaoRoute =
+  AdminProtectedConfiguracaoRouteImport.update({
+    id: '/configuracao',
+    path: '/configuracao',
     getParentRoute: () => AdminProtectedRouteRoute,
   } as any)
-const AdminProtectedProdutosRoute = AdminProtectedProdutosRouteImport.update({
-  id: '/produtos',
-  path: '/produtos',
-  getParentRoute: () => AdminProtectedRouteRoute,
-} as any)
 const AdminProtectedKanbanRoute = AdminProtectedKanbanRouteImport.update({
   id: '/kanban',
   path: '/kanban',
   getParentRoute: () => AdminProtectedRouteRoute,
 } as any)
-const AdminProtectedConfiguracaoRoute =
-  AdminProtectedConfiguracaoRouteImport.update({
-    id: '/configuracao',
-    path: '/configuracao',
+const AdminProtectedProdutosRoute = AdminProtectedProdutosRouteImport.update({
+  id: '/produtos',
+  path: '/produtos',
+  getParentRoute: () => AdminProtectedRouteRoute,
+} as any)
+const AdminProtectedRelatoriosRoute =
+  AdminProtectedRelatoriosRouteImport.update({
+    id: '/relatorios',
+    path: '/relatorios',
     getParentRoute: () => AdminProtectedRouteRoute,
   } as any)
 
@@ -209,46 +209,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/nova-senha': {
-      id: '/nova-senha'
-      path: '/nova-senha'
-      fullPath: '/nova-senha'
-      preLoaderRoute: typeof NovaSenhaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/meus-pedidos': {
-      id: '/meus-pedidos'
-      path: '/meus-pedidos'
-      fullPath: '/meus-pedidos'
-      preLoaderRoute: typeof MeusPedidosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/esqueci-senha': {
-      id: '/esqueci-senha'
-      path: '/esqueci-senha'
-      fullPath: '/esqueci-senha'
-      preLoaderRoute: typeof EsqueciSenhaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/conta': {
-      id: '/conta'
-      path: '/conta'
-      fullPath: '/conta'
-      preLoaderRoute: typeof ContaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/checkout': {
-      id: '/checkout'
-      path: '/checkout'
-      fullPath: '/checkout'
-      preLoaderRoute: typeof CheckoutRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cardapio': {
@@ -258,11 +223,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CardapioRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conta': {
+      id: '/conta'
+      path: '/conta'
+      fullPath: '/conta'
+      preLoaderRoute: typeof ContaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/esqueci-senha': {
+      id: '/esqueci-senha'
+      path: '/esqueci-senha'
+      fullPath: '/esqueci-senha'
+      preLoaderRoute: typeof EsqueciSenhaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meus-pedidos': {
+      id: '/meus-pedidos'
+      path: '/meus-pedidos'
+      fullPath: '/meus-pedidos'
+      preLoaderRoute: typeof MeusPedidosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nova-senha': {
+      id: '/nova-senha'
+      path: '/nova-senha'
+      fullPath: '/nova-senha'
+      preLoaderRoute: typeof NovaSenhaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/_protected': {
@@ -279,18 +279,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProtectedIndexRouteImport
       parentRoute: typeof AdminProtectedRouteRoute
     }
-    '/admin/_protected/relatorios': {
-      id: '/admin/_protected/relatorios'
-      path: '/relatorios'
-      fullPath: '/admin/relatorios'
-      preLoaderRoute: typeof AdminProtectedRelatoriosRouteImport
-      parentRoute: typeof AdminProtectedRouteRoute
-    }
-    '/admin/_protected/produtos': {
-      id: '/admin/_protected/produtos'
-      path: '/produtos'
-      fullPath: '/admin/produtos'
-      preLoaderRoute: typeof AdminProtectedProdutosRouteImport
+    '/admin/_protected/configuracao': {
+      id: '/admin/_protected/configuracao'
+      path: '/configuracao'
+      fullPath: '/admin/configuracao'
+      preLoaderRoute: typeof AdminProtectedConfiguracaoRouteImport
       parentRoute: typeof AdminProtectedRouteRoute
     }
     '/admin/_protected/kanban': {
@@ -300,11 +293,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminProtectedKanbanRouteImport
       parentRoute: typeof AdminProtectedRouteRoute
     }
-    '/admin/_protected/configuracao': {
-      id: '/admin/_protected/configuracao'
-      path: '/configuracao'
-      fullPath: '/admin/configuracao'
-      preLoaderRoute: typeof AdminProtectedConfiguracaoRouteImport
+    '/admin/_protected/produtos': {
+      id: '/admin/_protected/produtos'
+      path: '/produtos'
+      fullPath: '/admin/produtos'
+      preLoaderRoute: typeof AdminProtectedProdutosRouteImport
+      parentRoute: typeof AdminProtectedRouteRoute
+    }
+    '/admin/_protected/relatorios': {
+      id: '/admin/_protected/relatorios'
+      path: '/relatorios'
+      fullPath: '/admin/relatorios'
+      preLoaderRoute: typeof AdminProtectedRelatoriosRouteImport
       parentRoute: typeof AdminProtectedRouteRoute
     }
   }
