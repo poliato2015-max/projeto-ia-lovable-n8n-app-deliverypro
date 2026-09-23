@@ -24,7 +24,7 @@ O projeto foi desenvolvido de forma incremental com apoio do **Lovable**, utiliz
 
 A aplicação está disponível em:
 
-**https://app-deliverypro.lovable.app/**
+**https://deliverypro-zeta.vercel.app/**
 
 > A Fase 1 do DeliveryPro foi concluída e disponibiliza o fluxo principal de pedidos, gerenciamento administrativo, acompanhamento por Kanban, validação de entrega, relatórios e notificações via WhatsApp. O projeto terá continuidade na Fase 2, que contemplará novas melhorias e evoluções.
 
