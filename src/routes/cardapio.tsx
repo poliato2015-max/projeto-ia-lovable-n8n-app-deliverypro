@@ -9,6 +9,7 @@ import { useServerFn } from "@tanstack/react-start";
 
 import { supabase } from "@/integrations/supabase/client";
 import { produtosPopulares } from "@/lib/populares.functions";
+import { getProductAddons } from "@/lib/get-product-addons";
 import { formatBRL, getPhotoUrls } from "@/lib/product-photos";
 import { useCart } from "@/lib/cart";
 import { SiteHeader } from "@/components/site-header";
@@ -79,15 +80,6 @@ function Cardapio() {
     },
   });
 
-  const { data: links = [] } = useQuery({
-    queryKey: ["cardapio", "product-addons"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("product_addons").select("product_id, addon_id");
-      if (error) throw error;
-      return data;
-    },
-  });
-
   const buscarPopulares = useServerFn(produtosPopulares);
   const { data: populares = [] } = useQuery({
     queryKey: ["cardapio", "populares"],
@@ -100,12 +92,12 @@ function Cardapio() {
     enabled: products.length > 0,
   });
 
-  const addonsById = new Map(products.filter((p) => p.is_addon).map((p) => [p.id, p]));
-  const addonsDo = (productId: string) =>
-    links
-      .filter((l) => l.product_id === productId)
-      .map((l) => addonsById.get(l.addon_id))
-      .filter((p): p is Product => !!p);
+  const buscarAddons = useServerFn(getProductAddons);
+  const { data: addonsDoSelecionado = [], isLoading: addonsLoading } = useQuery({
+    queryKey: ["cardapio", "addons", selecionado?.id],
+    queryFn: () => buscarAddons(selecionado!.id),
+    enabled: !!selecionado,
+  });
 
   const vendaveis = products.filter((p) => !p.is_addon);
   const secoes = [...categories]
@@ -167,7 +159,7 @@ function Cardapio() {
           )}
         <ConfigDialog
           product={selecionado}
-          addons={selecionado ? addonsDo(selecionado.id) : []}
+          addons={addonsDoSelecionado}
           photoUrl={selecionado?.photo_url ? photoUrls[selecionado.photo_url] : undefined}
           onClose={() => setSelecionado(null)}
         />
