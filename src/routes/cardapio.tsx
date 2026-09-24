@@ -9,7 +9,6 @@ import { useServerFn } from "@tanstack/react-start";
 
 import { supabase } from "@/integrations/supabase/client";
 import { produtosPopulares } from "@/lib/populares.functions";
-import { getProductAddons } from "@/lib/get-product-addons";
 import { formatBRL, getPhotoUrls } from "@/lib/product-photos";
 import { useCart } from "@/lib/cart";
 import { SiteHeader } from "@/components/site-header";
@@ -80,6 +79,15 @@ function Cardapio() {
     },
   });
 
+  const { data: links = [] } = useQuery({
+    queryKey: ["cardapio", "product-addons"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("product_addons").select("product_id, addon_id");
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const buscarPopulares = useServerFn(produtosPopulares);
   const { data: populares = [] } = useQuery({
     queryKey: ["cardapio", "populares"],
@@ -92,12 +100,12 @@ function Cardapio() {
     enabled: products.length > 0,
   });
 
-  const buscarAddons = useServerFn(getProductAddons);
-  const { data: addonsDoSelecionado = [], isLoading: addonsLoading } = useQuery({
-    queryKey: ["cardapio", "addons", selecionado?.id],
-    queryFn: () => buscarAddons(selecionado!.id),
-    enabled: !!selecionado,
-  });
+  const addonsById = new Map(products.filter((p) => p.is_addon).map((p) => [p.id, p]));
+  const addonsDo = (productId: string) =>
+    links
+      .filter((l) => l.product_id === productId)
+      .map((l) => addonsById.get(l.addon_id))
+      .filter((p): p is Product => !!p);
 
   const vendaveis = products.filter((p) => !p.is_addon);
   const secoes = [...categories]
@@ -159,7 +167,7 @@ function Cardapio() {
           )}
         <ConfigDialog
           product={selecionado}
-          addons={addonsDoSelecionado}
+          addons={selecionado ? addonsDo(selecionado.id) : []}
           photoUrl={selecionado?.photo_url ? photoUrls[selecionado.photo_url] : undefined}
           onClose={() => setSelecionado(null)}
         />
@@ -288,27 +296,21 @@ function ConfigDialog({
 
   return (
     <Dialog open={!!product} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto w-full max-w-lg sm:max-w-xl p-4 sm:p-6 flex flex-col">
-        <DialogHeader className="pb-2 flex-shrink-0">
-          <DialogTitle className="text-base sm:text-lg">{product.name}</DialogTitle>
-          <DialogDescription className="text-xs sm:text-sm">{product.description}</DialogDescription>
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>{product.name}</DialogTitle>
+          <DialogDescription>{product.description}</DialogDescription>
         </DialogHeader>
 
-        <div className="relative w-full overflow-hidden rounded-lg bg-muted flex-shrink-0" style={{ aspectRatio: '4/3', maxHeight: '45vh' }}>
-          {photoUrl ? (
-            <img
-              src={photoUrl}
-              alt={`Foto de ${product.name}`}
-              className="h-full w-full object-cover object-center"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center">
-              <span className="text-muted-foreground">Sem imagem</span>
-            </div>
-          )}
+        <div className="aspect-[4/3] w-full overflow-hidden rounded-md">
+          <img
+            src={photoUrl}
+            alt={`Foto de ${product.name}`}
+            className="h-full w-full object-cover object-center"
+          />
         </div>
 
-        <div className="space-y-4 pt-2 flex-1 min-h-0 overflow-y-auto">
+        <div className="space-y-3">
           <h3 className="text-sm font-semibold text-foreground">Adicionais</h3>
           {addons.length === 0 ? (
             <p className="text-sm text-muted-foreground">
@@ -329,10 +331,10 @@ function ConfigDialog({
                       )
                     }
                   />
-                  <Label htmlFor={`addon-${addon.id}`} className="flex-1 min-w-0 cursor-pointer truncate">
+                  <Label htmlFor={`addon-${addon.id}`} className="flex-1 cursor-pointer">
                     {addon.name}
                   </Label>
-                  <span className="text-sm text-muted-foreground whitespace-nowrap">
+                  <span className="text-sm text-muted-foreground">
                     + {formatBRL(Number(addon.price))}
                   </span>
                 </li>
@@ -342,19 +344,17 @@ function ConfigDialog({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="notes" className="text-sm">Observações (opcional)</Label>
+          <Label htmlFor="notes">Observações (opcional)</Label>
           <Textarea
             id="notes"
             value={notes}
             maxLength={300}
             placeholder="Ex.: sem cebola"
             onChange={(e) => setNotes(e.target.value)}
-            rows={3}
-            className="resize-none"
           />
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 rounded-lg bg-muted/50">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Button
               type="button"
@@ -365,7 +365,7 @@ function ConfigDialog({
             >
               <Minus className="h-4 w-4" />
             </Button>
-            <span aria-live="polite" className="w-10 text-center text-base font-medium">
+            <span aria-live="polite" className="w-8 text-center text-sm font-medium">
               {quantity}
             </span>
             <Button
@@ -378,10 +378,10 @@ function ConfigDialog({
               <Plus className="h-4 w-4" />
             </Button>
           </div>
-          <p className="text-lg font-semibold text-foreground whitespace-nowrap">{formatBRL(total)}</p>
+          <p className="text-lg font-semibold text-foreground">{formatBRL(total)}</p>
         </div>
 
-        <DialogFooter className="pt-2 flex-shrink-0">
+        <DialogFooter>
           <Button
             type="button"
             className="w-full"
