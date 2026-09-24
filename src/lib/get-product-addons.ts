@@ -6,10 +6,12 @@ export const getProductAddons = createServerFn({ method: "GET" })
   .handler(async ({ data: productId }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
+    // product_addons tem duas FKs para products (product_id e addon_id).
+    // Precisa especificar a FK correta: product_addons_addon_id_fkey
     const { data, error } = await supabaseAdmin
       .from("product_addons")
       .select(
-        "addon_id, products!inner(id, name, description, price, photo_url, is_active, is_addon)"
+        "addon_id, products!product_addons_addon_id_fkey(id, name, description, price, photo_url, is_active, is_addon)"
       )
       .eq("product_id", productId)
       .eq("products.is_active", true)
