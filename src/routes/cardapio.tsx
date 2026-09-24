@@ -296,13 +296,13 @@ function ConfigDialog({
 
   return (
     <Dialog open={!!product} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto w-full max-w-lg sm:max-w-xl p-4 sm:p-6">
-        <DialogHeader className="pb-2">
+      <DialogContent className="max-h-[90vh] overflow-y-auto w-full max-w-lg sm:max-w-xl p-4 sm:p-6 flex flex-col">
+        <DialogHeader className="pb-2 flex-shrink-0">
           <DialogTitle className="text-base sm:text-lg">{product.name}</DialogTitle>
           <DialogDescription className="text-xs sm:text-sm">{product.description}</DialogDescription>
         </DialogHeader>
 
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-muted">
+        <div className="relative w-full overflow-hidden rounded-lg bg-muted flex-shrink-0" style={{ aspectRatio: '4/3', maxHeight: '45vh' }}>
           {photoUrl ? (
             <img
               src={photoUrl}
@@ -316,7 +316,7 @@ function ConfigDialog({
           )}
         </div>
 
-        <div className="space-y-4 pt-2">
+        <div className="space-y-4 pt-2 flex-1 min-h-0 overflow-y-auto">
           <h3 className="text-sm font-semibold text-foreground">Adicionais</h3>
           {addons.length === 0 ? (
             <p className="text-sm text-muted-foreground">
@@ -389,7 +389,7 @@ function ConfigDialog({
           <p className="text-lg font-semibold text-foreground whitespace-nowrap">{formatBRL(total)}</p>
         </div>
 
-        <DialogFooter className="pt-2">
+        <DialogFooter className="pt-2 flex-shrink-0">
           <Button
             type="button"
             className="w-full"
